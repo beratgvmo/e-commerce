@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('stores', function (Blueprint $table) {
             $table->id();
-            $table->string('name_surname');
-            $table->string('store_name', 25)->unique();
+            $table->string('name_surname', 30);
+            $table->string('store_name', 20)->unique();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('phone_number', 11);
-            $table->string('city', 50);
+            $table->string('phone_number', 14);
+            $table->string('city');
             $table->string('img');
+            $table->string('slug')->unique();
             $table->string('color');
             $table->unsignedBigInteger('selling_category_id');
             $table->float('store_rating')->default(0);

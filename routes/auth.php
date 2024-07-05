@@ -39,11 +39,10 @@ Route::middleware('guest')->group(function () {
 
     //store
 
-    Route::get('satici-kayit', [RegisteredStoreController::class, 'create'])
+    Route::get('store-register', [RegisteredStoreController::class, 'create'])
         ->name('store.register');
 
-    // Route::get('satici-giris', [RegisteredStoreController::class, 'create'])
-    //     ->name('store.register');
+    Route::post('store-register', [RegisteredStoreController::class, 'store']);
 });
 
 Route::middleware('auth')->group(function () {

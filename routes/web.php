@@ -19,6 +19,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+Route::middleware(['auth:store'])->group(function () {
+    Route::get('/store-dashboard', function () {
+        return "merhaba";
+    });
+});
+
 require __DIR__ . '/auth.php';
 
 // Route::get('/', function () {
