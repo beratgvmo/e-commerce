@@ -1,4 +1,5 @@
 <?php
+// app/Http/Controllers/Auth/RegisteredStoreController.php
 
 namespace App\Http\Controllers\Auth;
 
@@ -6,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRegisterRequest;
 use App\Models\Category;
 use App\Models\Store;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
@@ -15,7 +15,6 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules;
 
 class RegisteredStoreController extends Controller
 {
@@ -39,7 +38,6 @@ class RegisteredStoreController extends Controller
             return back()->withInput()->withErrors(['img' => 'Please upload an image']);
         }
 
-
         $store = Store::create([
             'name_surname' => $request->name_surname,
             'store_name' => $request->store_name,
@@ -57,6 +55,6 @@ class RegisteredStoreController extends Controller
 
         Auth::guard('store')->login($store);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('store.dashboard'));
     }
 }

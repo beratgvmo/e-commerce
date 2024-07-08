@@ -1,4 +1,5 @@
 <?php
+// app/Http/Requests/StoreRegisterRequest.php
 
 namespace App\Http\Requests;
 
@@ -16,18 +17,14 @@ class StoreRegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'name_surname' => [
-                'required',
-                'string',
-                new TwoWordMinLengthMaxRule(2, 30)
-            ],
+            'name_surname' => ['required', 'string', new TwoWordMinLengthMaxRule(2, 30)],
             'store_name' => 'required|string|min:5|max:20|unique:stores',
             'email' => 'required|string|email|max:255|unique:stores',
             'phone_number' => 'required|string|size:14',
             'city' => 'required|string|max:50',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'selling_category_id' => 'required|exists:categories,id',
-            'img' => 'required|image|mimes:jpeg,png,jpg|max:2048|dimensions:min_width=400,min_height=400',
+            'img' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048|dimensions:min_width=400,min_height=400',
             'color' => 'required|string',
         ];
     }

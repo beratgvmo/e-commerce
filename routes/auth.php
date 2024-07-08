@@ -10,10 +10,10 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\RegisteredStoreController;
-use App\Http\Controllers\RegisteredStoreController as ControllersRegisteredStoreController;
+use App\Http\Controllers\Auth\LoginStoreController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('guest')->group(function () {
+Route::middleware('guest', 'RedirectIfStore:store')->group(function () {
     // users 
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
@@ -37,13 +37,17 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
 
-    //store
-
-    Route::get('store-register', [RegisteredStoreController::class, 'create'])
+    Route::get('store/register', [RegisteredStoreController::class, 'create'])
         ->name('store.register');
 
-    Route::post('store-register', [RegisteredStoreController::class, 'store']);
+    Route::post('store/register', [RegisteredStoreController::class, 'store']);
+
+    Route::get('store/login', [LoginStoreController::class, 'create'])
+        ->name('store.login');
+
+    Route::post('store/login', [LoginStoreController::class, 'store']);
 });
+
 
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)

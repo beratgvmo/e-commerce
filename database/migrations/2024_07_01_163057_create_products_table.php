@@ -24,8 +24,6 @@ return new class extends Migration
             $table->integer('review_count')->default(0);
             $table->boolean('is_delete')->default(false);
             $table->boolean('is_active')->default(true);
-
-            $table->boolean('is_deleted')->default(false);
             $table->timestamps();
 
             $table->foreign('category_id')->references('id')->on('categories');

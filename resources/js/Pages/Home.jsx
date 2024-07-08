@@ -8,11 +8,8 @@ export default function Home({ auth, categories }) {
     return (
         <HomeLayout auth={auth} categories={categories}>
             <Head title="Welcome" />
-            {auth.store.store_name} -{auth.store.city} -
-            {auth.store.phone_number} -{auth.store.store_name}
-            {/* grid-template-columns: repeat(4, minmax(211px, 349.33px))
-            !important;
-            gap 24 */}
+            {/* {auth.store.store_name} -{auth.store.city} -
+            {auth.store.phone_number} -{auth.store.store_name} */}
             <div className="flex">
                 <div className="bg-gray-50 w-56 mr-5"></div>
                 <div className="grid grid-cols-4 gap-5">
