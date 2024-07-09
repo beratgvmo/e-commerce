@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\LoginStoreController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StoreDashboardController;
 use Illuminate\Support\Facades\Route;
@@ -15,14 +16,9 @@ Route::get('/profileimg', function () {
 })->name('profile.img');
 
 
-
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-
-
-
-
 
 
 Route::middleware('auth')->group(function () {
@@ -31,8 +27,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
 Route::middleware('auth:store')->group(function () {
-    Route::get('/store/dashboard', [StoreDashboardController::class, "store"])->name("store.dashboard");
+    Route::get('/store/dashboard', [StoreDashboardController::class, "index"])->name("store.dashboard");
+
+
+    Route::get('/store/productadd', [ProductController::class, "indexAdd"])->name('store.ProductAdd');
 
     Route::post('/store/logout', [LoginStoreController::class, 'destroy'])
         ->name('store.logout');

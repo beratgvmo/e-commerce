@@ -13,6 +13,11 @@ class Product extends Model
         'name', 'slug', 'category_id', 'description', 'price', 'stock_quantity', 'store_id', 'rating', 'review_count', 'is_active'
     ];
 
+    public function reviews()
+    {
+        return $this->hasMany(ProductReview::class);
+    }
+
     public function images()
     {
         return $this->hasMany(ProductImg::class);

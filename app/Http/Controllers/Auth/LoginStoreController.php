@@ -31,11 +31,11 @@ class LoginStoreController extends Controller
 
         if (Auth::guard('store')->attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('store.dashboard');
+            return redirect()->intended(route('store.dashboard', absolute: false));
         }
 
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
+            'email' => 'Sağlanan kimlik bilgileri kayıtlarımızla eşleşmiyor.',
         ]);
     }
 

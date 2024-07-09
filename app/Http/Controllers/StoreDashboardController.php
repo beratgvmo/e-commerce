@@ -8,7 +8,7 @@ use Inertia\Inertia;
 
 class StoreDashboardController extends Controller
 {
-    public function store()
+    public function index()
     {
         return Inertia::render('Store/Dashboard');
     }
