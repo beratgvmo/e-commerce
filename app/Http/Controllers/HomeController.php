@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductImg;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -13,11 +14,14 @@ class HomeController extends Controller
     {
         // Tüm kategorileri ve alt kategorileri getiriyoruz
         $categories = Category::all();
+        $products = Product::all();
+        $productImg = ProductImg::all();
 
         return Inertia::render('Home', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
-            'categories' => $categories
+            'categories' => $categories,
+            'products' => $products
         ]);
     }
 

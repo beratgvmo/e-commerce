@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductRequest;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductImg;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -30,11 +34,39 @@ class ProductController extends Controller
         ]);
     }
 
-    public function add(ProductRequest $request)
+    public function productAdd(ProductRequest $request)
     {
-        return $request;
+        $slug = Str::slug($request->name, '-');
+
+        $product = Product::create([
+            'name' => $request->name,
+            'category_id' => $request->category_id,
+            'description' => $request->description,
+            'price' => $request->price,
+            'stock_quantity' => $request->stock_quantity,
+            'is_active' => $request->is_active,
+            'slug' => $slug,
+            'is_active' => $request->is_active,
+            'store_id' => Auth::user()->id,
+        ]);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePath = $image->store('public/image');
+                $imageUrl = Storage::url($imagePath);
+
+                ProductImg::create([
+                    'product_id' => $product->id,
+                    'img' => $imageUrl,
+                ]);
+            }
+        }
     }
 }
+
+
+
+// // Görselleri kaydetme işlemi (opsiyonel)
 
 
 //     public function store(Request $request)

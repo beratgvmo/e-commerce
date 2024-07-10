@@ -31,8 +31,9 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth:store')->group(function () {
     Route::get('/store/dashboard', [StoreDashboardController::class, "index"])->name("store.dashboard");
 
+    Route::get('/store/productadd', [ProductController::class, "indexAdd"])->name('store.productAdd');
 
-    Route::get('/store/productadd', [ProductController::class, "indexAdd"])->name('store.ProductAdd');
+    Route::post('/store/productadd', [ProductController::class, "productAdd"]);
 
     Route::post('/store/logout', [LoginStoreController::class, 'destroy'])
         ->name('store.logout');
