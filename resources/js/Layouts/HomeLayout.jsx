@@ -1,8 +1,11 @@
 import { Link } from "@inertiajs/react";
+import { useState } from "react";
 import CategoryList from "@/Components/CategoryList";
 import { IoIosSearch } from "react-icons/io";
 
 export default function HomeLayout({ auth, categories, children }) {
+    const [isCategoryHovered, setIsCategoryHovered] = useState(false);
+
     return (
         <div>
             <header className="pt-2 border-b bg-gray-50 border-gray-200">
@@ -58,12 +61,21 @@ export default function HomeLayout({ auth, categories, children }) {
                         </div>
                     </div>
                     <div className="">
-                        <CategoryList categories={categories} />
+                        <CategoryList
+                            categories={categories}
+                            setIsCategoryHovered={setIsCategoryHovered}
+                        />
                     </div>
                 </div>
             </header>
-
-            <main className="w-[1200px] mt-[15px] mx-auto">{children}</main>
+            <div className="relative min-h-screen">
+                {isCategoryHovered && (
+                    <div className="absolute inset-0 bg-black bg-opacity-40 z-40"></div>
+                )}
+                <main className="relative z-20 w-[1200px] mx-auto">
+                    {children}
+                </main>
+            </div>
         </div>
     );
 }

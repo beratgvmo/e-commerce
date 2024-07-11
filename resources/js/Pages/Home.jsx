@@ -1,10 +1,8 @@
 import { Link, Head } from "@inertiajs/react";
-import img from "./laptop4.jpeg";
 import HomeLayout from "@/Layouts/HomeLayout";
-import { Transition } from "@headlessui/react";
-import { useState } from "react";
+import RenderStars from "@/Components/RenderStars";
 
-export default function Home({ auth, categories, products }) {
+export default function Home({ auth, categories, products, canLogin }) {
     return (
         <HomeLayout auth={auth} categories={categories}>
             <Head title="Welcome" />
@@ -13,26 +11,39 @@ export default function Home({ auth, categories, products }) {
             <div className="flex">
                 <div className="grid grid-cols-4 gap-5">
                     {products.map((product) => (
-                        <div class="group max-w-56 bg-white border border-gray-200 rounded-lg shadow ">
-                            <img class="rounded-t-lg" src={img} />
-                            <div class="p-2 flex flex-col justify-between min-h-[168px]">
-                                <div>
-                                    <h3 class="font-medium text-sm text-gray-900 mb-1">
-                                        {product.name}
-                                    </h3>
-                                    <p className="mb-1">{product.rating}</p>
-                                    <p className="font-semibold mb-5">
-                                        {product.price} TL
-                                    </p>
+                        <Link key={product.id} href={`urun/${product.slug}`}>
+                            <div className="group max-w-56 bg-white border border-gray-200 rounded-lg shadow">
+                                <img
+                                    className="rounded-t-lg mt-4"
+                                    src={product.images[0]?.img}
+                                    alt={product.name}
+                                />
+                                <div className="p-2 rounded-lg bg-gray-50 flex flex-col justify-between min-h-[165px]">
+                                    <div>
+                                        <h3 className="font-medium text-sm text-gray-900 mb-1">
+                                            {product.name.length > 60
+                                                ? product.name.slice(0, 60) +
+                                                  "..."
+                                                : product.name}
+                                        </h3>
+                                        <div className="mb-1 flex">
+                                            <RenderStars
+                                                count={product.rating}
+                                            />
+                                        </div>
+                                        <p className="font-semibold">
+                                            {product.price} TL
+                                        </p>
+                                    </div>
+                                    <a
+                                        href="#"
+                                        className="justify-center hidden group-hover:flex w-full py-2 text-sm font-medium text-center text-white bg-blue-500 rounded-lg transition hover:bg-blue-600"
+                                    >
+                                        Sepete Ekle
+                                    </a>
                                 </div>
-                                <a
-                                    href="#"
-                                    class="justify-center hidden group-hover:flex w-full py-2 text-sm font-medium text-center text-white bg-blue-500 rounded-lg transition hover:bg-blue-600"
-                                >
-                                    Sepete Ekle
-                                </a>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>

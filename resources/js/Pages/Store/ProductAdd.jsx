@@ -182,13 +182,16 @@ export default function ProductAdd({ auth, categories, subCategories }) {
                                     />
                                     <ReactQuill
                                         value={data.description}
-                                        onChange={
-                                            (content, delta, source, editor) =>
-                                                console.log(delta)
-                                            // setData(
-                                            //     "description",
-                                            //     content.getHTML()
-                                            // )
+                                        onChange={(
+                                            content,
+                                            delta,
+                                            source,
+                                            editor
+                                        ) =>
+                                            setData(
+                                                "description",
+                                                editor.getHTML()
+                                            )
                                         }
                                         modules={modules}
                                         formats={formats}

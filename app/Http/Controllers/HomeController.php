@@ -12,29 +12,49 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Tüm kategorileri ve alt kategorileri getiriyoruz
         $categories = Category::all();
-        $products = Product::all();
-        $productImg = ProductImg::all();
+        $products = Product::with('images')->get();
 
         return Inertia::render('Home', [
-            'canLogin' => Route::has('login'),
-            'canRegister' => Route::has('register'),
             'categories' => $categories,
             'products' => $products
         ]);
     }
 
-    public function show($id)
+    public function show($slug)
     {
-        $product = Product::with('reviews', 'images')->findOrFail($id);
+        $product = Product::with('reviews', 'images')->where('slug', $slug)->firstOrFail();
+        $categories = Category::all();
+        $category = Category::find($product->category_id);
 
-        return $product;
+        // Kategori hiyerarşisini bir diziye almak
+        $categoryHierarchy = [];
+        while ($category) {
+            $categoryHierarchy[] = $category;
+            $category = Category::find($category->parent_id);
+        }
+
+        $categoryHierarchy = array_reverse($categoryHierarchy);
 
         return Inertia::render('ProductDetail', [
-            'canLogin' => Route::has('login'),
-            'canRegister' => Route::has('register'),
-            'product' => $product
+            'product' => $product,
+            'categories' => $categories,
+            'categoryHierarchy' => $categoryHierarchy,
+        ]);
+    }
+
+    public function categoryPage($slug)
+    {
+        $category = Category::where('slug', $slug)->firstOrFail();
+
+
+        return Inertia::render('ProductDetail', [
+            'product' => $category,
+
         ]);
     }
 }
+
+
+            // 'canLogin' => Route::has('login'),
+            // 'canRegister' => Route::has('register'),
