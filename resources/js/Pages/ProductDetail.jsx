@@ -11,8 +11,13 @@ export default function ProductDetail({
     categories,
     product,
     categoryHierarchy,
+    storeName,
+    storeRating,
+    storeFollowers,
+    attributes,
+    attributeTypes,
 }) {
-    // const ProductDetail = ({ product, productCommets, properties, propertyType }) => {
+    //  properties, propertyType
     const [currentIndex, setCurrentIndex] = useState(0);
     const [currentTab, setCurrentTab] = useState(1);
     const [isAddedToCart, setIsAddedToCart] = useState(false);
@@ -36,6 +41,9 @@ export default function ProductDetail({
     const switchTab = (tabNumber) => {
         setCurrentTab(tabNumber);
     };
+
+    console.log(attributes);
+    console.log(attributeTypes);
 
     return (
         <HomeLayout auth={auth} categories={categories}>
@@ -129,16 +137,16 @@ export default function ProductDetail({
                             <div className="w-1/2 relative mt-4 p-2 px-3 bg-orange-100 border rounded-md">
                                 <div>
                                     <p className="text-indigo-400 text-sm font-bold">
-                                        Ahmet Giyim{" "}
-                                        <span className="bg-emerald-400 py-1 px-2 rounded-md text-white">
-                                            8.2
+                                        {storeName}
+                                        <span className="ml-1 bg-emerald-400 py-1 px-2 rounded-md text-white">
+                                            {storeRating ? storeRating : 0}
                                         </span>
                                     </p>
                                     <p className="text-xs font-medium mb-1 text-gray-700">
-                                        919,3B Takipçi
+                                        {storeFollowers} Takipçi
                                     </p>
                                 </div>
-                                <div className="w-full absolute left-0 -bottom-3 flex justify-center">
+                                <div className="w-full absolute left-3 -bottom-3 flex justify-center">
                                     <button className="text-xs border bg-indigo-200 px-3 py-1 hover:bg-indigo-300 transition hover:scale-105 flex items-center rounded-full">
                                         MAĞAZAYA GİT
                                         <IoIosArrowForward />
@@ -278,16 +286,20 @@ export default function ProductDetail({
 
                             {currentTab === 3 && (
                                 <div>
-                                    {/* {properties.map((property, index) => (
-                                        <div key={index} className="flex">
-                                            <p className="text-lg font-medium mr-2">
-                                                {property[propertyType]}
-                                            </p>
-                                            <p className="text-lg">
-                                                {property.value}
-                                            </p>
+                                    {attributeTypes.map((attributeT) => (
+                                        <div className=" flex">
+                                            <p>{attributeT.name}</p>
+
+                                            {attributes.map(
+                                                (attribute) =>
+                                                    attribute.attribute_type_id ==
+                                                        attributeT.id && (
+                                                        <p>{attribute.name}</p>
+                                                    )
+                                            )}
                                         </div>
-                                    ))} */}
+                                    ))}
+                                    {/* attributes attributeTypes */}
                                 </div>
                             )}
                         </div>

@@ -25,7 +25,8 @@ class ProductController extends Controller
         $subCategories = [];
 
         foreach ($categories as $category) {
-            $subCategories = array_merge($subCategories, Category::where('parent_id', $category->id)->get()->toArray());
+            $subCategories[] =  Category::where('parent_id', $category->id)->get();
+            // $subCategories = array_merge($subCategories, Category::where('parent_id', $category->id)->get()->toArray());
         }
 
         return Inertia::render('Store/ProductAdd', [

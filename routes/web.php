@@ -13,6 +13,8 @@ Route::get('/', [HomeController::class, "index"])->name("home.index");
 
 Route::get('/urun/{slug}', [HomeController::class, "show"])->name("home.show");
 
+Route::get('/{slug}', [HomeController::class, 'categoryProducts'])->name('home.category');
+
 Route::get('/profileimg', function () {
     return Inertia::render('Profile');
 })->name('profile.img');
