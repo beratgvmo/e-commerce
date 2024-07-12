@@ -5,6 +5,9 @@ import RenderStars from "@/Components/RenderStars";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import { FaHome } from "react-icons/fa";
+import { BiMessageSquareAdd } from "react-icons/bi";
+import { MdOutlineInfo } from "react-icons/md";
+import { FaStar } from "react-icons/fa";
 
 export default function ProductDetail({
     auth,
@@ -16,6 +19,8 @@ export default function ProductDetail({
     storeFollowers,
     attributes,
     attributeTypes,
+    ratingPercentages,
+    ratingsCount,
 }) {
     //  properties, propertyType
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -41,9 +46,6 @@ export default function ProductDetail({
     const switchTab = (tabNumber) => {
         setCurrentTab(tabNumber);
     };
-
-    console.log(attributes);
-    console.log(attributeTypes);
 
     return (
         <HomeLayout auth={auth} categories={categories}>
@@ -110,7 +112,7 @@ export default function ProductDetail({
                                     <p className="mr-1 ">{product.rating}</p>
                                     <RenderStars
                                         count={product.rating}
-                                        size="high"
+                                        size="large"
                                     />
                                 </div>
                                 <p className="text-xs font-medium text-end">
@@ -195,7 +197,7 @@ export default function ProductDetail({
                             </button>
                         </div>
 
-                        <div className="min-h-[42rem] px-4 py-3">
+                        <div className="min-h-[10rem] py-3">
                             {currentTab === 1 && (
                                 <div
                                     dangerouslySetInnerHTML={{
@@ -206,9 +208,122 @@ export default function ProductDetail({
 
                             {currentTab === 2 && (
                                 <div>
+                                    <div
+                                        className={
+                                            product.reviews.length > 0 &&
+                                            `border-b-2 px-4`
+                                        }
+                                    >
+                                        <div className="flex justify-between">
+                                            <p className="w-[70%] font-semibold">
+                                                {product.name} Değerlendirmeleri
+                                            </p>
+                                            {product.reviews.length > 0 || (
+                                                <p className="font-semibold">
+                                                    Tüm değerlendirmeler (
+                                                    {product.reviews.length})
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div className="flex mt-6">
+                                            <div className="h-52 w-52 mr-16">
+                                                {product.images && (
+                                                    <img
+                                                        src={
+                                                            product.images[0]
+                                                                .img
+                                                        }
+                                                        alt="Product Image"
+                                                        className="w-full h-auto"
+                                                    />
+                                                )}
+                                            </div>
+                                            <div>
+                                                {product.reviews.length > 0 ? (
+                                                    <div className="flex">
+                                                        <div className="flex flex-col justify-center items-center gap-1 mr-8">
+                                                            <p className="text-6xl text-gray-800">
+                                                                {product.rating}
+                                                            </p>
+                                                            <RenderStars
+                                                                count={
+                                                                    product.rating
+                                                                }
+                                                                size="very large"
+                                                            />
+                                                        </div>
+
+                                                        <div>
+                                                            {[
+                                                                5, 4, 3, 2, 1,
+                                                            ].map((rating) => (
+                                                                <div
+                                                                    key={rating}
+                                                                    className="flex items-center mb-0.5 px-2 py-1 hover:bg-gray-100 transition ease-linear rounded-2xl"
+                                                                >
+                                                                    <p className="flex text font-medium items-center mr-3">
+                                                                        <FaStar className="text-yellow-400" />
+                                                                        {rating}
+                                                                    </p>
+                                                                    <div className="w-60 bg-gray-300 rounded-full h-1.5 mr-2">
+                                                                        <div
+                                                                            className="bg-yellow-400 h-1.5 rounded-full"
+                                                                            style={{
+                                                                                width: `${ratingPercentages[rating]}%`,
+                                                                            }}
+                                                                        ></div>
+                                                                    </div>
+                                                                    <p className="text-sm text-gray-700">
+                                                                        {
+                                                                            ratingsCount[
+                                                                                rating
+                                                                            ]
+                                                                        }
+                                                                    </p>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="">
+                                                        <p className="text-xl font-medium mb-2">
+                                                            Henüz değerlendirme
+                                                            yok
+                                                        </p>
+                                                        <p className="w-1/2 text-gray-700 text-sm">
+                                                            Siz de
+                                                            değerlendirmenizle
+                                                            katkıda bulunmak
+                                                            için ürün satın alın
+                                                            ve müşterilerin
+                                                            karar vermesine
+                                                            yardımcı olmaya ne
+                                                            dersiniz?
+                                                        </p>
+                                                        <div className="flex mt-3 gap-3">
+                                                            <button className="py-3 px-7 font-semibold rounded-lg text-white flex gap-1 items-center bg-blue-500 hover:bg-blue-600 transition">
+                                                                Değerlendir{" "}
+                                                                <BiMessageSquareAdd />
+                                                            </button>
+                                                            <button className="py-3 px-7 font-semibold rounded-lg text-blue-600 bg-blue-100 hover:bg-blue-200 transition">
+                                                                Sepete ekle
+                                                            </button>
+                                                        </div>
+                                                        <div className="flex items-center mt-1 gap-1 text-gray-700">
+                                                            <MdOutlineInfo />
+                                                            Değerlendirme
+                                                            yapabilmek için bu
+                                                            ürünü satın almış
+                                                            olmalısınız.
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>{" "}
                                     {/* Yorumlar */}
-                                    {/* {productCommets.length > 0 ? (
-                                        productCommets.map((productCommet) => (
+                                    {product.reviews.length > 0 &&
+                                        product.reviews.map((productCommet) => (
                                             <div
                                                 key={productCommet.id}
                                                 className="flex m-2 mt-5 mb-16 w-[50rem]"
@@ -216,45 +331,19 @@ export default function ProductDetail({
                                                 <div>
                                                     <div className="p-2 w-16 h-16 flex justify-center items-center border bg-gray-100 rounded-full mr-7 font-semibold">
                                                         <p>
-                                                            {productCommet.userName
-                                                                .split(" ")
-                                                                .map((name) =>
-                                                                    name[0].toUpperCase()
-                                                                )
-                                                                .join("")}
+                                                            {
+                                                                productCommet.userName
+                                                            }
                                                         </p>
                                                     </div>
                                                 </div>
                                                 <div className="flex mb-1">
                                                     <div className="flex mr-3 mb-2">
-                                                        {[...Array(5)].map(
-                                                            (_, i) => (
-                                                                <div
-                                                                    key={i}
-                                                                    style={{
-                                                                        color:
-                                                                            i <
-                                                                            productCommet.rating
-                                                                                ? "rgb(255, 179, 0)"
-                                                                                : "rgb(170, 170, 170)",
-                                                                        backgroundColor:
-                                                                            "rgba(255, 255, 255)",
-                                                                    }}
-                                                                >
-                                                                    <svg
-                                                                        stroke="currentColor"
-                                                                        fill="currentColor"
-                                                                        strokeWidth="0"
-                                                                        viewBox="0 0 576 512"
-                                                                        height="20px"
-                                                                        width="18px"
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                    >
-                                                                        <path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
-                                                                    </svg>
-                                                                </div>
-                                                            )
-                                                        )}
+                                                        <RenderStars
+                                                            count={
+                                                                productCommet.rating
+                                                            }
+                                                        />
                                                         <p className="ml-2">
                                                             {
                                                                 productCommet.formatted_created_at
@@ -262,44 +351,47 @@ export default function ProductDetail({
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <div className="border bg-gray-100 p-5 text-sm leading-6 rounded-[16px]">
+                                                <div className="border bg-gray-100 w-[600px] p-5 text-sm leading-6 rounded-[16px]">
                                                     <p
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: productCommet.comment.replace(
-                                                                /\n/g,
-                                                                "<br>"
-                                                            ),
-                                                        }}
-                                                    ></p>
+                                                    // dangerouslySetInnerHTML={{
+                                                    //     __html: productCommet.comment.replace(
+                                                    //         /\n/g,
+                                                    //         "<br>"
+                                                    //     ),
+                                                    // }}
+                                                    >
+                                                        {productCommet.comment}
+                                                    </p>
                                                 </div>
                                             </div>
-                                        ))
-                                    ) : ( */}
-                                    <div className="flex justify-center mt-3 mx-5">
-                                        <div className="text-center w-full p-6 px-28 bg-yellow-200 rounded text-lg font-semibold text-gray-800">
-                                            Henüz değerlendirme yok
-                                        </div>
-                                    </div>
-                                    {/* )} */}
+                                        ))}
                                 </div>
                             )}
 
                             {currentTab === 3 && (
-                                <div>
-                                    {attributeTypes.map((attributeT) => (
-                                        <div className=" flex">
-                                            <p>{attributeT.name}</p>
-
-                                            {attributes.map(
-                                                (attribute) =>
-                                                    attribute.attribute_type_id ==
-                                                        attributeT.id && (
-                                                        <p>{attribute.name}</p>
-                                                    )
-                                            )}
+                                <div className="grid grid-cols-2 gap-5 mt-2">
+                                    {attributeTypes.map((attributeType) => (
+                                        <div
+                                            className="flex justify-between bg-gray-100 shadow px-4 py-2 rounded-md"
+                                            key={attributeType.id}
+                                        >
+                                            <p>{attributeType.name}</p>
+                                            {attributes
+                                                .filter(
+                                                    (attribute) =>
+                                                        attribute.attribute_type_id ===
+                                                        attributeType.id
+                                                )
+                                                .map((attribute) => (
+                                                    <p
+                                                        key={attribute.id}
+                                                        className="font-ibold"
+                                                    >
+                                                        {attribute.name}
+                                                    </p>
+                                                ))}
                                         </div>
                                     ))}
-                                    {/* attributes attributeTypes */}
                                 </div>
                             )}
                         </div>

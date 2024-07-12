@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\ProductAttribute;
 use App\Models\Store;
 use App\Models\Attribute;
+use App\Models\ProductReview;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -36,13 +37,11 @@ class HomeController extends Controller
         $productAttributes = ProductAttribute::where('product_id', $product->id)->get();
 
         $attributes = [];
-
         foreach ($productAttributes as $productAttribute) {
             $attributes[] = Attribute::where('id', $productAttribute->attribute_id)->first();
         }
 
         $categories = Category::all();
-
         $category = Category::find($product->category_id);
         $categoryHierarchy = [];
 
@@ -50,16 +49,26 @@ class HomeController extends Controller
             $categoryHierarchy[] = $category;
             $category = Category::find($category->parent_id);
         }
-
         $categoryHierarchy = array_reverse($categoryHierarchy);
 
         $store = Store::find($product->store_id);
-
         $storeName = $store->store_name;
         $storeRating = $store->store_rating;
         $storeFollowers = $store->followers_count;
 
-        // Render the Inertia view with all necessary data
+        $reviews = ProductReview::where('product_id', $product->id)->get();
+        $ratings = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+
+        foreach ($reviews as $review) {
+            $ratings[$review->rating]++;
+        }
+
+        $totalReviews = $reviews->count();
+
+        foreach ($ratings as $rating => $count) {
+            $ratingPercentages[$rating] = $totalReviews > 0 ? ($count / $totalReviews) * 100 : 0;
+        }
+
         return Inertia::render('ProductDetail', [
             'product' => $product,
             'attributes' => $attributes,
@@ -69,8 +78,11 @@ class HomeController extends Controller
             'storeName' => $storeName,
             'storeFollowers' => $storeFollowers,
             'storeRating' => $storeRating,
+            'ratingPercentages' => $ratingPercentages,
+            'ratingsCount' => $ratings
         ]);
     }
+
 
 
     public function categoryProducts(Request $request, $slug)

@@ -7,8 +7,11 @@ export default function RenderStars({ count, size = "medium" }) {
             <FaStar
                 key={i}
                 className={`${
-                    i <= count ? "text-yellow-500" : "text-gray-300"
-                } ${size === "medium" ? "text-base" : "text-xl"}`}
+                    i <= count ? "text-yellow-400" : "text-gray-300"
+                } ${size === "medium" && "text-base"}
+                ${size === "large" && "text-xl"}
+                ${size === "very large" && "text-3xl mr-1"}
+                    `}
             />
         );
     }
