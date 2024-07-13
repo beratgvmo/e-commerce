@@ -17,4 +17,14 @@ class Category extends Model
     {
         return $this->belongsTo(Category::class, 'parent_id');
     }
+
+    public function attributeType()
+    {
+        return $this->hasMany(AttributeType::class);
+    }
+
+    public function childrenRecursive()
+    {
+        return $this->hasMany(Category::class, 'parent_id')->with('childrenRecursive');
+    }
 }

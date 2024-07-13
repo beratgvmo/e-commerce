@@ -21,6 +21,7 @@ export default function ProductDetail({
     attributeTypes,
     ratingPercentages,
     ratingsCount,
+    totalReviews,
 }) {
     //  properties, propertyType
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -116,7 +117,7 @@ export default function ProductDetail({
                                     />
                                 </div>
                                 <p className="text-xs font-medium text-end">
-                                    {product.reviews.length} Değerlendirme
+                                    {totalReviews} Değerlendirme
                                 </p>
                             </div>
                         </div>
@@ -183,7 +184,7 @@ export default function ProductDetail({
                                         : "bg-neutral-400 text-white"
                                 }`}
                             >
-                                Değerlendirmeler (243)
+                                Değerlendirmeler ({totalReviews})
                             </button>
                             <button
                                 onClick={() => switchTab(3)}
@@ -321,47 +322,51 @@ export default function ProductDetail({
                                             </div>
                                         </div>
                                     </div>{" "}
-                                    {/* Yorumlar */}
                                     {product.reviews.length > 0 &&
                                         product.reviews.map((productCommet) => (
                                             <div
                                                 key={productCommet.id}
-                                                className="flex m-2 mt-5 mb-16 w-[50rem]"
+                                                className="flex px-4 m-2 mt-5 mb-16 w-[50rem]"
                                             >
                                                 <div>
                                                     <div className="p-2 w-16 h-16 flex justify-center items-center border bg-gray-100 rounded-full mr-7 font-semibold">
                                                         <p>
-                                                            {
-                                                                productCommet.userName
-                                                            }
+                                                            {productCommet.user_name
+                                                                .split(" ")
+                                                                .map((name) =>
+                                                                    name[0].toUpperCase()
+                                                                )
+                                                                .join("")}
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <div className="flex mb-1">
-                                                    <div className="flex mr-3 mb-2">
+                                                <div>
+                                                    <div className="flex items-center mb-3">
                                                         <RenderStars
                                                             count={
                                                                 productCommet.rating
                                                             }
                                                         />
-                                                        <p className="ml-2">
+                                                        <p className="ml-2 text-gray-600 text-sm">
                                                             {
                                                                 productCommet.formatted_created_at
                                                             }
                                                         </p>
                                                     </div>
-                                                </div>
-                                                <div className="border bg-gray-100 w-[600px] p-5 text-sm leading-6 rounded-[16px]">
-                                                    <p
-                                                    // dangerouslySetInnerHTML={{
-                                                    //     __html: productCommet.comment.replace(
-                                                    //         /\n/g,
-                                                    //         "<br>"
-                                                    //     ),
-                                                    // }}
-                                                    >
-                                                        {productCommet.comment}
-                                                    </p>
+                                                    <div className="border bg-gray-100 w-[600px] p-5 text-sm leading-6 rounded-[16px]">
+                                                        <p
+                                                        // dangerouslySetInnerHTML={{
+                                                        //     __html: productCommet.comment.replace(
+                                                        //         /\n/g,
+                                                        //         "<br>"
+                                                        //     ),
+                                                        // }}
+                                                        >
+                                                            {
+                                                                productCommet.comment
+                                                            }
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))}

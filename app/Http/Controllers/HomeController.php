@@ -9,6 +9,7 @@ use App\Models\ProductAttribute;
 use App\Models\Store;
 use App\Models\Attribute;
 use App\Models\ProductReview;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,11 +29,14 @@ class HomeController extends Controller
 
     public function show($slug)
     {
-        $product = Product::with('reviews', 'images')
+        $product = Product::with(['reviews' => function ($query) {
+            $query->take(10);
+        }, 'images'])
             ->where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();
 
+        // Ürün özellikleri
         $attributeTypes = AttributeType::where('category_id', $product->category_id)->get();
         $productAttributes = ProductAttribute::where('product_id', $product->id)->get();
 
@@ -41,6 +45,7 @@ class HomeController extends Controller
             $attributes[] = Attribute::where('id', $productAttribute->attribute_id)->first();
         }
 
+        // Kategori hiyerarşisi
         $categories = Category::all();
         $category = Category::find($product->category_id);
         $categoryHierarchy = [];
@@ -51,11 +56,13 @@ class HomeController extends Controller
         }
         $categoryHierarchy = array_reverse($categoryHierarchy);
 
+        // Mağaza bilgileri
         $store = Store::find($product->store_id);
         $storeName = $store->store_name;
         $storeRating = $store->store_rating;
         $storeFollowers = $store->followers_count;
 
+        // Yorum ve yüzdelik oranları hesapla
         $reviews = ProductReview::where('product_id', $product->id)->get();
         $ratings = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
 
@@ -69,6 +76,12 @@ class HomeController extends Controller
             $ratingPercentages[$rating] = $totalReviews > 0 ? ($count / $totalReviews) * 100 : 0;
         }
 
+        // Yorum kullanıcı ismini ve tarihi
+        foreach ($product->reviews as $comment) {
+            $comment->user_name = User::where('id', $comment->user_id)->value('name');
+            $comment->formatted_created_at = \Carbon\Carbon::parse($comment->created_at)->locale('tr')->isoFormat('D MMMM YYYY, dddd');
+        }
+
         return Inertia::render('ProductDetail', [
             'product' => $product,
             'attributes' => $attributes,
@@ -79,33 +92,79 @@ class HomeController extends Controller
             'storeFollowers' => $storeFollowers,
             'storeRating' => $storeRating,
             'ratingPercentages' => $ratingPercentages,
-            'ratingsCount' => $ratings
+            'ratingsCount' => $ratings,
+            'totalReviews' => $totalReviews
         ]);
     }
 
 
+    public function getAllSubCategories($parent_id = null)
+    {
+        return Category::with('childrenRecursive')
+            ->where('parent_id', $parent_id)
+            ->get();
+    }
 
     public function categoryProducts(Request $request, $slug)
     {
+        // Kategorileri
         $categories = Category::all();
-        $category = Category::where('slug', $slug)->firstOrFail();
+        $categoryMain = Category::where('slug', $slug)->firstOrFail();
 
-        $query = Product::query()->where('category_id', $category->id);
+        // Alt kategorileri
+        $categorySubMain = $this->getAllSubCategories($categoryMain->id);
+        $categorySub = $categorySubMain->flatMap(function ($category) {
+            return $category->childrenRecursive->isNotEmpty() ? $category->childrenRecursive : [$category];
+        });
+
+        // Attributes ve ürün sorguları
+        $attributesMain = AttributeType::where('category_id', $categoryMain->id)->with('attributes')->get();
+
+        $query = Product::with(['images'])
+            ->where('is_active', true)
+            ->where('category_id', $categoryMain->id);
 
         if ($request->has('search')) {
             $query->where('name', 'like', '%' . $request->input('search') . '%');
         }
 
+        if ($request->has('attributes')) {
+            return $request->input('attributes');
+        }
+
         $products = $query->get();
 
+        if ($products->isEmpty() && $categorySubMain->isNotEmpty()) {
+            $categorySub->each(function ($category) use (&$products) {
+                $products = $products->merge(
+                    Product::with(['images'])
+                        ->where('is_active', true)
+                        ->where('category_id', $category->id)
+                        ->get()
+                );
+            });
+        }
+
+        // Kategori hiyerarşisi
+        $categoryHierarchy = [];
+        $currentCategory = $categoryMain;
+        while ($currentCategory) {
+            $categoryHierarchy[] = $currentCategory;
+            $currentCategory = Category::find($currentCategory->parent_id);
+        }
+        $categoryHierarchy = array_reverse($categoryHierarchy);
+
         return Inertia::render('CategoryProducts', [
-            'category' => $category,
             'categories' => $categories,
             'products' => $products,
+            'categoryHierarchy' => $categoryHierarchy,
+            'attributesMain' => $attributesMain,
+            'categorySubMain' => $categorySubMain,
+            'categoryMain' => $categoryMain
         ]);
     }
 }
 
 
-            // 'canLogin' => Route::has('login'),
-            // 'canRegister' => Route::has('register'),
+// 'canLogin' => Route::has('login'),
+// 'canRegister' => Route::has('register'),
