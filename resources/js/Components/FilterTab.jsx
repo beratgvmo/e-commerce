@@ -24,28 +24,33 @@ const FilterTab = ({ attributesMain, categorySubMain, categorySlug }) => {
         });
     };
 
-    const handleAttributeChange = (attributeId, isChecked, attributeType) => {
+    const handleAttributeChange = (
+        attributeId,
+        isChecked,
+        attributeType,
+        name
+    ) => {
         setSelectedAttributes((prevState) => {
             const newState = { ...prevState };
-            if (!newState[attributeType]) {
-                newState[attributeType] = [];
-            }
             if (isChecked) {
+                if (!newState[attributeType]) {
+                    newState[attributeType] = [];
+                }
                 newState[attributeType].push(attributeId);
             } else {
                 newState[attributeType] = newState[attributeType].filter(
                     (id) => id !== attributeId
                 );
+                if (newState[attributeType].length === 0) {
+                    delete newState[attributeType];
+                }
             }
             return newState;
         });
     };
 
     const fetchProducts = useCallback(() => {
-        const formattedAttributes = Object.entries(selectedAttributes)
-            .map(([type, ids]) => `${type}=${ids.join(",")}`)
-            .join(";");
-
+        const formattedAttributes = Object.values(selectedAttributes).flat();
         router.visit(route("home.category", { slug: categorySlug }), {
             method: "get",
             data: { attributes: formattedAttributes },
@@ -56,7 +61,7 @@ const FilterTab = ({ attributesMain, categorySubMain, categorySlug }) => {
     }, [selectedAttributes, categorySlug]);
 
     useEffect(() => {
-        const timeoutId = setTimeout(fetchProducts, 200);
+        const timeoutId = setTimeout(fetchProducts, 100);
         return () => clearTimeout(timeoutId);
     }, [fetchProducts]);
 
@@ -121,7 +126,8 @@ const FilterTab = ({ attributesMain, categorySubMain, categorySlug }) => {
                                                         handleAttributeChange(
                                                             attribute.id,
                                                             e.target.checked,
-                                                            attributeType.name
+                                                            attributeType.name,
+                                                            attribute.name
                                                         )
                                                     }
                                                 />

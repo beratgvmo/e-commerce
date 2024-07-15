@@ -8,6 +8,7 @@ import { FaHome } from "react-icons/fa";
 import { BiMessageSquareAdd } from "react-icons/bi";
 import { MdOutlineInfo } from "react-icons/md";
 import { FaStar } from "react-icons/fa";
+import ProductSwiper from "@/Components/ProductSwiper";
 
 export default function ProductDetail({
     auth,
@@ -22,6 +23,7 @@ export default function ProductDetail({
     ratingPercentages,
     ratingsCount,
     totalReviews,
+    products,
 }) {
     //  properties, propertyType
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -60,8 +62,8 @@ export default function ProductDetail({
                                 <Link href="/">Ana Sayfa</Link>
                             </div>
                         </li>
-                        {categoryHierarchy.map((category) => (
-                            <li>
+                        {categoryHierarchy.map((category, index) => (
+                            <li key={index}>
                                 <div className="flex items-center">
                                     <IoIosArrowForward />
                                     <div className="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">
@@ -74,7 +76,6 @@ export default function ProductDetail({
                         ))}
                     </ol>
                 </nav>
-
                 <div className="flex rounded-md border border-gray-300">
                     <div className="relative group min-w-[34rem] flex justify-between items-center">
                         <button
@@ -156,13 +157,17 @@ export default function ProductDetail({
                                     </button>
                                 </div>
                             </div>
-                            <div className="w-1/2 mt-4 p-2 px-3 border rounded-md">
-                                farklı özelik
+                            <div className="w-1/2 mt-4 p-2 px-3 border bg-orange-100 rounded-md">
+                                <p className="text-sm">
+                                    <span className="font-semibold">
+                                        Tahmini Kargoya Teslim
+                                    </span>
+                                    : 3 gün içinde
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div className="mt-6">
                     <div className="border border-gray-300 rounded-lg">
                         <div className="flex w-full justify-between rounded-t-lg">
@@ -201,6 +206,7 @@ export default function ProductDetail({
                         <div className="min-h-[10rem] py-3">
                             {currentTab === 1 && (
                                 <div
+                                    className="px-4"
                                     dangerouslySetInnerHTML={{
                                         __html: product.description,
                                     }}
@@ -210,10 +216,10 @@ export default function ProductDetail({
                             {currentTab === 2 && (
                                 <div>
                                     <div
-                                        className={
+                                        className={`px-4 ${
                                             product.reviews.length > 0 &&
-                                            `border-b-2 px-4`
-                                        }
+                                            "border-b-2"
+                                        }`}
                                     >
                                         <div className="flex justify-between">
                                             <p className="w-[70%] font-semibold">
@@ -321,7 +327,7 @@ export default function ProductDetail({
                                                 )}
                                             </div>
                                         </div>
-                                    </div>{" "}
+                                    </div>
                                     {product.reviews.length > 0 &&
                                         product.reviews.map((productCommet) => (
                                             <div
@@ -374,7 +380,7 @@ export default function ProductDetail({
                             )}
 
                             {currentTab === 3 && (
-                                <div className="grid grid-cols-2 gap-5 mt-2">
+                                <div className="grid grid-cols-2 gap-5 mt-2 px-4">
                                     {attributeTypes.map((attributeType) => (
                                         <div
                                             className="flex justify-between bg-gray-100 shadow px-4 py-2 rounded-md"
@@ -401,6 +407,10 @@ export default function ProductDetail({
                             )}
                         </div>
                     </div>
+                </div>
+                <div className="">
+                    <p>Benzer Ürünler</p>
+                    <ProductSwiper products={products} />
                 </div>
             </div>
         </HomeLayout>

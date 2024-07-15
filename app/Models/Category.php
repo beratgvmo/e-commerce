@@ -23,8 +23,8 @@ class Category extends Model
         return $this->hasMany(AttributeType::class);
     }
 
-    public function childrenRecursive()
+    public function children()
     {
-        return $this->hasMany(Category::class, 'parent_id')->with('childrenRecursive');
+        return $this->hasMany(Category::class, 'parent_id')->with('children');
     }
 }

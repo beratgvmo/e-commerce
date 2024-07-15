@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use PhpParser\Node\Stmt\Return_;
 
 class HomeController extends Controller
 {
@@ -35,6 +36,8 @@ class HomeController extends Controller
             ->where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();
+
+        $products = Product::where("category_id", $product->category_id)->with("images")->get();
 
         // Ürün özellikleri
         $attributeTypes = AttributeType::where('category_id', $product->category_id)->get();
@@ -93,14 +96,15 @@ class HomeController extends Controller
             'storeRating' => $storeRating,
             'ratingPercentages' => $ratingPercentages,
             'ratingsCount' => $ratings,
-            'totalReviews' => $totalReviews
+            'totalReviews' => $totalReviews,
+            'products' => $products
         ]);
     }
 
 
     public function getAllSubCategories($parent_id = null)
     {
-        return Category::with('childrenRecursive')
+        return Category::with('children')
             ->where('parent_id', $parent_id)
             ->get();
     }
@@ -112,27 +116,38 @@ class HomeController extends Controller
         $categoryMain = Category::where('slug', $slug)->firstOrFail();
 
         // Alt kategorileri
+
         $categorySubMain = $this->getAllSubCategories($categoryMain->id);
-        $categorySub = $categorySubMain->flatMap(function ($category) {
-            return $category->childrenRecursive->isNotEmpty() ? $category->childrenRecursive : [$category];
-        });
+
+        foreach ($categorySubMain as $category) {
+            count($category->children) > 0 ?
+                $categorySub[] = $category->children : $categorySub[] =  $category;
+        }
+
+
+        return $categorySub;
 
         // Attributes ve ürün sorguları
         $attributesMain = AttributeType::where('category_id', $categoryMain->id)->with('attributes')->get();
 
-        $query = Product::with(['images'])
+        $query = Product::with(['images', 'attributes'])
             ->where('is_active', true)
             ->where('category_id', $categoryMain->id);
+
 
         if ($request->has('search')) {
             $query->where('name', 'like', '%' . $request->input('search') . '%');
         }
 
         if ($request->has('attributes')) {
-            return $request->input('attributes');
+            $attributeFilters = $request->input('attributes');
+            $query->whereHas('attributes', function ($q) use ($attributeFilters) {
+                $q->whereIn('attribute_id', $attributeFilters);
+            });
         }
 
         $products = $query->get();
+
 
         if ($products->isEmpty() && $categorySubMain->isNotEmpty()) {
             $categorySub->each(function ($category) use (&$products) {

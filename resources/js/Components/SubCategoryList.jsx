@@ -14,11 +14,12 @@ const SubCategoryList = ({ categories, parentId, color = true }) => {
             {subCategories.map((category) => (
                 <div key={category.id}>
                     <p
-                        className={`${
-                            color
-                                ? "font-semibold text-blue-500 mb-[10px] text-[15px]"
-                                : "font-medium text-black mb-[8px] text-sm "
-                        }`}
+                        className={`cursor-pointer inline-block hover:underline 
+                            ${
+                                color
+                                    ? "font-semibold text-blue-500 mb-[10px] text-[15px]"
+                                    : "font-medium text-black mb-[8px] text-sm "
+                            }`}
                     >
                         {category.name}
                     </p>

@@ -5,6 +5,7 @@ import FilterTab from "@/Components/FilterTab";
 import ProductContainer from "@/Components/ProductContainer";
 import { FaHome } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
+import { LuSearchX } from "react-icons/lu";
 
 const CategoryProducts = ({
     auth,
@@ -57,14 +58,10 @@ const CategoryProducts = ({
                             </>
                         ) : (
                             <>
-                                <div className="text-lg font-medium mb-6 border-b pb-2">
-                                    "{categoryMain.name}" araması için 0 sonuç
-                                    listeleniyor
-                                </div>
                                 <div className="flex justify-center mt-8">
-                                    <div className="text-center w-full p-4 px-28 bg-gray-200 rounded text-lg font-semibold text-gray-800">
-                                        Şu anda bu kategoride ürün
-                                        bulunmamaktadır.
+                                    <div className="flex flex-col justify-center items-center">
+                                        <LuSearchX className="text-8xl text-orange-500" />
+                                        Aramanız için sonuç bulunamadı.
                                     </div>
                                 </div>
                             </>

@@ -6,12 +6,15 @@ export default function ProductContainer({ products }) {
         <div className="grid grid-cols-4 gap-4 mt-4">
             {products.map((product) => (
                 <Link key={product.id} href={`urun/${product.slug}`}>
-                    <div className="group max-w-56 bg-white border border-gray-200 rounded-lg shadow">
-                        <img
-                            className="rounded-t-lg mt-4"
-                            src={product.images[0]?.img}
-                            alt={product.name}
-                        />
+                    <div className="group max-w-56 duration-300 bg-white border border-gray-200 hover:border-gray-400 rounded-lg shadow flex flex-col overflow-hidden">
+                        <div className="aspect-square relative overflow-hidden">
+                            <img
+                                className="object-contain duration-300 md:object-cover w-full h-full absolute inset-0 transition-transform group-hover:scale-105"
+                                loading="lazy"
+                                src={product.images[0]?.img}
+                                alt={product.name}
+                            />
+                        </div>
                         <div className="p-2 rounded-lg bg-gray-50 flex flex-col justify-between min-h-[165px]">
                             <div>
                                 <h3 className="font-medium text-sm text-gray-900 mb-1">
@@ -28,7 +31,7 @@ export default function ProductContainer({ products }) {
                             </div>
                             <a
                                 href="#"
-                                className="justify-center hidden group-hover:flex w-full py-2 text-sm font-medium text-center text-white bg-blue-500 rounded-lg transition hover:bg-blue-600"
+                                className="group-hover:flex flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full py-2 text-sm font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600"
                             >
                                 Sepete Ekle
                             </a>

@@ -14,14 +14,17 @@ export default function HomeLayout({ auth, categories, children }) {
                 <div className="w-[1200px] mx-auto">
                     <div className="text-xs flex gap-3 justify-end">
                         <Link href={route("store.register")}>
-                            Trendyol'da Satış Yap
+                            E-ticaret'da Satış Yap
                         </Link>
                         <p>Hakkımızda</p>
                     </div>
                     <div className="flex justify-between items-center">
-                        <p className="text-xl font-medium text-blue-500">
+                        <Link
+                            href="/"
+                            className="text-xl font-medium text-blue-500"
+                        >
                             E-ticaret
-                        </p>
+                        </Link>
                         <div className="flex bg-gray-200 border-none w-[40%] rounded-md">
                             <input
                                 type="text"
@@ -62,7 +65,7 @@ export default function HomeLayout({ auth, categories, children }) {
                             )}
                         </div>
                     </div>
-                    <div className="">
+                    <div>
                         <CategoryList
                             categories={categories}
                             setIsCategoryHovered={setIsCategoryHovered}
@@ -70,7 +73,7 @@ export default function HomeLayout({ auth, categories, children }) {
                     </div>
                 </div>
             </header>
-            <div className="relative min-h-screen">
+            <div className="relative min-h-screen flex-col flex justify-between">
                 {isCategoryHovered && (
                     <div className="absolute inset-0 bg-black bg-opacity-40 z-40"></div>
                 )}
