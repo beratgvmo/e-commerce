@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('store_name', 20)->unique();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->string('slug')->unique();
             $table->string('phone_number', 14);
             $table->string('city');
-            $table->string('img');
-            $table->string('slug')->unique();
+            $table->string('img')->nullable();
             $table->string('banner')->nullable();
             $table->unsignedBigInteger('selling_category_id');
             $table->float('store_rating')->default(0);
@@ -29,8 +29,9 @@ return new class extends Migration
             $table->integer('reviews_count')->default(0);
             $table->string('password');
             $table->rememberToken();
-            $table->foreign('selling_category_id')->references('id')->on('categories');
             $table->timestamps();
+
+            $table->foreign('selling_category_id')->references('id')->on('categories');
         });
     }
 

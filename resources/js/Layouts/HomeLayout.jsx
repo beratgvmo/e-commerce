@@ -239,18 +239,20 @@ export default function HomeLayout({ auth, categories, children }) {
                                 © 2024 Tüm Hakları Saklıdır E-Ticaret
                             </span>
                             <div className="flex">
-                                <Link
+                                <a
+                                    target="_blank"
                                     href="https://github.com/beratguven0"
-                                    className="text-gray-500 text-lg hover:text-gray-900 transition duration-200 "
+                                    className="text-gray-500 text-lg hover:text-gray-900 transition duration-200"
                                 >
                                     <FaGithub className="text-2xl" />
-                                </Link>
-                                <Link
+                                </a>
+                                <a
+                                    target="_blank"
                                     href="https://www.linkedin.com/in/berat-g%C3%BCven-82b782262/"
                                     className="text-gray-500 text-lg hover:text-gray-900 ml-4 transition duration-200"
                                 >
                                     <FaLinkedin className="text-2xl" />
-                                </Link>
+                                </a>
                             </div>
                         </div>
                     </div>

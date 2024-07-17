@@ -184,6 +184,8 @@ class HomeController extends Controller
 
         $store = Store::where('slug', $slug)->firstOrFail();
 
+        $products = Product::where('store_id', $store->id)->with('images', 'reviews')->get();
+
         //   "id": 11,
         //   "name_surname": "hasan yılmaz",
         //   "store_name": "hasan yılmaz",
@@ -205,6 +207,7 @@ class HomeController extends Controller
         return Inertia::render('ShopHome', [
             'categories' => $categories,
             'store' => $store,
+            'products' => $products,
         ]);
     }
 }

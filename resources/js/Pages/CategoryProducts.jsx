@@ -44,11 +44,14 @@ const CategoryProducts = ({
                 </nav>
                 <div className="flex gap-5">
                     <div>
-                        <FilterTab
-                            attributesMain={attributesMain}
-                            categorySubMain={categorySubMain}
-                            categorySlug={categoryMain.slug}
-                        />
+                        {(categorySubMain.length > 0 ||
+                            attributesMain.length > 0) && (
+                            <FilterTab
+                                attributesMain={attributesMain}
+                                categorySubMain={categorySubMain}
+                                categorySlug={categoryMain.slug}
+                            />
+                        )}
                     </div>
                     <div className="w-full">
                         {products.length > 0 ? (
@@ -62,6 +65,12 @@ const CategoryProducts = ({
                                     <div className="flex flex-col justify-center items-center">
                                         <LuSearchX className="text-8xl text-orange-500" />
                                         Aramanız için sonuç bulunamadı.
+                                        <Link
+                                            href="/"
+                                            className="text-orange-600 underline"
+                                        >
+                                            Ana Sayfa
+                                        </Link>
                                     </div>
                                 </div>
                             </>
