@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('city');
             $table->string('img');
             $table->string('slug')->unique();
-            $table->string('color');
+            $table->string('banner')->nullable();
             $table->unsignedBigInteger('selling_category_id');
             $table->float('store_rating')->default(0);
             $table->integer('product_count')->default(0);

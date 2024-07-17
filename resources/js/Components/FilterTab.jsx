@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import Checkbox from "./Checkbox";
 import TextInput from "./TextInput";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { useForm, router } from "@inertiajs/react";
+import { useForm, router, Link } from "@inertiajs/react";
 
 const FilterTab = ({ attributesMain, categorySubMain, categorySlug }) => {
     const [isCategoryVisible, setIsCategoryVisible] = useState(true);
@@ -68,9 +68,9 @@ const FilterTab = ({ attributesMain, categorySubMain, categorySlug }) => {
     return (
         <div className="w-52 sticky top-[20px] px-3 py-2 border border-gray-200 rounded">
             {categorySubMain.length > 0 && (
-                <div>
+                <div className="py-1 border-b">
                     <div
-                        className="flex justify-between items-center"
+                        className="flex justify-between items-center cursor-pointer transition select-none hover:bg-gray-100 px-1.5 py-0.5 rounded-full"
                         onClick={toggleCategoryVisibility}
                     >
                         <p className="mr-2">İlgili Kategoriler</p>
@@ -80,25 +80,30 @@ const FilterTab = ({ attributesMain, categorySubMain, categorySlug }) => {
                             <IoIosArrowDown />
                         )}
                     </div>
-                    {isCategoryVisible &&
-                        categorySubMain.map((category) => (
-                            <div
-                                key={category.id}
-                                className="text-sm py-1 ml-1 text-gray-800"
-                            >
-                                {category.name}
-                            </div>
-                        ))}
+                    <div className="mb-2">
+                        {isCategoryVisible &&
+                            categorySubMain.map((category) => (
+                                <div className="">
+                                    <Link
+                                        href={category.slug}
+                                        key={category.id}
+                                        className="text-sm my-1 ml-2 text-gray-800 hover:text-gray-400"
+                                    >
+                                        {category.name}
+                                    </Link>
+                                </div>
+                            ))}
+                    </div>
                 </div>
             )}
             {attributesMain.map((attributeType, index) => (
                 <div key={index} className="border-b mb-2">
                     <div className="py-1">
                         <div
-                            className="flex items-center justify-between"
+                            className="flex items-center justify-between mb-3 cursor-pointer transition select-none hover:bg-gray-100 px-1.5 py-0.5 rounded-full"
                             onClick={() => toggleAttributeVisibility(index)}
                         >
-                            <p className="mb-3">{attributeType.name}</p>
+                            <p>{attributeType.name}</p>
                             {visibleAttributes[index] ? (
                                 <IoIosArrowUp />
                             ) : (

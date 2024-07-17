@@ -15,9 +15,7 @@ export default function ProductDetail({
     categories,
     product,
     categoryHierarchy,
-    storeName,
-    storeRating,
-    storeFollowers,
+    store,
     attributes,
     attributeTypes,
     ratingPercentages,
@@ -141,20 +139,25 @@ export default function ProductDetail({
                             <div className="w-1/2 relative mt-4 p-2 px-3 bg-orange-100 border rounded-md">
                                 <div>
                                     <p className="text-indigo-400 text-sm font-bold">
-                                        {storeName}
-                                        <span className="ml-1 bg-emerald-400 py-1 px-2 rounded-md text-white">
-                                            {storeRating ? storeRating : 0}
+                                        {store.store_name}
+                                        <span className="ml-1 bg-green-500 py-1 px-2 rounded-md text-white">
+                                            {store.store_rating
+                                                ? store.store_rating
+                                                : 0}
                                         </span>
                                     </p>
                                     <p className="text-xs font-medium mb-1 text-gray-700">
-                                        {storeFollowers} Takipçi
+                                        {store.followers_count} Takipçi
                                     </p>
                                 </div>
                                 <div className="w-full absolute left-3 -bottom-3 flex justify-center">
-                                    <button className="text-xs border bg-indigo-200 px-3 py-1 hover:bg-indigo-300 transition hover:scale-105 flex items-center rounded-full">
+                                    <Link
+                                        href={`/magaza/${store.slug}`}
+                                        className="text-xs border bg-indigo-200 px-3 py-1 hover:bg-indigo-300 transition hover:scale-105 flex items-center rounded-full"
+                                    >
                                         MAĞAZAYA GİT
                                         <IoIosArrowForward />
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                             <div className="w-1/2 mt-4 p-2 px-3 border bg-orange-100 rounded-md">
@@ -408,8 +411,8 @@ export default function ProductDetail({
                         </div>
                     </div>
                 </div>
-                <div className="">
-                    <p>Benzer Ürünler</p>
+                <div className="my-4">
+                    <p className="">Benzer Ürünler</p>
                     <ProductSwiper products={products} />
                 </div>
             </div>

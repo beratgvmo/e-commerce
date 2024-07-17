@@ -4,7 +4,7 @@ import RenderStars from "./RenderStars";
 export default function Product({ product }) {
     return (
         <Link key={product.id} href={`/urun/${product.slug}`}>
-            <div className="group max-w-56 duration-300 bg-white border border-gray-200 hover:border-gray-400 rounded-lg shadow flex flex-col overflow-hidden">
+            <div className="group max-w-56 duration-200 bg-white border border-gray-200 hover:border-gray-400 rounded-lg shadow flex flex-col overflow-hidden">
                 <div className="aspect-square relative overflow-hidden">
                     <img
                         className="object-contain select-none duration-300 md:object-cover w-full h-full absolute inset-0 transition-transform group-hover:scale-105"
@@ -27,7 +27,7 @@ export default function Product({ product }) {
                     </div>
                     <a
                         href="#"
-                        className="group-hover:flex flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full py-2 text-sm font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+                        className="group-hover:flex flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-full py-2 text-sm font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600"
                     >
                         Sepete Ekle
                     </a>

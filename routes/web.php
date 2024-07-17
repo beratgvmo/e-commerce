@@ -11,9 +11,12 @@ use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, "index"])->name("home.index");
 
+Route::get('/{slug}', [HomeController::class, 'categoryProducts'])->name('home.category');
+
 Route::get('/urun/{slug}', [HomeController::class, "show"])->name("home.show");
 
-Route::get('/{slug}', [HomeController::class, 'categoryProducts'])->name('home.category');
+Route::get('/magaza/{slug}', [HomeController::class, "magaza"])->name("home.magaza");
+
 
 Route::get('/profileimg', function () {
     return Inertia::render('Profile');

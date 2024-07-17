@@ -61,9 +61,6 @@ class HomeController extends Controller
 
         // Mağaza bilgileri
         $store = Store::find($product->store_id);
-        $storeName = $store->store_name;
-        $storeRating = $store->store_rating;
-        $storeFollowers = $store->followers_count;
 
         // Yorum ve yüzdelik oranları hesapla
         $reviews = ProductReview::where('product_id', $product->id)->get();
@@ -91,9 +88,7 @@ class HomeController extends Controller
             'attributeTypes' => $attributeTypes,
             'categories' => $categories,
             'categoryHierarchy' => $categoryHierarchy,
-            'storeName' => $storeName,
-            'storeFollowers' => $storeFollowers,
-            'storeRating' => $storeRating,
+            'store' => $store,
             'ratingPercentages' => $ratingPercentages,
             'ratingsCount' => $ratings,
             'totalReviews' => $totalReviews,
@@ -102,7 +97,7 @@ class HomeController extends Controller
     }
 
 
-    public function getAllSubCategories($parent_id = null)
+    public function getAllSubCategories($parent_id)
     {
         return Category::with('children')
             ->where('parent_id', $parent_id)
@@ -119,13 +114,17 @@ class HomeController extends Controller
 
         $categorySubMain = $this->getAllSubCategories($categoryMain->id);
 
+        $categorySub = [];
+
         foreach ($categorySubMain as $category) {
-            count($category->children) > 0 ?
-                $categorySub[] = $category->children : $categorySub[] =  $category;
+            if (count($category['children']) > 0) {
+                foreach ($category['children'] as $child) {
+                    $categorySub[] = $child;
+                }
+            } else {
+                $categorySub[] = $category;
+            }
         }
-
-
-        return $categorySub;
 
         // Attributes ve ürün sorguları
         $attributesMain = AttributeType::where('category_id', $categoryMain->id)->with('attributes')->get();
@@ -148,16 +147,16 @@ class HomeController extends Controller
 
         $products = $query->get();
 
-
         if ($products->isEmpty() && $categorySubMain->isNotEmpty()) {
-            $categorySub->each(function ($category) use (&$products) {
+
+            foreach ($categorySub as $category) {
                 $products = $products->merge(
                     Product::with(['images'])
                         ->where('is_active', true)
                         ->where('category_id', $category->id)
                         ->get()
                 );
-            });
+            }
         }
 
         // Kategori hiyerarşisi
@@ -176,6 +175,36 @@ class HomeController extends Controller
             'attributesMain' => $attributesMain,
             'categorySubMain' => $categorySubMain,
             'categoryMain' => $categoryMain
+        ]);
+    }
+
+    public function magaza($slug)
+    {
+        $categories = Category::all();
+
+        $store = Store::where('slug', $slug)->firstOrFail();
+
+        //   "id": 11,
+        //   "name_surname": "hasan yılmaz",
+        //   "store_name": "hasan yılmaz",
+        //   "email": "berat@gmail.com",
+        //   "email_verified_at": null,
+        //   "phone_number": "0511 111 11 11",
+        //   "city": "Bolu",
+        //   "img": "/storage/images/zEeh6DxIjs8xKDIYR3B8HK6E40I5JSKZTNHQiCmL.webp",
+        //   "slug": "hasan-yilmaz",
+        //   "color": "#ca1c1c",
+        //   "selling_category_id": 2,
+        //   "store_rating": 1.4,
+        //   "product_count": 0,
+        //   "followers_count": 0,
+        //   "reviews_count": 0,
+        //   "created_at": "2024-07-05T18:08:43.000000Z",
+        //   "updated_at": "2024-07-05T18:08:43.000000Z"
+
+        return Inertia::render('ShopHome', [
+            'categories' => $categories,
+            'store' => $store,
         ]);
     }
 }
