@@ -1,3 +1,4 @@
+import { Link } from "@inertiajs/react";
 import React from "react";
 
 const SubCategoryList = ({ categories, parentId, color = true }) => {
@@ -13,7 +14,8 @@ const SubCategoryList = ({ categories, parentId, color = true }) => {
         <>
             {subCategories.map((category) => (
                 <div key={category.id}>
-                    <p
+                    <Link
+                        href={`/kategori/${category.slug}`}
                         className={`cursor-pointer inline-block hover:underline 
                             ${
                                 color
@@ -22,7 +24,7 @@ const SubCategoryList = ({ categories, parentId, color = true }) => {
                             }`}
                     >
                         {category.name}
-                    </p>
+                    </Link>
                     <SubCategoryList
                         categories={categories}
                         parentId={category.id}

@@ -25,12 +25,9 @@ export default function Product({ product }) {
                         </div>
                         <p className="font-semibold">{product.price} TL</p>
                     </div>
-                    <a
-                        href="#"
-                        className="group-hover:flex flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-full py-2 text-sm font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600"
-                    >
+                    <button className="group-hover:flex flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-full py-2 text-sm font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600">
                         Sepete Ekle
-                    </a>
+                    </button>
                 </div>
             </div>
         </Link>

@@ -8,35 +8,22 @@ import { Head, Link, useForm } from "@inertiajs/react";
 import InputMask from "react-input-mask";
 import { cities } from "@/data/cities";
 
-export default function Register({ categories }) {
+export default function Register({ categories, cargoCompanies }) {
     const [step, setStep] = useState(1);
     const { data, setData, post, processing, errors, reset } = useForm({
-        name_surname: "",
+        first_name: "",
+        last_name: "",
         store_name: "",
         email: "",
         phone_number: "05",
         city: "",
+        iban_no: "TR",
+        address: "",
         selling_category_id: "",
-        img: null,
-        color: "",
+        cargo_companies_id: "",
         password: "",
         password_confirmation: "",
     });
-
-    const [imagePreview, setImagePreview] = useState(null);
-
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        setData("img", file);
-        setImagePreview(URL.createObjectURL(file));
-    };
-
-    const validateNameSurname = (name) => {
-        const parts = name.trim().split(" ");
-        if (parts.length !== 2) return false;
-        const [firstName, lastName] = parts;
-        return firstName.length >= 2 && lastName.length >= 2;
-    };
 
     useEffect(() => {
         return () => {
@@ -58,16 +45,22 @@ export default function Register({ categories }) {
         switch (currentStep) {
             case 1:
                 return (
-                    validateNameSurname(data.name_surname) &&
-                    data.name_surname.length <= 30 &&
+                    data.first_name.length > 2 &&
+                    data.first_name.length < 30 &&
+                    data.last_name.length > 2 &&
+                    data.last_name.length < 30 &&
                     data.store_name.length >= 5 &&
-                    data.store_name.length <= 20 &&
+                    data.store_name.length <= 30 &&
                     data.city &&
                     data.selling_category_id &&
                     data.phone_number.replace(/_/g, "").length == 14
                 );
             case 2:
-                return data.img && data.color;
+                return (
+                    data.iban_no.replace(/_/g, "").length == 32 &&
+                    data.cargo_companies_id &&
+                    data.address.length > 30
+                );
             case 3:
                 return (
                     data.email &&
@@ -84,6 +77,7 @@ export default function Register({ categories }) {
         if (validateStep(step)) {
             post(route("store.register"));
         }
+        setStep(1);
     };
 
     return (
@@ -111,7 +105,7 @@ export default function Register({ categories }) {
                         >
                             2
                         </span>
-                        <p>Profil Teması</p>
+                        <p>Banka ve Adres Bilgisi</p>
                     </li>
                     <li
                         className={`flex transition-all items-center text-${
@@ -133,27 +127,56 @@ export default function Register({ categories }) {
                 <form onSubmit={submit}>
                     {step === 1 && (
                         <>
-                            <div>
-                                <InputLabel
-                                    htmlFor="name_surname"
-                                    value="ADINIZ - SOYADINIZ"
-                                />
-                                <TextInput
-                                    id="name_surname"
-                                    name="name_surname"
-                                    value={data.name_surname}
-                                    className="mt-1 block w-full"
-                                    autoComplete="name"
-                                    isFocused={true}
-                                    onChange={(e) =>
-                                        setData("name_surname", e.target.value)
-                                    }
-                                    required
-                                />
-                                <InputError
-                                    message={errors.name_surname}
-                                    className="mt-2"
-                                />
+                            <div className="flex gap-4 w-full">
+                                <div className="w-full">
+                                    <InputLabel
+                                        htmlFor="first_name"
+                                        value="Adı"
+                                    />
+                                    <TextInput
+                                        id="first_name"
+                                        name="first_name"
+                                        value={data.first_name}
+                                        className="mt-1 block w-full"
+                                        autoComplete="first_name"
+                                        placeholder="Adı"
+                                        isFocused={true}
+                                        onChange={(e) =>
+                                            setData(
+                                                "first_name",
+                                                e.target.value
+                                            )
+                                        }
+                                        required
+                                    />
+                                    <InputError
+                                        message={errors.first_name}
+                                        className="mt-2"
+                                    />
+                                </div>
+                                <div className="w-full">
+                                    <InputLabel
+                                        htmlFor="last_name"
+                                        value="Soyadı"
+                                    />
+                                    <TextInput
+                                        id="last_name"
+                                        name="last_name"
+                                        value={data.last_name}
+                                        className="mt-1 block w-full"
+                                        autoComplete="last_name"
+                                        isFocused={true}
+                                        onChange={(e) =>
+                                            setData("last_name", e.target.value)
+                                        }
+                                        placeholder="Soyadı"
+                                        required
+                                    />
+                                    <InputError
+                                        message={errors.last_name}
+                                        className="mt-2"
+                                    />
+                                </div>
                             </div>
                             <div className="mt-4">
                                 <InputLabel
@@ -170,6 +193,7 @@ export default function Register({ categories }) {
                                         setData("store_name", e.target.value)
                                     }
                                     required
+                                    placeholder="Mağaza adı"
                                 />
                                 <InputError
                                     message={errors.store_name}
@@ -182,8 +206,9 @@ export default function Register({ categories }) {
                                     value="CEP TELEFONUNUZ"
                                 />
                                 <InputMask
-                                    mask="9999 999 99 99"
+                                    mask="0599 999 99 99"
                                     value={data.phone_number}
+                                    placeholder="Cep Numarası"
                                     onChange={(e) =>
                                         setData("phone_number", e.target.value)
                                     }
@@ -281,82 +306,92 @@ export default function Register({ categories }) {
                     )}
                     {step === 2 && (
                         <>
-                            <div>
+                            <div className="mt-4">
                                 <InputLabel
-                                    htmlFor="img"
-                                    value="Mağaza Resmi"
+                                    htmlFor="iban_no"
+                                    value="IBAN NUMARASI (kayıt sırasında isimle, İBAN kayıt olan İsimle aynı olmalı)"
                                 />
-                                {imagePreview && (
-                                    <img
-                                        src={imagePreview}
-                                        alt="Preview"
-                                        className="mb-4 w-64 h-64 object-cover"
-                                    />
-                                )}
-                                <div className="flex mt-1 items-center justify-center w-full">
-                                    <label
-                                        htmlFor="img"
-                                        className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-                                    >
-                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                            <svg
-                                                className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                                                aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 20 16"
-                                            >
-                                                <path
-                                                    stroke="currentColor"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                                                />
-                                            </svg>
-                                            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                                                <span className="font-semibold">
-                                                    Yüklemek için tıklayın veya
-                                                    sürükleyip bırakın
-                                                </span>
-                                            </p>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                                                PNG, JPG (400px x 400px)
-                                            </p>
-                                        </div>
-                                        <input
-                                            type="file"
-                                            id="img"
-                                            name="img"
-                                            className="hidden mt-1 w-full"
-                                            onChange={handleImageChange}
+                                <InputMask
+                                    mask="TR99 9999 9999 9999 9999 9999 99"
+                                    placeholder="IBAN No Giriniz"
+                                    value={data.iban_no}
+                                    onChange={(e) =>
+                                        setData("iban_no", e.target.value)
+                                    }
+                                >
+                                    {(inputProps) => (
+                                        <TextInput
+                                            {...inputProps}
+                                            id="iban_no"
+                                            name="iban_no"
+                                            className="mt-1 block w-full"
+                                            autoComplete="iban_no"
                                             required
                                         />
-                                    </label>
-                                </div>
+                                    )}
+                                </InputMask>
                                 <InputError
-                                    message={errors.img}
+                                    message={errors.iban_no}
+                                    className="mt-2"
+                                />
+
+                                <InputError
+                                    message={errors.iban_no}
+                                    className="mt-2"
+                                />
+                            </div>
+                            <div className="mt-4">
+                                <InputLabel htmlFor="address" value="Adres" />
+
+                                <textarea
+                                    id="address"
+                                    rows="6"
+                                    maxlength="255"
+                                    class="block resize-none p-2.5 w-full text-sm text-gray-900 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                                    name="address"
+                                    value={data.address}
+                                    autoComplete="address"
+                                    onChange={(e) =>
+                                        setData("address", e.target.value)
+                                    }
+                                    required
+                                    placeholder="Adres"
+                                ></textarea>
+                                <InputError
+                                    message={errors.address}
                                     className="mt-2"
                                 />
                             </div>
                             <div className="mt-4">
                                 <InputLabel
-                                    htmlFor="color"
-                                    value="Mağaza Rengi"
+                                    htmlFor="cargo_companies_id"
+                                    value="Kargo Firmalari"
                                 />
-                                <input
-                                    type="color"
-                                    id="color"
-                                    name="color"
-                                    value={data.color}
-                                    className="mt-1 block w-full"
+                                <select
+                                    id="cargo_companies_id"
+                                    name="cargo_companies_id"
+                                    value={data.cargo_companies_id}
+                                    className="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                                     onChange={(e) =>
-                                        setData("color", e.target.value)
+                                        setData(
+                                            "cargo_companies_id",
+                                            e.target.value
+                                        )
                                     }
                                     required
-                                />
+                                >
+                                    <option value="">Kargo Firması seç</option>
+                                    {cargoCompanies.map((CargoCompany) => (
+                                        <option
+                                            key={CargoCompany.id}
+                                            value={CargoCompany.id}
+                                        >
+                                            {CargoCompany.name}
+                                        </option>
+                                    ))}
+                                </select>
                                 <InputError
-                                    message={errors.color}
+                                    message={errors.cargo_companies_id}
                                     className="mt-2"
                                 />
                             </div>

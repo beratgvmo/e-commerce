@@ -10,8 +10,6 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { MdDelete } from "react-icons/md";
 
-import img from "../laptop4.jpeg";
-
 export default function ProductAdd({ auth, categories, subCategories }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
@@ -66,9 +64,9 @@ export default function ProductAdd({ auth, categories, subCategories }) {
             image.src = URL.createObjectURL(file);
 
             image.onload = () => {
-                if (image.width > 1500 || image.height > 1500) {
+                if (image.width > 1200 || image.height > 1800) {
                     alert(
-                        "Resim boyutu çok büyük! Lütfen 1500x1500 pikselden küçük bir resim seçin."
+                        "Resim boyutu çok büyük! Lütfen 1200x1800 pikselden küçük bir resim seçin."
                     );
                     return;
                 }

@@ -4,6 +4,7 @@ import CategoryList from "@/Components/CategoryList";
 import { IoIosSearch } from "react-icons/io";
 import { FaGithub } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa";
+import { CgProfile } from "react-icons/cg";
 
 export default function HomeLayout({ auth, categories, children }) {
     const [isCategoryHovered, setIsCategoryHovered] = useState(false);
@@ -12,13 +13,17 @@ export default function HomeLayout({ auth, categories, children }) {
         <div>
             <header className="pt-2 border-b bg-gray-50 border-gray-200">
                 <div className="w-[1200px] mx-auto">
-                    <div className="text-xs flex gap-3 justify-end">
-                        <Link href={route("store.register")}>
-                            E-ticaret'da Satış Yap
-                        </Link>
-                        <p>Hakkımızda</p>
+                    <div>
+                        {!auth.store && (
+                            <div className="text-xs flex gap-3 justify-end">
+                                <Link href={route("store.register")}>
+                                    E-ticaret'da Satış Yap
+                                </Link>
+                                <p>Hakkımızda</p>
+                            </div>
+                        )}
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex mt-2 justify-between items-center">
                         <Link
                             href="/"
                             className="text-xl font-medium text-blue-500"
@@ -43,7 +48,7 @@ export default function HomeLayout({ auth, categories, children }) {
                                             href={route("dashboard")}
                                             className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70"
                                         >
-                                            Hesap
+                                            Hesabım
                                         </Link>
                                     ) : (
                                         <>
@@ -62,6 +67,15 @@ export default function HomeLayout({ auth, categories, children }) {
                                         </>
                                     )}
                                 </>
+                            )}
+                            {auth.store && (
+                                <Link
+                                    href={route("store.dashboard")}
+                                    className="rounded-md flex items-center gap-0.5 px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70"
+                                >
+                                    <CgProfile />
+                                    Hesabım
+                                </Link>
                             )}
                         </div>
                     </div>

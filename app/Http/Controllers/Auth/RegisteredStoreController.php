@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRegisterRequest;
+use App\Models\CargoCompany;
 use App\Models\Category;
 use App\Models\Store;
 use Inertia\Inertia;
@@ -21,9 +22,11 @@ class RegisteredStoreController extends Controller
     public function create(): Response
     {
         $categories = Category::all();
+        $cargoCompanies = CargoCompany::all();
 
         return Inertia::render('Auth/StoreRegister', [
-            'categories' => $categories
+            'categories' => $categories,
+            'cargoCompanies' => $cargoCompanies
         ]);
     }
 
@@ -31,24 +34,21 @@ class RegisteredStoreController extends Controller
     {
         $slug = Str::slug($request->store_name, '-');
 
-        if ($request->hasFile('img')) {
-            $imagePath = $request->file('img')->store('public/images');
-            $imageUrl = Storage::url($imagePath);
-        } else {
-            return back()->withInput()->withErrors(['img' => 'Please upload an image']);
-        }
 
         $store = Store::create([
-            'name_surname' => $request->name_surname,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
             'store_name' => $request->store_name,
             'email' => $request->email,
+            'slug' => $slug,
             'phone_number' => $request->phone_number,
+            'iban_no' => $request->iban_no,
             'city' => $request->city,
-            'password' => Hash::make($request->password),
+            'address' => $request->address,
+            'cargo_company' => $request->cargo_company,
             'selling_category_id' => $request->selling_category_id,
-            'img' => $imageUrl,
-            'color' => $request->color,
-            'slug' => $slug
+            'cargo_companies_id' => $request->cargo_companies_id,
+            'password' => Hash::make($request->password),
         ]);
 
         event(new Registered($store));

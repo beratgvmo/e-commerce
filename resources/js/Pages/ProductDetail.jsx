@@ -64,7 +64,7 @@ export default function ProductDetail({
                             <div className="flex items-center">
                                 <IoIosArrowForward />
                                 <div className="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">
-                                    <Link href={`/${category.slug}`}>
+                                    <Link href={`/kategori/${category.slug}`}>
                                         {category.name}
                                     </Link>
                                 </div>
@@ -371,28 +371,25 @@ export default function ProductDetail({
 
                         {currentTab === 3 && (
                             <div className="grid grid-cols-2 gap-5 mt-2 px-4">
-                                {attributeTypes.map((attributeType) => (
-                                    <div
-                                        className="flex justify-between bg-gray-100 shadow px-4 py-2 rounded-md"
-                                        key={attributeType.id}
-                                    >
-                                        <p>{attributeType.name}</p>
-                                        {attributes
-                                            .filter(
-                                                (attribute) =>
-                                                    attribute.attribute_type_id ===
-                                                    attributeType.id
-                                            )
-                                            .map((attribute) => (
-                                                <p
-                                                    key={attribute.id}
-                                                    className="font-ibold"
-                                                >
+                                {attributeTypes.map((attributeType) =>
+                                    attributes
+                                        .filter(
+                                            (attribute) =>
+                                                attribute.attribute_type_id ===
+                                                attributeType.id
+                                        )
+                                        .map((attribute) => (
+                                            <div
+                                                className="flex justify-between bg-gray-100 shadow px-4 py-2 rounded-md"
+                                                key={attribute.id} // Key should be unique for each element in the map function
+                                            >
+                                                <p>{attributeType.name}</p>
+                                                <p className="font-bold">
                                                     {attribute.name}
                                                 </p>
-                                            ))}
-                                    </div>
-                                ))}
+                                            </div>
+                                        ))
+                                )}
                             </div>
                         )}
                     </div>

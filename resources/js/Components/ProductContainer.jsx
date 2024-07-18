@@ -1,5 +1,3 @@
-import { Link } from "@inertiajs/react";
-import RenderStars from "@/Components/RenderStars";
 import Product from "./Product";
 
 export default function ProductContainer({ products }) {

@@ -4,6 +4,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -17,20 +18,24 @@ class Store extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name_surname',
+        'first_name',
+        'last_name',
         'store_name',
         'email',
-        'phone_number',
-        'city',
-        'selling_category_id',
-        'img',
-        'color',
         'slug',
-        'password',
+        'phone_number',
+        'iban_no',
+        'city',
+        'address',
+        'cargo_company',
+        'logo',
+        'banner',
+        'selling_category_id',
         'store_rating',
         'product_count',
         'followers_count',
         'reviews_count',
+        'password',
     ];
 
     /**
@@ -52,4 +57,19 @@ class Store extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function product()
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

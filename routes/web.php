@@ -11,7 +11,7 @@ use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, "index"])->name("home.index");
 
-Route::get('/{slug}', [HomeController::class, 'categoryProducts'])->name('home.category');
+Route::get('kategori/{slug}', [HomeController::class, 'categoryProducts'])->name('home.category');
 
 Route::get('/urun/{slug}', [HomeController::class, "show"])->name("home.show");
 
@@ -46,9 +46,12 @@ Route::middleware('auth:store')->group(function () {
         ->name('store.logout');
 });
 
+// Route::middleware('guest')->group(function () {
+Route::get('/berat', function ($id) {
+    return "dsadsa";
+});
+// });
 
-
-require __DIR__ . '/auth.php';
 
 // Route::get('/', function () {
 //     return Inertia::render('Home', [
@@ -59,3 +62,5 @@ require __DIR__ . '/auth.php';
 
 // 'laravelVersion' => Application::VERSION,
 // 'phpVersion' => PHP_VERSION,
+
+require __DIR__ . '/auth.php';

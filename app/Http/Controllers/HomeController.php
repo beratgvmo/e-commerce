@@ -13,7 +13,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use PhpParser\Node\Stmt\Return_;
 
 class HomeController extends Controller
 {
@@ -24,7 +23,7 @@ class HomeController extends Controller
 
         return Inertia::render('Home', [
             'categories' => $categories,
-            'products' => $products
+            'products' => $products,
         ]);
     }
 

@@ -2,7 +2,7 @@ import { Head } from "@inertiajs/react";
 import HomeLayout from "@/Layouts/HomeLayout";
 import ProductContainer from "@/Components/ProductContainer";
 
-export default function Home({ auth, categories, products, canLogin }) {
+export default function Home({ auth, categories, products }) {
     return (
         <HomeLayout auth={auth} categories={categories}>
             <Head title="Welcome" />

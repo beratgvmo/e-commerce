@@ -13,17 +13,21 @@ return new class extends Migration
     {
         Schema::create('stores', function (Blueprint $table) {
             $table->id();
-            $table->string('name_surname', 30);
-            $table->string('store_name', 20)->unique();
+            $table->string('first_name', 30);
+            $table->string('last_name', 30);
+            $table->string('store_name', 50)->unique();  // Increased max length to match validation rule
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('slug')->unique();
             $table->string('phone_number', 14);
-            $table->string('city');
-            $table->string('img')->nullable();
+            $table->string('iban_no', 32);
+            $table->string('city', 50);  // Added max length to match validation rule
+            $table->string('address', 255);
+            $table->string('logo')->nullable();
             $table->string('banner')->nullable();
             $table->unsignedBigInteger('selling_category_id');
-            $table->float('store_rating')->default(0);
+            $table->unsignedBigInteger('cargo_companies_id');
+            $table->float('store_rating', 2, 1)->default(0);
             $table->integer('product_count')->default(0);
             $table->integer('followers_count')->default(0);
             $table->integer('reviews_count')->default(0);
@@ -31,7 +35,9 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
 
-            $table->foreign('selling_category_id')->references('id')->on('categories');
+            // Foreign key constraints
+            $table->foreign('selling_category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreign('cargo_companies_id')->references('id')->on('cargo_companies')->onDelete('cascade');
         });
     }
 
