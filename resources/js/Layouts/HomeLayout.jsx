@@ -16,7 +16,7 @@ export default function HomeLayout({ auth, categories, children }) {
                     <div>
                         {!auth.store && (
                             <div className="text-xs flex gap-3 justify-end">
-                                <Link href={route("store.register")}>
+                                <Link href={route("store.login")}>
                                     E-ticaret'da Satış Yap
                                 </Link>
                                 <p>Hakkımızda</p>

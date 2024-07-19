@@ -3,41 +3,52 @@ import { Head, Link } from "@inertiajs/react";
 import banner from "./banner.webp";
 import banner1 from "./banner1.webp";
 import banner2 from "./banner2.webp";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { IoIosArrowForward, IoIosSearch } from "react-icons/io";
 import { FaHome } from "react-icons/fa";
 import ProductSwiper from "@/Components/ProductSwiper";
 import { FaPen } from "react-icons/fa";
 import { LuUploadCloud } from "react-icons/lu";
+import { useForm } from "@inertiajs/react";
+import ModalImg from "../Components/ModalImg";
 
-import Modal from "../Components/ModalImg";
 import "react-image-crop/dist/ReactCrop.css";
 
-export default function ShopHome({ auth, categories, store, products }) {
-    const [currentTab, setCurrentTab] = useState(1);
+import { BiStoreAlt } from "react-icons/bi";
 
+export default function ShopHome({ auth, categories, store, products }) {
+    const { data, setData, post, errors, processing } = useForm({
+        logo: null,
+    });
+
+    const [currentTab, setCurrentTab] = useState(1);
     const [imagePreview, setImagePreview] = useState(null);
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        setImagePreview(URL.createObjectURL(file));
-    };
+    const [modalOpen, setModalOpen] = useState(false);
 
     const switchTab = (tabNumber) => {
         setCurrentTab(tabNumber);
     };
 
-    const avatarUrl = useRef(store.img);
-    const [modalOpen, setModalOpen] = useState(false);
-
-    const updateAvatar = (imgSrc) => {
-        avatarUrl.current = imgSrc;
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        setImagePreview(URL.createObjectURL(file));
     };
 
-    console.log(imagePreview);
+    const updateAvatar = (imgSrc) => {
+        setData("logo", imgSrc);
+        setModalOpen(false);
+        post(route("store.storeLogo"));
+    };
 
     return (
         <HomeLayout auth={auth} categories={categories}>
             <Head title="Welcome" />
+
+            <ModalImg
+                confirmingLogo={modalOpen}
+                updateAvatar={updateAvatar}
+                closeModal={() => setModalOpen(false)}
+            />
 
             <nav className="flex pt-5" aria-label="Breadcrumb">
                 <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
@@ -67,30 +78,29 @@ export default function ShopHome({ auth, categories, store, products }) {
                     </li>
                 </ol>
             </nav>
-
             <div className="mt-4">
                 <div className="">
                     <img src={banner} alt="" className="rounded-lg" />
                 </div>
                 <div className="px-6 flex pt-4 pb-2 rounded-t-lg">
                     <div className="relative w-[100px] h-[100px] mr-5 bg-white">
-                        <img
-                            src={avatarUrl.current}
-                            alt="Avatar"
-                            className="w-[100px] h-[100px] rounded-full border-4 border-white bg-white object-contain absolute -top-10"
-                        />
+                        {store.img > 0 ? (
+                            <img
+                                src={store.logo}
+                                alt="Avatar"
+                                className="w-[100px] h-[100px] rounded-full border-4 border-white bg-white object-contain absolute -top-10"
+                            />
+                        ) : (
+                            <div className="w-[100px] h-[100px] rounded-full flex justify-center items-center border-2 border-gray-300 bg-white object-contain absolute -top-10">
+                                <BiStoreAlt className="w-[60%] h-[60%] text-gray-300" />
+                            </div>
+                        )}
                         <button
-                            className=" text-white rounded-full absolute w-7 h-7 flex  justify-center items-center bg-blue-500 hover:bg-blue-600 transition bottom-10 right-1"
+                            className="text-white rounded-full absolute w-7 h-7 flex justify-center items-center bg-blue-500 hover:bg-blue-600 transition bottom-10 right-1"
                             onClick={() => setModalOpen(true)}
                         >
                             <FaPen size={12} />
                         </button>
-                        {modalOpen && (
-                            <Modal
-                                updateAvatar={updateAvatar}
-                                closeModal={() => setModalOpen(false)}
-                            />
-                        )}
                     </div>
                     <div>
                         <div className="flex items-center gap-2">
@@ -189,11 +199,15 @@ export default function ShopHome({ auth, categories, store, products }) {
                                                 htmlFor="img"
                                                 className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-2xl cursor-pointer "
                                             >
-                                                <div className="flex group-hover:scale-105 transition-all flex-col items-center justify-center pt-5 pb-6">
+                                                <div className="flex group-hover:scale-105 bg-white/60 px-4  py-2 rounded-full transition-all flex-col items-center justify-center">
                                                     <LuUploadCloud
-                                                        size={20}
-                                                        className="text-gray-600 bg-white p-3 w-16 h-16 rounded-full"
+                                                        size={30}
+                                                        className="text-gray-600"
                                                     />
+                                                    <p>
+                                                        Banner Güncelle için
+                                                        İçin Tıklayın
+                                                    </p>
                                                 </div>
                                                 <input
                                                     type="file"
@@ -213,7 +227,14 @@ export default function ShopHome({ auth, categories, store, products }) {
                                             className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
                                         >
                                             <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                <LuUploadCloud />
+                                                <LuUploadCloud
+                                                    size={30}
+                                                    className="mb-1"
+                                                />
+                                                <p>
+                                                    Yeni Banner Resmi Ekleme
+                                                    İçin Tıklayın
+                                                </p>
                                             </div>
                                             <input
                                                 type="file"

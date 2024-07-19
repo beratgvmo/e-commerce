@@ -21,8 +21,8 @@
     },
     "dependencies": {
         "quill": "^2.0.2",
+        "react-easy-crop": "^5.0.7",
         "react-icons": "^5.2.1",
-        "react-image-crop": "^11.0.5",
         "react-input-mask": "^2.0.4",
         "react-quill": "^2.0.0",
         "swiper": "^11.1.5"

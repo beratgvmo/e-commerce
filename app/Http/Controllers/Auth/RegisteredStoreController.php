@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/Auth/RegisteredStoreController.php
 
 namespace App\Http\Controllers\Auth;
 
@@ -13,27 +12,35 @@ use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 
 class RegisteredStoreController extends Controller
 {
-    public function create(): Response
+    public function create(Request $request): Response
     {
         $categories = Category::all();
         $cargoCompanies = CargoCompany::all();
 
+        $validator = Validator::make($request->all(), [
+            'store_name' => 'required|string|max:50|unique:stores,store_name',
+        ]);
+
+        $nameUnique = !$validator->fails();
+
         return Inertia::render('Auth/StoreRegister', [
             'categories' => $categories,
-            'cargoCompanies' => $cargoCompanies
+            'cargoCompanies' => $cargoCompanies,
+            'nameUnique' => $nameUnique
         ]);
     }
 
     public function store(StoreRegisterRequest $request): RedirectResponse
     {
-        $slug = Str::slug($request->store_name, '-');
 
+        $slug = Str::slug($request->store_name, '-');
 
         $store = Store::create([
             'first_name' => $request->first_name,
@@ -45,7 +52,6 @@ class RegisteredStoreController extends Controller
             'iban_no' => $request->iban_no,
             'city' => $request->city,
             'address' => $request->address,
-            'cargo_company' => $request->cargo_company,
             'selling_category_id' => $request->selling_category_id,
             'cargo_companies_id' => $request->cargo_companies_id,
             'password' => Hash::make($request->password),

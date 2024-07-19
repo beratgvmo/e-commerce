@@ -31,6 +31,7 @@ class Store extends Authenticatable
         'logo',
         'banner',
         'selling_category_id',
+        'cargo_companies_id',
         'store_rating',
         'product_count',
         'followers_count',

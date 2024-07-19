@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import StoreGuest from "@/Layouts/StoreGuestLayout";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, router, useForm } from "@inertiajs/react";
 import InputMask from "react-input-mask";
 import { cities } from "@/data/cities";
 
-export default function Register({ categories, cargoCompanies }) {
+export default function Register({ categories, cargoCompanies, nameUnique }) {
     const [step, setStep] = useState(1);
     const { data, setData, post, processing, errors, reset } = useForm({
         first_name: "",
@@ -31,6 +31,21 @@ export default function Register({ categories, cargoCompanies }) {
         };
     }, []);
 
+    const fetchProducts = useCallback(() => {
+        router.visit(route("store.register"), {
+            method: "get",
+            data: { store_name: data.store_name },
+            preserveState: true,
+            replace: true,
+            only: ["nameUnique"],
+        });
+    }, [data.store_name]);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(fetchProducts, 100);
+        return () => clearTimeout(timeoutId);
+    }, [fetchProducts]);
+
     const nextStep = () => {
         if (validateStep(step)) {
             setStep(step + 1);
@@ -41,13 +56,15 @@ export default function Register({ categories, cargoCompanies }) {
         setStep(step - 1);
     };
 
+    console.log(nameUnique);
+
     const validateStep = (currentStep) => {
         switch (currentStep) {
             case 1:
                 return (
-                    data.first_name.length > 2 &&
+                    data.first_name.length >= 2 &&
                     data.first_name.length < 30 &&
-                    data.last_name.length > 2 &&
+                    data.last_name.length >= 2 &&
                     data.last_name.length < 30 &&
                     data.store_name.length >= 5 &&
                     data.store_name.length <= 30 &&
@@ -81,7 +98,7 @@ export default function Register({ categories, cargoCompanies }) {
     };
 
     return (
-        <StoreGuest>
+        <StoreGuest page="register">
             <Head title="Register" />
             <div className="pb-6">
                 <ol className="flex items-center w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base">

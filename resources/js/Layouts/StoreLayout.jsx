@@ -15,42 +15,116 @@ export default function StoreLayout({ user, header, children }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex">
-                            <div className="shrink-0 flex items-center">
+                            <div className="shrink-0 flex items-center mr-8">
                                 <Link href="/">
                                     <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
                                 </Link>
                             </div>
 
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <div className="flex space-x-8 ">
                                 <NavLink
                                     href={route("store.dashboard")}
                                     active={route().current("store.dashboard")}
                                 >
                                     Yönetim
                                 </NavLink>
-                                <NavLink
-                                    href={route("store.dashboard")}
-                                    active={route().current("store.dashboard")}
-                                >
-                                    Ürün
-                                </NavLink>
-                                <NavLink
-                                    href={route("store.dashboard")}
-                                    active={route().current("store.dashboard")}
-                                >
-                                    Siparis
-                                </NavLink>
+                                <div className="flex items-center">
+                                    <Dropdown>
+                                        <Dropdown.Trigger>
+                                            <span className="rounded-md">
+                                                <button
+                                                    type="button"
+                                                    className="inline-flex items-center px-3 py-2 border border-transparent text-xs leading-4 font-medium rounded-md text-gray-900 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
+                                                >
+                                                    ÜRÜN
+                                                    <svg
+                                                        className="ms-2 -me-0.5 h-4 w-4"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 20 20"
+                                                        fill="currentColor"
+                                                    >
+                                                        <path
+                                                            fillRule="evenodd"
+                                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                            clipRule="evenodd"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                            </span>
+                                        </Dropdown.Trigger>
+
+                                        <Dropdown.Content align="left">
+                                            <Dropdown.Link
+                                                href={route("store.logout")}
+                                            >
+                                                Ürün Listesi
+                                            </Dropdown.Link>
+                                            <Dropdown.Link
+                                                href={route("store.productAdd")}
+                                            >
+                                                Ürün Olustur
+                                            </Dropdown.Link>
+                                            <Dropdown.Link
+                                                href={route("store.productAdd")}
+                                            >
+                                                Ürün Soruları
+                                            </Dropdown.Link>
+                                        </Dropdown.Content>
+                                    </Dropdown>
+                                </div>
+
+                                <div className="flex items-center">
+                                    <Dropdown>
+                                        <Dropdown.Trigger>
+                                            <span className="rounded-md">
+                                                <button
+                                                    type="button"
+                                                    className="inline-flex items-center px-3 py-2 border border-transparent text-xs leading-4 font-medium rounded-md text-gray-900 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
+                                                >
+                                                    SİPARİŞ & KARGO
+                                                    <svg
+                                                        className="ms-2 -me-0.5 h-4 w-4"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 20 20"
+                                                        fill="currentColor"
+                                                    >
+                                                        <path
+                                                            fillRule="evenodd"
+                                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                            clipRule="evenodd"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                            </span>
+                                        </Dropdown.Trigger>
+
+                                        <Dropdown.Content align="left">
+                                            <Dropdown.Link
+                                                href={route("store.logout")}
+                                            >
+                                                Kargo İşlemleri
+                                            </Dropdown.Link>
+                                            <Dropdown.Link
+                                                href={route("store.productAdd")}
+                                            >
+                                                İade İşlemleri
+                                            </Dropdown.Link>
+                                            <Dropdown.Link
+                                                href={route("store.productAdd")}
+                                            >
+                                                Ürün Soruları
+                                            </Dropdown.Link>
+                                        </Dropdown.Content>
+                                    </Dropdown>
+                                </div>
                                 <NavLink
                                     href={route("store.dashboard")}
                                     active={route().current("store.dashboard")}
                                 >
                                     Muhasebe
                                 </NavLink>
-                                <NavLink
-                                    href={route("store.dashboard")}
-                                    active={route().current("store.dashboard")}
-                                >
-                                    Mağaza Yönetimi
+                                <NavLink href={route("store.dashboard")}>
+                                    Mağaza Git
                                 </NavLink>
                             </div>
                         </div>
@@ -64,7 +138,7 @@ export default function StoreLayout({ user, header, children }) {
                                                 type="button"
                                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
                                             >
-                                                {user.name_surname}
+                                                {user.store_name}
 
                                                 <svg
                                                     className="ms-2 -me-0.5 h-4 w-4"
@@ -82,7 +156,7 @@ export default function StoreLayout({ user, header, children }) {
                                         </span>
                                     </Dropdown.Trigger>
 
-                                    <Dropdown.Content>
+                                    <Dropdown.Content align="left">
                                         <Dropdown.Link
                                             href={route("profile.edit")}
                                         >

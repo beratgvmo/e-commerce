@@ -9,5 +9,5 @@ class CargoCompany extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'phone_number', 'website'];
+    protected $fillable = ['name', 'phone_number', 'website', 'price'];
 }

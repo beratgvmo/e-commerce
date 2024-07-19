@@ -15,7 +15,7 @@ Route::get('kategori/{slug}', [HomeController::class, 'categoryProducts'])->name
 
 Route::get('/urun/{slug}', [HomeController::class, "show"])->name("home.show");
 
-Route::get('/magaza/{slug}', [HomeController::class, "magaza"])->name("home.magaza");
+Route::get('/magaza/{slug}', [HomeController::class, "shop"])->name("home.magaza");
 
 
 Route::get('/profileimg', function () {
@@ -44,14 +44,9 @@ Route::middleware('auth:store')->group(function () {
 
     Route::post('/store/logout', [LoginStoreController::class, 'destroy'])
         ->name('store.logout');
-});
 
-// Route::middleware('guest')->group(function () {
-Route::get('/berat', function ($id) {
-    return "dsadsa";
+    Route::post('/store/logo-img', [StoreDashboardController::class, 'storeLogo'])->name('store.storeLogo');
 });
-// });
-
 
 // Route::get('/', function () {
 //     return Inertia::render('Home', [

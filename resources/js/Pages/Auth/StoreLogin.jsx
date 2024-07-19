@@ -35,7 +35,6 @@ export default function StoreLogin({ status, canResetPassword }) {
                     {status}
                 </div>
             )}
-
             <form onSubmit={submit}>
                 <div>
                     <InputLabel htmlFor="email" value="E-posta" />

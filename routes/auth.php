@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\RegisteredStoreController;
 use App\Http\Controllers\Auth\LoginStoreController;
+use App\Http\Controllers\StoreDashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest', 'RedirectIfStore:store')->group(function () {

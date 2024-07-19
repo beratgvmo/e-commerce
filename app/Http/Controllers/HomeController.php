@@ -177,7 +177,7 @@ class HomeController extends Controller
         ]);
     }
 
-    public function magaza($slug)
+    public function shop($slug)
     {
         $categories = Category::all();
 
