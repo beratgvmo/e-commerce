@@ -19,7 +19,7 @@ import { BiStoreAlt } from "react-icons/bi";
 export default function ShopHome({ auth, categories, store, products }) {
     const { data, setData, post } = useForm({
         logo: "",
-        megaBanner: "",
+        banner: "",
     });
 
     const [currentTab, setCurrentTab] = useState(1);
@@ -48,6 +48,14 @@ export default function ShopHome({ auth, categories, store, products }) {
         }
     }, [data.logo]);
 
+    useEffect(() => {
+        if (data.banner) {
+            post(route("store.storeBanner"), {
+                preserveScroll: true,
+            });
+        }
+    }, [data.banner]);
+
     return (
         <HomeLayout auth={auth} categories={categories}>
             <Head title="Welcome" />
@@ -59,10 +67,10 @@ export default function ShopHome({ auth, categories, store, products }) {
                 imgType="logo"
             />
             <ModalImg
-                confirmingLogo={modalOpen && currentImgType === "megaBanner"}
+                confirmingLogo={modalOpen && currentImgType === "banner"}
                 update={updateImage}
                 closeModal={() => setModalOpen(false)}
-                imgType="megaBanner"
+                imgType="banner"
             />
 
             <nav className="flex pt-5" aria-label="Breadcrumb">
@@ -94,12 +102,12 @@ export default function ShopHome({ auth, categories, store, products }) {
                 </ol>
             </nav>
             <div className="mt-4">
-                {auth.store.banner ? (
-                    <div>banner resmi</div>
+                {store.banner ? (
+                    <img src={store.banner} alt="Avatar" className="" />
                 ) : (
                     <button
                         onClick={() => {
-                            setCurrentImgType("megaBanner");
+                            setCurrentImgType("banner");
                             setModalOpen(true);
                         }}
                         className="flex h-full flex-col items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"

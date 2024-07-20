@@ -46,6 +46,7 @@ Route::middleware('auth:store')->group(function () {
         ->name('store.logout');
 
     Route::post('/store/logo-img', [StoreDashboardController::class, 'storeLogo'])->name('store.storeLogo');
+    Route::post('/store/banner-img', [StoreDashboardController::class, 'storeBenner'])->name('store.storeBanner');
 });
 
 // Route::get('/', function () {

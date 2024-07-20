@@ -9,8 +9,8 @@ import { TbCloudUpload } from "react-icons/tb";
 
 const DIMENSIONS = {
     logo: { width: 200, height: 200, aspectRatio: 1 },
-    banner: { width: 500, height: 200, aspectRatio: 1.75 },
-    megaBanner: { width: 1100, height: 200, aspectRatio: 3.25 },
+    altBanner: { width: 500, height: 200, aspectRatio: 1.75 },
+    banner: { width: 1000, height: 200, aspectRatio: 3 },
 };
 
 const ImageCropper = ({ closeModal, update, imgType = "logo" }) => {

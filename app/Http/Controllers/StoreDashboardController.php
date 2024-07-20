@@ -42,6 +42,32 @@ class StoreDashboardController extends Controller
         return redirect()->back()->with('success', 'Logo güncellendi.');
     }
 
+    public function storeBenner(Request $request)
+    {
+        $request->validate([
+            'banner' => 'required|string',
+        ]);
+
+        $store = Store::where('id', Auth::user()->id)->firstOrFail();
+
+        if ($store->banner) {
+            Storage::disk('public')->delete($this->getRelativePath($store->banner));
+        }
+
+        $imageData = $request->input('banner');
+        $imageData = str_replace('data:image/png;base64,', '', $imageData);
+        $imageData = base64_decode($imageData);
+
+        $imageName = uniqid() . '.png';
+        $imagePath = 'images/' . $imageName;
+
+        Storage::disk('public')->put($imagePath, $imageData);
+
+        $store->update(['banner' => Storage::url($imagePath)]);
+
+        return redirect()->back()->with('success', 'banner güncellendi.');
+    }
+
     private function getRelativePath($url)
     {
         return str_replace('/storage/', '', parse_url($url, PHP_URL_PATH));
