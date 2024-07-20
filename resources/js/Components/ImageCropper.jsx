@@ -1,52 +1,150 @@
-import { useState, useRef, useCallback } from "react";
-import Cropper from "react-easy-crop";
-import getCroppedImg from "../utils/getCroppedImg";
+import { useRef, useState } from "react";
+import ReactCrop, {
+    centerCrop,
+    makeAspectCrop,
+    convertToPixelCrop,
+} from "react-image-crop";
+import setCanvasPreview from "../utils/setCanvasPreview";
+import { TbCloudUpload } from "react-icons/tb";
 
-const ImageCropper = ({ updateAvatar, closeModal }) => {
-    const [imageSrc, setImageSrc] = useState("");
-    const [crop, setCrop] = useState({ x: 0, y: 0 });
-    const [zoom, setZoom] = useState(1);
-    const [croppedArea, setCroppedArea] = useState(null);
-    const inputRef = useRef(null);
+const DIMENSIONS = {
+    logo: { width: 200, height: 200, aspectRatio: 1 },
+    banner: { width: 500, height: 200, aspectRatio: 1.75 },
+    megaBanner: { width: 1100, height: 200, aspectRatio: 3.25 },
+};
 
-    const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-        setCroppedArea(croppedAreaPixels);
-    }, []);
+const ImageCropper = ({ closeModal, update, imgType = "logo" }) => {
+    const { width, height, aspectRatio } =
+        DIMENSIONS[imgType] || DIMENSIONS.logo;
 
-    const onSelectFile = (event) => {
-        if (event.target.files && event.target.files.length > 0) {
-            const reader = new FileReader();
-            reader.readAsDataURL(event.target.files[0]);
-            reader.onload = () => {
-                setImageSrc(reader.result.toString());
+    const imgRef = useRef(null);
+    const previewCanvasRef = useRef(null);
+    const [imgSrc, setImgSrc] = useState("");
+    const [crop, setCrop] = useState();
+    const [error, setError] = useState("");
+
+    const onSelectFile = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            const imageElement = new Image();
+            imageElement.src = reader.result?.toString() || "";
+            imageElement.onload = () => {
+                const { naturalWidth, naturalHeight } = imageElement;
+                if (naturalWidth < width || naturalHeight < height) {
+                    setError(
+                        `Image must be at least ${width} x ${height} pixels.`
+                    );
+                    setImgSrc("");
+                } else {
+                    setError("");
+                    setImgSrc(imageElement.src);
+                }
             };
-        }
+        };
+        reader.readAsDataURL(file);
     };
 
-    const handleCrop = async () => {
-        const croppedImage = await getCroppedImg(imageSrc, croppedArea);
-        updateAvatar(croppedImage);
+    const onImageLoad = (e) => {
+        const { width: imgWidth, height: imgHeight } = e.currentTarget;
+        setCrop(
+            centerCrop(
+                makeAspectCrop(
+                    { unit: "px", width, height },
+                    aspectRatio,
+                    imgWidth,
+                    imgHeight
+                ),
+                imgWidth,
+                imgHeight
+            )
+        );
+    };
+
+    const handleSaveClick = () => {
+        setCanvasPreview(
+            imgRef.current,
+            previewCanvasRef.current,
+            convertToPixelCrop(
+                crop,
+                imgRef.current.width,
+                imgRef.current.height
+            )
+        );
+        const dataUrl = previewCanvasRef.current.toDataURL();
+        update(dataUrl);
         closeModal();
     };
 
     return (
-        <div className="crop-container">
-            <input type="file" onChange={onSelectFile} ref={inputRef} />
-            {imageSrc && (
-                <div>
-                    <Cropper
-                        image={imageSrc}
-                        crop={crop}
-                        zoom={zoom}
-                        aspect={1}
-                        onCropChange={setCrop}
-                        onZoomChange={setZoom}
-                        onCropComplete={onCropComplete}
-                    />
-                    <button onClick={handleCrop}>Crop</button>
-                </div>
+        <>
+            <div className="block mb-3 px-3 border-b-2 pb-1.5 w-full text-center text-black font-bold">
+                Yükleyeceginiz Görseli Düzenleyin
+            </div>
+            {error && (
+                <p className="text-red-400 text-xs text-center">{error}</p>
             )}
-        </div>
+            <div className="h-[28.2rem]">
+                {!imgSrc ? (
+                    <div className="bg-gray-200 flex justify-center items-center h-[25rem] w-full">
+                        <label
+                            htmlFor="file_input"
+                            className="flex flex-col items-center justify-center h-full w-full border-2 border-gray-300 border-dashed cursor-pointer bg-gray-50 hover:bg-gray-100"
+                        >
+                            <TbCloudUpload
+                                size={50}
+                                className="text-gray-500 mb-4"
+                            />
+                            <p className="text-xs mt-2 text-gray-500">
+                                Mağaza Görselinizi Yüklemek İçin Tıklayın
+                            </p>
+                            <input
+                                id="file_input"
+                                type="file"
+                                accept="image/*"
+                                onChange={onSelectFile}
+                                className="hidden"
+                            />
+                        </label>
+                    </div>
+                ) : (
+                    <div className="bg-gray-200 flex justify-center items-center h-[25rem] w-full">
+                        <ReactCrop
+                            crop={crop}
+                            onChange={(_, percentCrop) => setCrop(percentCrop)}
+                            circularCrop={imgType === "logo"}
+                            keepSelection
+                            aspect={aspectRatio}
+                            minHeight={height / 2}
+                        >
+                            <img
+                                ref={imgRef}
+                                src={imgSrc}
+                                alt="Upload"
+                                style={{
+                                    maxHeight: "24rem",
+                                    userSelect: "none",
+                                }}
+                                onLoad={onImageLoad}
+                            />
+                        </ReactCrop>
+                    </div>
+                )}
+                {crop && (
+                    <div className="flex justify-end mt-4">
+                        <button
+                            className="text-white font-mono text-sm py-2 px-5 rounded-md bg-blue-500 hover:bg-blue-600"
+                            onClick={handleSaveClick}
+                        >
+                            Görseli Ekle
+                        </button>
+                    </div>
+                )}
+            </div>
+            {crop && <canvas ref={previewCanvasRef} className="hidden" />}
+        </>
     );
 };
 

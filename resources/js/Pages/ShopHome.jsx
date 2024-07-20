@@ -3,7 +3,7 @@ import { Head, Link } from "@inertiajs/react";
 import banner from "./banner.webp";
 import banner1 from "./banner1.webp";
 import banner2 from "./banner2.webp";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoIosArrowForward, IoIosSearch } from "react-icons/io";
 import { FaHome } from "react-icons/fa";
 import ProductSwiper from "@/Components/ProductSwiper";
@@ -17,14 +17,15 @@ import "react-image-crop/dist/ReactCrop.css";
 import { BiStoreAlt } from "react-icons/bi";
 
 export default function ShopHome({ auth, categories, store, products }) {
-    const { data, setData, post, errors, processing } = useForm({
-        logo: null,
+    const { data, setData, post } = useForm({
+        logo: "",
+        megaBanner: "",
     });
 
     const [currentTab, setCurrentTab] = useState(1);
     const [imagePreview, setImagePreview] = useState(null);
+    const [currentImgType, setCurrentImgType] = useState("logo");
     const [modalOpen, setModalOpen] = useState(false);
-
     const switchTab = (tabNumber) => {
         setCurrentTab(tabNumber);
     };
@@ -34,20 +35,34 @@ export default function ShopHome({ auth, categories, store, products }) {
         setImagePreview(URL.createObjectURL(file));
     };
 
-    const updateAvatar = (imgSrc) => {
-        setData("logo", imgSrc);
+    const updateImage = (imgSrc) => {
+        setData(currentImgType, imgSrc);
         setModalOpen(false);
-        post(route("store.storeLogo"));
     };
+
+    useEffect(() => {
+        if (data.logo) {
+            post(route("store.storeLogo"), {
+                preserveScroll: true,
+            });
+        }
+    }, [data.logo]);
 
     return (
         <HomeLayout auth={auth} categories={categories}>
             <Head title="Welcome" />
 
             <ModalImg
-                confirmingLogo={modalOpen}
-                updateAvatar={updateAvatar}
+                confirmingLogo={modalOpen && currentImgType === "logo"}
+                update={updateImage}
                 closeModal={() => setModalOpen(false)}
+                imgType="logo"
+            />
+            <ModalImg
+                confirmingLogo={modalOpen && currentImgType === "megaBanner"}
+                update={updateImage}
+                closeModal={() => setModalOpen(false)}
+                imgType="megaBanner"
             />
 
             <nav className="flex pt-5" aria-label="Breadcrumb">
@@ -79,37 +94,103 @@ export default function ShopHome({ auth, categories, store, products }) {
                 </ol>
             </nav>
             <div className="mt-4">
-                <div className="">
-                    <img src={banner} alt="" className="rounded-lg" />
-                </div>
-                <div className="px-6 flex pt-4 pb-2 rounded-t-lg">
+                {auth.store.banner ? (
+                    <div>banner resmi</div>
+                ) : (
+                    <button
+                        onClick={() => {
+                            setCurrentImgType("megaBanner");
+                            setModalOpen(true);
+                        }}
+                        className="flex h-full flex-col items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+                    >
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg
+                                className="w-8 h-8 mb-4 text-gray-500"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 20 16"
+                            >
+                                <path
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                                />
+                            </svg>
+                            <p className="mb-2 text-sm text-gray-500 font-semibold">
+                                Mağazanıza Banner ekleyin
+                            </p>
+                            <p className="text-xs text-center text-gray-500">
+                                PNG, JPG, WEBP, JPEG
+                            </p>
+                        </div>
+                    </button>
+                )}
+                <div className="px-6 flex pt-4 items-center mb-8 rounded-t-lg">
                     <div className="relative w-[100px] h-[100px] mr-5 bg-white">
-                        {store.img > 0 ? (
-                            <img
-                                src={store.logo}
-                                alt="Avatar"
-                                className="w-[100px] h-[100px] rounded-full border-4 border-white bg-white object-contain absolute -top-10"
-                            />
+                        {store.logo ? (
+                            store.banner ? (
+                                <div className="absolute -top-10">
+                                    <img
+                                        src={store.logo}
+                                        alt="Avatar"
+                                        className="w-[100px] h-[100px] rounded-full border-4 border-white bg-white object-contain"
+                                    />
+                                </div>
+                            ) : (
+                                <img
+                                    src={store.logo}
+                                    alt="Avatar"
+                                    className="w-[100px] h-[100px] rounded-full border-2 border-gray-200 bg-white object-contain"
+                                />
+                            )
+                        ) : store.banner ? (
+                            <div className="absolute -top-10">
+                                <div className="w-[100px] h-[100px] rounded-full flex justify-center items-center border-2 border-gray-300 bg-white object-contain">
+                                    <BiStoreAlt className="w-[60%] h-[60%] text-gray-300" />
+                                </div>
+                            </div>
                         ) : (
-                            <div className="w-[100px] h-[100px] rounded-full flex justify-center items-center border-2 border-gray-300 bg-white object-contain absolute -top-10">
+                            <div className="w-[100px] h-[100px] rounded-full flex justify-center items-center border-2 border-gray-300 bg-white object-contain">
                                 <BiStoreAlt className="w-[60%] h-[60%] text-gray-300" />
                             </div>
                         )}
-                        <button
-                            className="text-white rounded-full absolute w-7 h-7 flex justify-center items-center bg-blue-500 hover:bg-blue-600 transition bottom-10 right-1"
-                            onClick={() => setModalOpen(true)}
-                        >
-                            <FaPen size={12} />
-                        </button>
+                        {store.id === auth.store.id &&
+                            (store.banner ? (
+                                <button
+                                    className="text-white rounded-full absolute w-7 h-7 flex justify-center items-center bg-blue-500 hover:bg-blue-600 transition bottom-10 right-1"
+                                    onClick={() => {
+                                        setModalOpen(true);
+                                        setCurrentImgType("logo");
+                                    }}
+                                >
+                                    <FaPen size={12} />
+                                </button>
+                            ) : (
+                                <button
+                                    className="text-white rounded-full absolute w-7 h-7 flex justify-center items-center bg-blue-500 hover:bg-blue-600 transition bottom-0 right-0"
+                                    onClick={() => {
+                                        setModalOpen(true);
+                                        setCurrentImgType("logo");
+                                    }}
+                                >
+                                    <FaPen size={12} />
+                                </button>
+                            ))}
                     </div>
                     <div>
                         <div className="flex items-center gap-2">
                             <p className="text-3xl font-black text-gray-800 mr-2">
                                 {store.store_name}
                             </p>
-                            <button className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:bg-blue-700 focus:outline-none focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out">
-                                Takip Et
-                            </button>
+                            {store.id === auth.store.id || (
+                                <button className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:bg-blue-700 focus:outline-none focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out">
+                                    Takip Et
+                                </button>
+                            )}
                         </div>
                         <div className="flex mt-3 gap-2 items-center">
                             <p className="font-bold bg-green-500 text-xs py-0.5 px-2 rounded text-white">

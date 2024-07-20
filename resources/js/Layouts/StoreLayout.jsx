@@ -4,6 +4,7 @@ import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link } from "@inertiajs/react";
+import { BiStoreAlt } from "react-icons/bi";
 
 export default function StoreLayout({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
@@ -123,8 +124,15 @@ export default function StoreLayout({ user, header, children }) {
                                 >
                                     Muhasebe
                                 </NavLink>
-                                <NavLink href={route("store.dashboard")}>
+                                <NavLink
+                                    href={`/magaza/${user.slug}`}
+                                    className="group"
+                                >
                                     Mağaza Git
+                                    <BiStoreAlt
+                                        size={20}
+                                        className=" text-gray-500 ml-1 group-hover:text-gray-700"
+                                    />
                                 </NavLink>
                             </div>
                         </div>

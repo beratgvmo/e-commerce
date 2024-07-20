@@ -56,8 +56,6 @@ export default function Register({ categories, cargoCompanies, nameUnique }) {
         setStep(step - 1);
     };
 
-    console.log(nameUnique);
-
     const validateStep = (currentStep) => {
         switch (currentStep) {
             case 1:

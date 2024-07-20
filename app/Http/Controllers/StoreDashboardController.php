@@ -19,26 +19,31 @@ class StoreDashboardController extends Controller
     public function storeLogo(Request $request)
     {
         $request->validate([
-            'logo' => 'required|string', // Expect a base64 encoded string
+            'logo' => 'required|string',
         ]);
 
         $store = Store::where('id', Auth::user()->id)->firstOrFail();
 
         if ($store->logo) {
-            Storage::disk('public')->delete($store->logo);
+            Storage::disk('public')->delete($this->getRelativePath($store->logo));
         }
 
         $imageData = $request->input('logo');
         $imageData = str_replace('data:image/png;base64,', '', $imageData);
         $imageData = base64_decode($imageData);
 
-        $imagePath = $imageData->store('public/images');
-        $imageUrl = Storage::url($imagePath);
+        $imageName = uniqid() . '.png';
+        $imagePath = 'images/' . $imageName;
 
+        Storage::disk('public')->put($imagePath, $imageData);
 
-        $path = $request->file('logo')->store('public/images', 'public');
-        $store->update(['logo' => $path]);
+        $store->update(['logo' => Storage::url($imagePath)]);
 
-        return redirect()->route('home.magaza')->with('success', 'Logo yüklendi!');
+        return redirect()->back()->with('success', 'Logo güncellendi.');
+    }
+
+    private function getRelativePath($url)
+    {
+        return str_replace('/storage/', '', parse_url($url, PHP_URL_PATH));
     }
 }

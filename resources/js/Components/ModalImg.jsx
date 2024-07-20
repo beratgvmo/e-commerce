@@ -1,9 +1,8 @@
-// src/components/ModalImg.js
 import ImageCropper from "./ImageCropper";
 import Modal from "@/Components/Modal";
 import { FaTimes } from "react-icons/fa";
 
-const ModalImg = ({ updateAvatar, closeModal, confirmingLogo }) => {
+const ModalImg = ({ update, closeModal, confirmingLogo, imgType }) => {
     return (
         <Modal show={confirmingLogo} onClose={closeModal}>
             <div className="relative min-w-[65vh] min-h-[60vh] text-slate-100 text-left shadow-xl transition-all">
@@ -16,8 +15,9 @@ const ModalImg = ({ updateAvatar, closeModal, confirmingLogo }) => {
                         <FaTimes />
                     </button>
                     <ImageCropper
-                        updateAvatar={updateAvatar}
+                        update={update}
                         closeModal={closeModal}
+                        imgType={imgType}
                     />
                 </div>
             </div>
