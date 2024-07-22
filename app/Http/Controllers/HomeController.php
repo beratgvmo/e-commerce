@@ -181,27 +181,9 @@ class HomeController extends Controller
     {
         $categories = Category::all();
 
-        $store = Store::where('slug', $slug)->firstOrFail();
+        $store = Store::where('slug', $slug)->with("subBanners")->firstOrFail();
 
         $products = Product::where('store_id', $store->id)->with('images', 'reviews')->get();
-
-        //   "id": 11,
-        //   "name_surname": "hasan yılmaz",
-        //   "store_name": "hasan yılmaz",
-        //   "email": "berat@gmail.com",
-        //   "email_verified_at": null,
-        //   "phone_number": "0511 111 11 11",
-        //   "city": "Bolu",
-        //   "img": "/storage/images/zEeh6DxIjs8xKDIYR3B8HK6E40I5JSKZTNHQiCmL.webp",
-        //   "slug": "hasan-yilmaz",
-        //   "color": "#ca1c1c",
-        //   "selling_category_id": 2,
-        //   "store_rating": 1.4,
-        //   "product_count": 0,
-        //   "followers_count": 0,
-        //   "reviews_count": 0,
-        //   "created_at": "2024-07-05T18:08:43.000000Z",
-        //   "updated_at": "2024-07-05T18:08:43.000000Z"
 
         return Inertia::render('ShopHome', [
             'categories' => $categories,

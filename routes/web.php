@@ -22,7 +22,6 @@ Route::get('/profileimg', function () {
     return Inertia::render('Profile');
 })->name('profile.img');
 
-
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -38,6 +37,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth:store')->group(function () {
     Route::get('/store/dashboard', [StoreDashboardController::class, "index"])->name("store.dashboard");
 
+    Route::get('/store/productlist', [ProductController::class, "indexList"])->name('store.productList');
+
     Route::get('/store/productadd', [ProductController::class, "indexAdd"])->name('store.productAdd');
 
     Route::post('/store/productadd', [ProductController::class, "productAdd"]);
@@ -45,8 +46,10 @@ Route::middleware('auth:store')->group(function () {
     Route::post('/store/logout', [LoginStoreController::class, 'destroy'])
         ->name('store.logout');
 
-    Route::post('/store/logo-img', [StoreDashboardController::class, 'storeLogo'])->name('store.storeLogo');
-    Route::post('/store/banner-img', [StoreDashboardController::class, 'storeBenner'])->name('store.storeBanner');
+    Route::post('/store/storeLogo', [StoreDashboardController::class, 'storeLogo'])->name('store.storeLogo');
+    Route::post('/store/storeBanner', [StoreDashboardController::class, 'storeBenner'])->name('store.storeBanner');
+    Route::post('/store/storeSubBanner', [StoreDashboardController::class, 'storeSubBanner'])->name('store.storeSubBanner');
+    Route::delete('/store/deleteSubBanner/{id}', [StoreDashboardController::class, 'deleteSubBanner'])->name('store.deleteSubBanner');
 });
 
 // Route::get('/', function () {

@@ -47,6 +47,6 @@ class LoginStoreController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/store-login');
+        return redirect('/');
     }
 }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('store_banners', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('store_id');
-            $table->string('slug')->unique();
+            $table->string('slug');
             $table->string('img');
             $table->timestamps();
 

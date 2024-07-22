@@ -16,7 +16,9 @@ class ProductController extends Controller
 {
     public function indexList()
     {
-        return Inertia::render('Store/ProductList');
+        $products = Product::with('category', 'images', "attributes")->paginate(12);
+
+        return Inertia::render('Store/ProductList', ['products' => $products]);
     }
 
     public function indexAdd()
@@ -36,7 +38,9 @@ class ProductController extends Controller
 
     public function productAdd(ProductRequest $request)
     {
-        $slug = Str::slug($request->name, '-');
+        $baseSlug = Str::slug($request->name, '-');
+        $uniqueIdentifier = strtoupper(Str::random(12));
+        $slug = "{$baseSlug}-{$uniqueIdentifier}";
 
         $product = Product::create([
             'name' => $request->name,
@@ -46,21 +50,26 @@ class ProductController extends Controller
             'stock_quantity' => $request->stock_quantity,
             'is_active' => $request->is_active,
             'slug' => $slug,
-            'is_active' => $request->is_active,
-            'store_id' => Auth::user()->id,
+            'store_id' => Auth::id(),
         ]);
 
         if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
+            $images = $request->file('images');
+
+            foreach ($images as $image) {
+                // Dosya yolunu belirle
                 $imagePath = $image->store('public/images');
                 $imageUrl = Storage::url($imagePath);
 
+                // Ürün resmini veritabanına ekle
                 ProductImg::create([
                     'product_id' => $product->id,
                     'img' => $imageUrl,
                 ]);
             }
         }
+
+        return redirect()->route('store.productAdd')->with('success', 'Product added successfully');
     }
 }
 

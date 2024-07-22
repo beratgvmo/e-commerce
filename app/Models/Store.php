@@ -73,4 +73,9 @@ class Store extends Authenticatable
     {
         return $this->hasMany(Order::class);
     }
+
+    public function subBanners()
+    {
+        return $this->hasMany(StoreBanner::class);
+    }
 }

@@ -13,7 +13,7 @@ export default function StoreLayout({ user, header, children }) {
     return (
         <div className="min-h-screen bg-gray-100">
             <nav className="bg-white border-b border-gray-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="w-[1400px] mx-auto px-4">
                     <div className="flex justify-between h-16">
                         <div className="flex">
                             <div className="shrink-0 flex items-center mr-8">
@@ -268,13 +268,11 @@ export default function StoreLayout({ user, header, children }) {
 
             {header && (
                 <header className="bg-white shadow">
-                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {header}
-                    </div>
+                    <div className="w-[1400px] mx-auto py-6 px-4">{header}</div>
                 </header>
             )}
 
-            <main>{children}</main>
+            <main className="w-[1400px] mx-auto">{children}</main>
         </div>
     );
 }

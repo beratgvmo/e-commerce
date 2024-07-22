@@ -1,8 +1,5 @@
 import HomeLayout from "@/Layouts/HomeLayout";
 import { Head, Link } from "@inertiajs/react";
-import banner from "./banner.webp";
-import banner1 from "./banner1.webp";
-import banner2 from "./banner2.webp";
 import { useEffect, useState } from "react";
 import { IoIosArrowForward, IoIosSearch } from "react-icons/io";
 import { FaHome } from "react-icons/fa";
@@ -11,33 +8,39 @@ import { FaPen } from "react-icons/fa";
 import { LuUploadCloud } from "react-icons/lu";
 import { useForm } from "@inertiajs/react";
 import ModalImg from "../Components/ModalImg";
+import { MdDelete } from "react-icons/md";
 
 import "react-image-crop/dist/ReactCrop.css";
 
 import { BiStoreAlt } from "react-icons/bi";
 
 export default function ShopHome({ auth, categories, store, products }) {
-    const { data, setData, post } = useForm({
+    const {
+        data,
+        setData,
+        post,
+        delete: destroy,
+    } = useForm({
         logo: "",
         banner: "",
+        subBanner: "",
+        bannerSlug: "",
     });
 
     const [currentTab, setCurrentTab] = useState(1);
-    const [imagePreview, setImagePreview] = useState(null);
     const [currentImgType, setCurrentImgType] = useState("logo");
     const [modalOpen, setModalOpen] = useState(false);
     const switchTab = (tabNumber) => {
         setCurrentTab(tabNumber);
     };
 
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        setImagePreview(URL.createObjectURL(file));
-    };
-
     const updateImage = (imgSrc) => {
         setData(currentImgType, imgSrc);
         setModalOpen(false);
+    };
+
+    const updateSlug = (imgSlug) => {
+        setData("bannerSlug", imgSlug);
     };
 
     useEffect(() => {
@@ -56,6 +59,18 @@ export default function ShopHome({ auth, categories, store, products }) {
         }
     }, [data.banner]);
 
+    useEffect(() => {
+        if (data.subBanner) {
+            post(route("store.storeSubBanner"), { preserveScroll: true });
+        }
+    }, [data.subBanner]);
+
+    const handleDeleteSubBanner = (subBannerId) => {
+        destroy(route("store.deleteSubBanner", { id: subBannerId }), {
+            preserveScroll: true,
+        });
+    };
+
     return (
         <HomeLayout auth={auth} categories={categories}>
             <Head title="Welcome" />
@@ -71,6 +86,13 @@ export default function ShopHome({ auth, categories, store, products }) {
                 update={updateImage}
                 closeModal={() => setModalOpen(false)}
                 imgType="banner"
+            />
+            <ModalImg
+                confirmingLogo={modalOpen && currentImgType === "subBanner"}
+                slugState={updateSlug}
+                update={updateImage}
+                closeModal={() => setModalOpen(false)}
+                imgType="subBanner"
             />
 
             <nav className="flex pt-5" aria-label="Breadcrumb">
@@ -101,73 +123,143 @@ export default function ShopHome({ auth, categories, store, products }) {
                     </li>
                 </ol>
             </nav>
+
             <div className="mt-4">
-                {store.banner ? (
-                    <img src={store.banner} alt="Avatar" className="" />
+                {auth.store && store.id === auth.store.id ? (
+                    store.banner ? (
+                        <button
+                            onClick={() => {
+                                setCurrentImgType("banner");
+                                setModalOpen(true);
+                            }}
+                            className="rounded-2xl overflow-hidden relative w-full"
+                        >
+                            <img
+                                src={store.banner}
+                                alt="banner"
+                                className="rounded-lg cursor-pointer w-full"
+                            />
+                            <div className="absolute group top-0 flex items-center justify-center w-full h-full">
+                                <div className="flex group-hover:scale-105 bg-white px-8 pt-2 pb-3 rounded-full transition-all flex-col items-center justify-center">
+                                    <LuUploadCloud
+                                        size={30}
+                                        className="text-gray-600"
+                                    />
+                                    <p>Banner Güncelle için İçin Tıklayın</p>
+                                </div>
+                            </div>
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => {
+                                setCurrentImgType("banner");
+                                setModalOpen(true);
+                            }}
+                            className="flex h-full flex-col items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+                        >
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                <svg
+                                    className="w-8 h-8 mb-4 text-gray-500"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 20 16"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                                    />
+                                </svg>
+                                <p className="mb-2 text-sm text-gray-500 font-semibold">
+                                    Mağazanıza Banner ekleyin
+                                </p>
+                                <p className="text-xs text-center text-gray-500">
+                                    PNG, JPG, WEBP, JPEG
+                                </p>
+                            </div>
+                        </button>
+                    )
                 ) : (
-                    <button
-                        onClick={() => {
-                            setCurrentImgType("banner");
-                            setModalOpen(true);
-                        }}
-                        className="flex h-full flex-col items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-                    >
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                            <svg
-                                className="w-8 h-8 mb-4 text-gray-500"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 20 16"
-                            >
-                                <path
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                                />
-                            </svg>
-                            <p className="mb-2 text-sm text-gray-500 font-semibold">
-                                Mağazanıza Banner ekleyin
-                            </p>
-                            <p className="text-xs text-center text-gray-500">
-                                PNG, JPG, WEBP, JPEG
-                            </p>
-                        </div>
-                    </button>
+                    store.banner && (
+                        <img
+                            src={store.banner}
+                            alt="banner"
+                            className="rounded-lg cursor-pointer w-full"
+                        />
+                    )
                 )}
-                <div className="px-6 flex pt-4 items-center mb-8 rounded-t-lg">
-                    <div className="relative w-[100px] h-[100px] mr-5 bg-white">
-                        {store.logo ? (
-                            store.banner ? (
-                                <div className="absolute -top-10">
+                {store.banner ? (
+                    <div className="px-2 flex mt-3 rounded-t-lg">
+                        <div className="relative w-[120px] h-[120px] mr-3 bg-white">
+                            {store.logo ? (
+                                <div className="absolute -top-16">
                                     <img
                                         src={store.logo}
                                         alt="Avatar"
-                                        className="w-[100px] h-[100px] rounded-full border-4 border-white bg-white object-contain"
+                                        className="w-[120px] h-[120px] rounded-full border-4 border-white bg-white object-contain"
                                     />
                                 </div>
                             ) : (
-                                <img
-                                    src={store.logo}
-                                    alt="Avatar"
-                                    className="w-[100px] h-[100px] rounded-full border-2 border-gray-200 bg-white object-contain"
-                                />
-                            )
-                        ) : store.banner ? (
-                            <div className="absolute -top-10">
-                                <div className="w-[100px] h-[100px] rounded-full flex justify-center items-center border-2 border-gray-300 bg-white object-contain">
+                                <div className="w-[120px] h-[120px] rounded-full flex justify-center items-center border-2 border-gray-300 bg-white object-contain">
                                     <BiStoreAlt className="w-[60%] h-[60%] text-gray-300" />
                                 </div>
+                            )}
+                            {auth.store && store.id === auth.store.id && (
+                                <button
+                                    className="text-white rounded-full absolute w-7 h-7 flex justify-center items-center bg-blue-500 hover:bg-blue-600 transition bottom-16 right-2"
+                                    onClick={() => {
+                                        setModalOpen(true);
+                                        setCurrentImgType("logo");
+                                    }}
+                                >
+                                    <FaPen size={12} />
+                                </button>
+                            )}
+                        </div>
+
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <p className="text-3xl font-black text-gray-800 mr-2">
+                                    {store.store_name}
+                                </p>
+                                {(auth.store && store.id === auth.store.id) || (
+                                    <button className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:bg-blue-700 focus:outline-none focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out">
+                                        Takip Et
+                                    </button>
+                                )}
                             </div>
-                        ) : (
-                            <div className="w-[100px] h-[100px] rounded-full flex justify-center items-center border-2 border-gray-300 bg-white object-contain">
-                                <BiStoreAlt className="w-[60%] h-[60%] text-gray-300" />
+                            <div className="flex mt-3 gap-2 items-center">
+                                <p className="font-bold bg-green-500 text-xs py-0.5 px-2 rounded text-white">
+                                    {store.store_rating
+                                        ? store.store_rating
+                                        : 0}
+                                </p>
+                                <p className="text-blue-600 text-sm font-bold">
+                                    47B Takipçi • 257 ürün
+                                </p>
                             </div>
-                        )}
-                        {store.id === auth.store.id &&
-                            (store.banner ? (
+                        </div>
+                    </div>
+                ) : (
+                    <div className="px-2 flex items-center mb-8 rounded-t-lg">
+                        <div className="relative w-[120px] h-[120px] mr-5 bg-white">
+                            {store.logo ? (
+                                <div className="">
+                                    <img
+                                        src={store.logo}
+                                        alt="Avatar"
+                                        className="w-[120px] h-[120px] rounded-full border-4 border-white bg-white object-contain"
+                                    />
+                                </div>
+                            ) : (
+                                <div className="w-[120px] h-[120px] rounded-full flex justify-center items-center border-2 border-gray-300 bg-white object-contain">
+                                    <BiStoreAlt className="w-[60%] h-[60%] text-gray-300" />
+                                </div>
+                            )}
+                            {auth.store && store.id === auth.store.id && (
                                 <button
                                     className="text-white rounded-full absolute w-7 h-7 flex justify-center items-center bg-blue-500 hover:bg-blue-600 transition bottom-10 right-1"
                                     onClick={() => {
@@ -177,40 +269,33 @@ export default function ShopHome({ auth, categories, store, products }) {
                                 >
                                     <FaPen size={12} />
                                 </button>
-                            ) : (
-                                <button
-                                    className="text-white rounded-full absolute w-7 h-7 flex justify-center items-center bg-blue-500 hover:bg-blue-600 transition bottom-0 right-0"
-                                    onClick={() => {
-                                        setModalOpen(true);
-                                        setCurrentImgType("logo");
-                                    }}
-                                >
-                                    <FaPen size={12} />
-                                </button>
-                            ))}
-                    </div>
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <p className="text-3xl font-black text-gray-800 mr-2">
-                                {store.store_name}
-                            </p>
-                            {store.id === auth.store.id || (
-                                <button className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:bg-blue-700 focus:outline-none focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out">
-                                    Takip Et
-                                </button>
                             )}
                         </div>
-                        <div className="flex mt-3 gap-2 items-center">
-                            <p className="font-bold bg-green-500 text-xs py-0.5 px-2 rounded text-white">
-                                {store.store_rating ? store.store_rating : 0}
-                            </p>
 
-                            <p className="text-blue-600 text-sm font-bold">
-                                47B Takipçi • 257 ürün
-                            </p>
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <p className="text-3xl font-black text-gray-800 mr-2">
+                                    {store.store_name}
+                                </p>
+                                {(auth.store && store.id === auth.store.id) || (
+                                    <button className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:bg-blue-700 focus:outline-none focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out">
+                                        Takip Et
+                                    </button>
+                                )}
+                            </div>
+                            <div className="flex mt-3 gap-2 items-center">
+                                <p className="font-bold bg-green-500 text-xs py-0.5 px-2 rounded text-white">
+                                    {store.store_rating
+                                        ? store.store_rating
+                                        : 0}
+                                </p>
+                                <p className="text-blue-600 text-sm font-bold">
+                                    47B Takipçi • 257 ürün
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
             </div>
 
             <div className="flex justify-between mb-2">
@@ -247,12 +332,14 @@ export default function ShopHome({ auth, categories, store, products }) {
                     </button>
                 </div>
 
-                <div className="rounded-lg bg-gray-200 ml-3 flex items-center w-96 ">
-                    <IoIosSearch className="text-white bg-blue-500 w-10 px-2 h-full rounded-s-lg" />
+                <div className="flex bg-gray-200 border-none ml-3 w-[40%] rounded-md">
+                    <div className="flex items-center justify-center rounded-s-md px-2 bg-blue-500 transition hover:bg-blue-600">
+                        <IoIosSearch className="text-2xl text-white" />
+                    </div>
                     <input
                         type="text"
-                        placeholder="Satıcı Ürünleri Ara"
-                        className="bg-gray-200 text-sm border-transparent border-2 focus:border-blue-500 rounded-e-lg focus:bg-gray-50 transition w-full h-full outline-none focus:ring-0 focus:ring-transparent px-2"
+                        className="focus:ring-0 text-sm p-1 focus:ring-transparent transition border-2 rounded-e-md border-transparent focus:bg-gray-100 focus:border-2  focus:border-blue-500 bg-gray-200 w-full"
+                        placeholder="Aradığınız ürün yazınız"
                     />
                 </div>
             </div>
@@ -261,85 +348,73 @@ export default function ShopHome({ auth, categories, store, products }) {
                 {currentTab === 1 && (
                     <div>
                         <div className="gap-6 mb-6 grid grid-cols-2">
-                            <div className="rounded-2xl overflow-hidden">
-                                <img
-                                    src={banner1}
-                                    alt=""
-                                    className="rounded-2xl transition-transform cursor-pointer object-contain hover:scale-105"
-                                />
-                            </div>
-                            <div className="rounded-2xl overflow-hidden">
-                                <img
-                                    src={banner2}
-                                    alt=""
-                                    className="rounded-2xl transition-transform cursor-pointer object-contain hover:scale-105"
-                                />
-                            </div>
-                            <div>
-                                {imagePreview ? (
-                                    <div className="rounded-2xl overflow-hidden relative">
-                                        <img
-                                            src={imagePreview}
-                                            alt=""
-                                            className="rounded-2xl cursor-pointer"
-                                        />
-                                        <div className="absolute group top-0 flex items-center justify-center w-full h-full">
-                                            <label
-                                                htmlFor="img"
-                                                className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-2xl cursor-pointer "
+                            {auth.store && store.id === auth.store.id ? (
+                                <>
+                                    {store.sub_banners.map(
+                                        (subBanner, index) => (
+                                            <div
+                                                key={index}
+                                                className="rounded-2xl relative overflow-hidden"
                                             >
-                                                <div className="flex group-hover:scale-105 bg-white/60 px-4  py-2 rounded-full transition-all flex-col items-center justify-center">
+                                                <img
+                                                    src={subBanner.img}
+                                                    alt=""
+                                                    className="rounded-2xl transition-transform cursor-pointer object-contain hover:scale-105"
+                                                />
+                                                <div className="absolute flex gap-2 right-4 bottom-3">
+                                                    <button
+                                                        className="text-white rounded-full w-9 h-9 flex justify-center items-center bg-red-500 hover:bg-red-600 transition"
+                                                        onClick={() =>
+                                                            handleDeleteSubBanner(
+                                                                subBanner.id
+                                                            )
+                                                        }
+                                                    >
+                                                        <MdDelete size={17} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )
+                                    )}
+                                    {store.sub_banners.length < 6 && (
+                                        <div className="flex items-center justify-center w-full">
+                                            <button
+                                                onClick={() => {
+                                                    setCurrentImgType(
+                                                        "subBanner"
+                                                    );
+                                                    setModalOpen(true);
+                                                }}
+                                                className="flex flex-col h-[294px] items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+                                            >
+                                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                                     <LuUploadCloud
                                                         size={30}
-                                                        className="text-gray-600"
+                                                        className="mb-1"
                                                     />
-                                                    <p>
-                                                        Banner Güncelle için
-                                                        İçin Tıklayın
-                                                    </p>
+                                                    <p>Yeni Banner Ekleyin</p>
                                                 </div>
-                                                <input
-                                                    type="file"
-                                                    id="img"
-                                                    name="img"
-                                                    className="hidden mt-1 w-full"
-                                                    onChange={handleImageChange}
-                                                    required
-                                                />
-                                            </label>
+                                            </button>
                                         </div>
+                                    )}
+                                </>
+                            ) : (
+                                store.sub_banners.map((subBanner, index) => (
+                                    <div
+                                        key={index}
+                                        className="rounded-2xl overflow-hidden"
+                                    >
+                                        <img
+                                            src={subBanner.img}
+                                            alt=""
+                                            className="rounded-2xl transition-transform cursor-pointer object-contain hover:scale-105"
+                                        />
                                     </div>
-                                ) : (
-                                    <div className="flex mt-1 items-center justify-center w-full">
-                                        <label
-                                            htmlFor="img"
-                                            className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-                                        >
-                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                <LuUploadCloud
-                                                    size={30}
-                                                    className="mb-1"
-                                                />
-                                                <p>
-                                                    Yeni Banner Resmi Ekleme
-                                                    İçin Tıklayın
-                                                </p>
-                                            </div>
-                                            <input
-                                                type="file"
-                                                id="img"
-                                                name="img"
-                                                className="hidden mt-1 w-full"
-                                                onChange={handleImageChange}
-                                                required
-                                            />
-                                        </label>
-                                    </div>
-                                )}
-                            </div>
+                                ))
+                            )}
                         </div>
 
-                        <div className="">
+                        <div>
                             <div className="my-4">
                                 <p className="text-xl font-bold">
                                     Çok Satanlar
