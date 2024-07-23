@@ -19,11 +19,20 @@ class HomeController extends Controller
     public function index()
     {
         $categories = Category::all();
-        $products = Product::with('images')->where('is_active', true)->get();
+
+        $bestSellingProducts = Product::with('images')->where('is_active', true)->orderBy('sales_count', 'desc')->get();
+
+        $stores = Store::whereNotNull('logo')
+            ->orderBy('store_rating', 'desc')
+            ->orderBy('reviews_count', 'desc')
+            ->orderBy('product_count', 'desc')
+            ->take(10)
+            ->get();
 
         return Inertia::render('Home', [
             'categories' => $categories,
-            'products' => $products,
+            'bestSellingProducts' => $bestSellingProducts,
+            'stores' => $stores
         ]);
     }
 
@@ -192,7 +201,3 @@ class HomeController extends Controller
         ]);
     }
 }
-
-
-// 'canLogin' => Route::has('login'),
-// 'canRegister' => Route::has('register'),

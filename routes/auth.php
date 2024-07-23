@@ -47,6 +47,8 @@ Route::middleware('guest', 'RedirectIfStore:store')->group(function () {
         ->name('store.login');
 
     Route::post('store/login', [LoginStoreController::class, 'store']);
+
+    Route::get('/check-store-name', [RegisteredStoreController::class, 'checkStoreName'])->name('check.storeName');
 });
 
 

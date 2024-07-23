@@ -18,7 +18,9 @@ return new class extends Migration
             $table->unsignedBigInteger('category_id');
             $table->text('description')->nullable();
             $table->decimal('price', 8, 2);
+            $table->decimal('discounted_price', 8, 2);
             $table->integer('stock_quantity');
+            $table->integer('sales_count')->default(0);
             $table->float('rating')->default(0);
             $table->boolean('is_active')->default(true);
             $table->unsignedBigInteger('store_id');

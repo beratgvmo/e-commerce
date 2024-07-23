@@ -17,7 +17,7 @@ class StoreRegisterRequest extends FormRequest
         return [
             'first_name' => 'required|string|min:2|max:30',
             'last_name' => 'required|string|min:2|max:30',
-            'store_name' => 'required|string|min:5|max:50|unique:stores',
+            'store_name' => 'required|string|min:5|max:30|unique:stores',
             'email' => 'required|string|email|max:255|unique:stores',
             'phone_number' => 'required|string|size:14',
             'iban_no' => 'required|string|size:32',

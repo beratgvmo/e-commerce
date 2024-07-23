@@ -6,16 +6,21 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Product from "./Product";
 
-export default function ProductSwiper({ products, SwiperID = "1" }) {
+export default function ProductSwiper({
+    products,
+    SwiperID = "1",
+    classNamebutton = "",
+}) {
     const swiperRef = useRef(null);
 
     return (
-        <div className="w-full mt-5 mb-10 relative h-[26.5rem]">
+        <div className={`w-full mt-5 mb-10 relative h-[26.5rem] `}>
             <Swiper
                 onSwiper={(swiper) => (swiperRef.current = swiper)}
                 modules={[Virtual, Navigation, Pagination]}
                 slidesPerView={5}
                 spaceBetween={10}
+                slidesPerGroup={4}
                 pagination={{ el: `.pagination-${SwiperID}`, clickable: true }}
                 navigation={{
                     nextEl: `.swiper-next-${SwiperID}`,
@@ -30,18 +35,23 @@ export default function ProductSwiper({ products, SwiperID = "1" }) {
                 ))}
             </Swiper>
             <div className="absolute w-full inset-y-[45%]">
-                <div className="absolute -left-16 flex items-center">
+                <div className="absolute -left-14 flex items-center">
                     <div
-                        className={`swiper-prev-${SwiperID} swiper-button-prev !text-gray-400  rounded-full cursor-pointer`}
+                        className={
+                            `swiper-prev-${SwiperID} swiper-button-prev !text-gray-400 hover:!text-gray-600 transition duration-300 cursor-pointer` +
+                            classNamebutton
+                        }
                     ></div>
                 </div>
-                <div className="absolute -right-16 flex items-center">
+                <div className="absolute -right-14 flex items-center">
                     <div
-                        className={`swiper-next-${SwiperID} swiper-button-next  !text-gray-400 cursor-pointer`}
+                        className={
+                            `swiper-next-${SwiperID} swiper-button-next  !text-gray-400 hover:!text-gray-600  transition duration-300 cursor-pointer` +
+                            classNamebutton
+                        }
                     ></div>
                 </div>
             </div>
-
             <div className="flex justify-center mt-6">
                 <div
                     className={`pagination-${SwiperID} swiper-pagination`}

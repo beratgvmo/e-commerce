@@ -397,7 +397,10 @@ export default function ProductDetail({
             </div>
             <div className="my-7">
                 <p className="text-xl font-bold">Benzer Ürünler</p>
-                <ProductSwiper products={products} />
+                <ProductSwiper
+                    products={products}
+                    classNamebutton="after:!text-[35px]"
+                />
             </div>
         </HomeLayout>
     );

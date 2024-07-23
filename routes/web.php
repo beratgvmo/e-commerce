@@ -47,7 +47,7 @@ Route::middleware('auth:store')->group(function () {
         ->name('store.logout');
 
     Route::post('/store/storeLogo', [StoreDashboardController::class, 'storeLogo'])->name('store.storeLogo');
-    Route::post('/store/storeBanner', [StoreDashboardController::class, 'storeBenner'])->name('store.storeBanner');
+    Route::post('/store/storeBanner', [StoreDashboardController::class, 'storeBanner'])->name('store.storeBanner');
     Route::post('/store/storeSubBanner', [StoreDashboardController::class, 'storeSubBanner'])->name('store.storeSubBanner');
     Route::delete('/store/deleteSubBanner/{id}', [StoreDashboardController::class, 'deleteSubBanner'])->name('store.deleteSubBanner');
 });

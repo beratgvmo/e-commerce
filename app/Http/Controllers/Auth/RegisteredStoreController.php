@@ -19,22 +19,26 @@ use Illuminate\Support\Facades\Validator;
 
 class RegisteredStoreController extends Controller
 {
-    public function create(Request $request): Response
+    public function create(): Response
     {
         $categories = Category::all();
         $cargoCompanies = CargoCompany::all();
 
-        $validator = Validator::make($request->all(), [
-            'store_name' => 'required|string|max:50|unique:stores,store_name',
-        ]);
-
-        $nameUnique = !$validator->fails();
-
         return Inertia::render('Auth/StoreRegister', [
             'categories' => $categories,
             'cargoCompanies' => $cargoCompanies,
-            'nameUnique' => $nameUnique
         ]);
+    }
+
+    public function checkStoreName(Request $request)
+    {
+        $request->validate([
+            'store_name' => 'required|string|min:5|max:30',
+        ]);
+
+        $isUnique = !Store::where('store_name', $request->store_name)->exists();
+
+        return response()->json(['unique' => $isUnique]);
     }
 
     public function store(StoreRegisterRequest $request): RedirectResponse

@@ -2,6 +2,7 @@
 
 import StoreLayout from "@/Layouts/StoreLayout";
 import { Head, usePage, Link } from "@inertiajs/react";
+import { IoIosArrowForward } from "react-icons/io";
 
 export default function ProductList({ auth }) {
     const { products } = usePage().props;
@@ -20,33 +21,33 @@ export default function ProductList({ auth }) {
             <Head title="ProductList" />
 
             <div className="py-12">
-                <div className="bg-white p-4 text-gray-900 overflow-hidden shadow-sm">
-                    <div className="relative overflow-x-auto shadow border rounded">
-                        <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                <div className="bg-white p-4 text-gray-900 px-6 overflow-hidden shadow-sm">
+                    <div className="relativeoverflow-x-auto shadow border rounded">
+                        <table className="w-full text-sm text-left text-gray-500">
+                            <thead className="text-gray-700 font-black uppercase bg-gray-50">
                                 <tr>
-                                    <th scope="col" className="px-6 py-3">
+                                    <th scope="col" className="p-3 border">
                                         Ürün bilgisi
                                     </th>
-                                    <th scope="col" className="px-6 py-3">
+                                    <th scope="col" className="p-3 border">
                                         Özellikleri
                                     </th>
-                                    <th scope="col" className="px-6 py-3">
+                                    <th scope="col" className="p-3 border">
                                         Komisyon
                                     </th>
-                                    <th scope="col" className="px-6 py-3">
+                                    <th scope="col" className="p-3 border">
                                         Piyasa Satiş fiyatı
                                     </th>
-                                    <th scope="col" className="px-6 py-3">
+                                    <th scope="col" className="p-3 border">
                                         İndirimli Satiş fiyatı
                                     </th>
-                                    <th scope="col" className="px-6 py-3">
+                                    <th scope="col" className="p-3 border">
                                         Stok
                                     </th>
-                                    <th scope="col" className="px-6 py-3">
+                                    <th scope="col" className="p-3 border">
                                         içerik Güncelle
                                     </th>
-                                    <th scope="col" className="px-6 py-3">
+                                    <th scope="col" className="p-3 border">
                                         Detay sayfası
                                     </th>
                                 </tr>
@@ -98,12 +99,14 @@ export default function ProductList({ auth }) {
                                             </div>
                                         </td>
                                         <td className="px-4 border">
-                                            <p>10%</p>
+                                            <p className=" bg-green-500 py-1 text-white rounded-full text-center">
+                                                %10.0
+                                            </p>
                                         </td>
-                                        <td className="px-4  border">
+                                        <td className="px-4 font-black border w-[10%]">
                                             <p>{product.price}</p>
                                         </td>
-                                        <td className="px-4 border">
+                                        <td className="px-4 font-black border w-[10%]">
                                             <p>{product.price}</p>
                                         </td>
                                         <td className="px-4 border">
@@ -115,6 +118,14 @@ export default function ProductList({ auth }) {
                                                 className="font-medium text-blue-600 hover:underline"
                                             >
                                                 Düzenle
+                                            </a>
+                                        </td>
+                                        <td className="px-4 border">
+                                            <a
+                                                href="#"
+                                                className="font-medium text-blue-600 hover:underline"
+                                            >
+                                                <IoIosArrowForward />
                                             </a>
                                         </td>
                                     </tr>

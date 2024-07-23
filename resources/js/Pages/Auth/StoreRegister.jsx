@@ -8,7 +8,7 @@ import { Head, Link, router, useForm } from "@inertiajs/react";
 import InputMask from "react-input-mask";
 import { cities } from "@/data/cities";
 
-export default function Register({ categories, cargoCompanies, nameUnique }) {
+export default function Register({ categories, cargoCompanies }) {
     const [step, setStep] = useState(1);
     const { data, setData, post, processing, errors, reset } = useForm({
         first_name: "",
@@ -25,26 +25,37 @@ export default function Register({ categories, cargoCompanies, nameUnique }) {
         password_confirmation: "",
     });
 
+    const [nameUnique, setNameUnique] = useState(true);
+    const [storeNameError, setStoreNameError] = useState("");
+
     useEffect(() => {
         return () => {
             reset("password", "password_confirmation");
         };
     }, []);
 
-    const fetchProducts = useCallback(() => {
-        router.visit(route("store.register"), {
-            method: "get",
-            data: { store_name: data.store_name },
-            preserveState: true,
-            replace: true,
-            only: ["nameUnique"],
-        });
+    const checkStoreName = useCallback(async () => {
+        if (data.store_name.length >= 5 && data.store_name.length <= 30) {
+            const response = await fetch(
+                `/check-store-name?store_name=${data.store_name}`
+            );
+            const result = await response.json();
+            setNameUnique(result.unique);
+            setStoreNameError(
+                result.unique ? "" : "Bu mağaza adı zaten kullanılıyor."
+            );
+        } else {
+            setNameUnique(false);
+            setStoreNameError(
+                "Mağaza adı 5 ile 30 karakter arasında olmalıdır."
+            );
+        }
     }, [data.store_name]);
 
     useEffect(() => {
-        const timeoutId = setTimeout(fetchProducts, 100);
+        const timeoutId = setTimeout(checkStoreName, 300);
         return () => clearTimeout(timeoutId);
-    }, [fetchProducts]);
+    }, [checkStoreName]);
 
     const nextStep = () => {
         if (validateStep(step)) {
@@ -66,6 +77,7 @@ export default function Register({ categories, cargoCompanies, nameUnique }) {
                     data.last_name.length < 30 &&
                     data.store_name.length >= 5 &&
                     data.store_name.length <= 30 &&
+                    nameUnique &&
                     data.city &&
                     data.selling_category_id &&
                     data.phone_number.replace(/_/g, "").length == 14
@@ -89,7 +101,7 @@ export default function Register({ categories, cargoCompanies, nameUnique }) {
 
     const submit = (e) => {
         e.preventDefault();
-        if (validateStep(step)) {
+        if (validateStep(step) && nameUnique) {
             post(route("store.register"));
         }
         setStep(1);
@@ -210,6 +222,12 @@ export default function Register({ categories, cargoCompanies, nameUnique }) {
                                     required
                                     placeholder="Mağaza adı"
                                 />
+                                {storeNameError && (
+                                    <InputError
+                                        message={storeNameError}
+                                        className="mt-2"
+                                    />
+                                )}
                                 <InputError
                                     message={errors.store_name}
                                     className="mt-2"
