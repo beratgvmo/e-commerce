@@ -25,14 +25,12 @@ class ProductRequest extends FormRequest
             'name' => 'required|string|min:15',
             'category_id' => 'required|exists:categories,id',
             'description' => 'required|string|min:40',
-            'price' => 'required|numeric|digits_between:1,10',
-            'stock_quantity' => 'required|numeric|digits_between:1,20',
+            'price' => 'required|min:2',
+            'stock_quantity' => 'required|min:2',
             'is_active' => 'required|boolean',
-            // 'property_id' => 'required|array|min:3',
             'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
     }
-
 
     public function messages(): array
     {

@@ -38,6 +38,9 @@ class ProductController extends Controller
 
     public function productAdd(ProductRequest $request)
     {
+        $price = $this->formatPrice($request->price);
+        $stockQuantity = $this->formatStockQuantity($request->stock_quantity);
+
         $baseSlug = Str::slug($request->name, '-');
         $uniqueIdentifier = strtoupper(Str::random(12));
         $slug = "{$baseSlug}-{$uniqueIdentifier}";
@@ -46,8 +49,9 @@ class ProductController extends Controller
             'name' => $request->name,
             'category_id' => $request->category_id,
             'description' => $request->description,
-            'price' => $request->price,
-            'stock_quantity' => $request->stock_quantity,
+            'price' => $price,
+            'discounted_price' => $price,
+            'stock_quantity' => $stockQuantity,
             'is_active' => $request->is_active,
             'slug' => $slug,
             'store_id' => Auth::id(),
@@ -57,11 +61,9 @@ class ProductController extends Controller
             $images = $request->file('images');
 
             foreach ($images as $image) {
-                // Dosya yolunu belirle
                 $imagePath = $image->store('public/images');
                 $imageUrl = Storage::url($imagePath);
 
-                // Ürün resmini veritabanına ekle
                 ProductImg::create([
                     'product_id' => $product->id,
                     'img' => $imageUrl,
@@ -70,6 +72,19 @@ class ProductController extends Controller
         }
 
         return redirect()->route('store.productAdd')->with('success', 'Product added successfully');
+    }
+
+    private function formatPrice($price)
+    {
+        $price = str_replace('.', '', $price);
+        $price = str_replace(',', '.', $price);
+        return (float)$price;
+    }
+
+    private function formatStockQuantity($quantity)
+    {
+        $quantity = str_replace('.', '', $quantity);
+        return (int)$quantity;
     }
 }
 

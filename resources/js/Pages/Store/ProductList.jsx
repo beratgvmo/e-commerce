@@ -21,8 +21,8 @@ export default function ProductList({ auth }) {
             <Head title="ProductList" />
 
             <div className="py-12">
-                <div className="bg-white rounded-lg mb-10 p-4 text-gray-900 px-6 overflow-hidden shadow-sm">
-                    <div className="w-full flex gap-4">
+                <div className="bg-white p-4 text-gray-900 px-6 overflow-hidden shadow-sm rounded-lg ">
+                    <div className="w-full flex gap-4 mb-8">
                         <TextInput
                             id="first_name"
                             name="first_name"
@@ -42,8 +42,6 @@ export default function ProductList({ auth }) {
                             placeholder="Alt Kategori Seçimi"
                         />
                     </div>
-                </div>
-                <div className="bg-white p-4 text-gray-900 px-6 overflow-hidden shadow-sm rounded-lg ">
                     <div className="relative overflow-x-auto shadow border rounded">
                         <table className="w-full text-sm text-left text-gray-500">
                             <thead className="text-gray-700 font-black uppercase bg-gray-50">
@@ -74,7 +72,7 @@ export default function ProductList({ auth }) {
                                     </th>
                                 </tr>
                             </thead>
-                            {products.length > 0 && (
+                            {products.data.length > 0 && (
                                 <tbody>
                                     {products.data.map((product) => (
                                         <tr
@@ -172,25 +170,27 @@ export default function ProductList({ auth }) {
                                 </tbody>
                             )}
                         </table>
-                        <div className="w-full h-72 flex justify-center items-center border">
-                            <FaTruckRampBox
-                                className="mr-8 text-blue-500"
-                                size={100}
-                            />
-                            <div className="w-1/2">
-                                <p className="font-semibold mb-3 text-lg">
-                                    Kayıt Bulunamadı
-                                </p>
-                                <Link
-                                    href={route("store.productAdd")}
-                                    className="px-52 py-2  bg-blue-500 rounded-lg text-white font-medium  hover:bg-blue-600 transition"
-                                >
-                                    Ürün Oluştur
-                                </Link>
+                        {!products.data.length > 0 && (
+                            <div className="w-full h-72 flex justify-center items-center border">
+                                <FaTruckRampBox
+                                    className="mr-8 text-blue-500"
+                                    size={100}
+                                />
+                                <div className="w-1/2">
+                                    <p className="font-semibold mb-3 text-lg">
+                                        Kayıt Bulunamadı
+                                    </p>
+                                    <Link
+                                        href={route("store.productAdd")}
+                                        className="px-52 py-2  bg-blue-500 rounded-lg text-white font-medium  hover:bg-blue-600 transition"
+                                    >
+                                        Ürün Oluştur
+                                    </Link>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
-                    {products.length > 0 && (
+                    {products.data.length > 10 && (
                         <div className="flex justify-center mt-4">
                             {products.links.map((link, index) => (
                                 <Link

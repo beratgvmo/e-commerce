@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Checkbox from "@/Components/Checkbox";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
@@ -9,6 +8,8 @@ import StoreLayout from "@/Layouts/StoreLayout";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { MdDelete } from "react-icons/md";
+import PriceInput from "@/Components/PriceInput";
+import NumberInput from "@/Components/NumberInput";
 
 export default function ProductAdd({ auth, categories, subCategories }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -21,13 +22,11 @@ export default function ProductAdd({ auth, categories, subCategories }) {
         images: [],
     });
 
+    console.log(data);
+
     const submit = (e) => {
         e.preventDefault();
         post(route("store.productAdd"));
-    };
-
-    const formatPrice = (value) => {
-        return value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     };
 
     const modules = {
@@ -87,7 +86,6 @@ export default function ProductAdd({ auth, categories, subCategories }) {
         setData("images", newImages);
     };
 
-    console.log(data.images);
     return (
         <StoreLayout
             user={auth.store}
@@ -98,6 +96,7 @@ export default function ProductAdd({ auth, categories, subCategories }) {
             }
         >
             <Head title="Product Add" />
+
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -193,7 +192,7 @@ export default function ProductAdd({ auth, categories, subCategories }) {
                                         }
                                         modules={modules}
                                         formats={formats}
-                                        className="h-48 mb-12"
+                                        className="h-96 mb-14"
                                     />
                                     <InputError
                                         message={errors.description}
@@ -202,11 +201,9 @@ export default function ProductAdd({ auth, categories, subCategories }) {
                                 </div>
                                 <div className="mt-6">
                                     <InputLabel htmlFor="price" value="Fiyat" />
-                                    <TextInput
+                                    <PriceInput
                                         id="price"
-                                        type="number"
                                         name="price"
-                                        value={data.price}
                                         className="mt-1 block w-full"
                                         autoComplete="price"
                                         onChange={(e) =>
@@ -223,11 +220,9 @@ export default function ProductAdd({ auth, categories, subCategories }) {
                                         htmlFor="stock_quantity"
                                         value="Stok Miktarı"
                                     />
-                                    <TextInput
+                                    <NumberInput
                                         id="stock_quantity"
-                                        type="number"
                                         name="stock_quantity"
-                                        value={data.stock_quantity}
                                         className="mt-1 block w-full"
                                         autoComplete="stock_quantity"
                                         onChange={(e) =>

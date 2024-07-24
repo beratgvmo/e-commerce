@@ -56,7 +56,9 @@ export default function StoreLayout({ user, header, children }) {
 
                                         <Dropdown.Content align="left">
                                             <Dropdown.Link
-                                                href={route("store.logout")}
+                                                href={route(
+                                                    "store.productList"
+                                                )}
                                             >
                                                 Ürün Listesi
                                             </Dropdown.Link>

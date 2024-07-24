@@ -14,7 +14,6 @@ class UserDashboardController extends Controller
             'quantity' => 'required|integer'
         ]);
 
-
         $user = Auth::user()->id;
     }
 }

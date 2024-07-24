@@ -1,5 +1,6 @@
 import { Link } from "@inertiajs/react";
 import RenderStars from "./RenderStars";
+import { NumericFormat } from "react-number-format";
 
 export default function Product({ product }) {
     return (
@@ -23,7 +24,17 @@ export default function Product({ product }) {
                         <div className="mb-1 flex">
                             <RenderStars count={product.rating} />
                         </div>
-                        <p className="font-semibold">{product.price} TL</p>
+                        <p className="font-semibold">
+                            <NumericFormat
+                                value={product.price}
+                                displayType={"text"}
+                                thousandSeparator={"."}
+                                decimalSeparator={","}
+                                fixedDecimalScale={true}
+                                decimalScale={2}
+                            />
+                            <span className="ml-1">TL</span>
+                        </p>
                     </div>
                     <button className="group-hover:flex flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-full py-2 text-sm font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600">
                         Sepete Ekle
