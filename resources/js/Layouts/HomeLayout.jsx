@@ -5,6 +5,7 @@ import { IoIosSearch } from "react-icons/io";
 import { FaGithub } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
+import { BiStoreAlt } from "react-icons/bi";
 
 export default function HomeLayout({ auth, categories, children }) {
     const [isCategoryHovered, setIsCategoryHovered] = useState(false);
@@ -40,16 +41,25 @@ export default function HomeLayout({ auth, categories, children }) {
                                 <IoIosSearch className="text-3xl text-white" />
                             </div>
                         </div>
-                        <div className="">
+                        <div>
                             {!auth.store && (
                                 <>
                                     {auth.user ? (
-                                        <Link
-                                            href={route("dashboard")}
-                                            className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70"
-                                        >
-                                            Hesabım
-                                        </Link>
+                                        <>
+                                            <Link
+                                                href={route("dashboard")}
+                                                className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70"
+                                            >
+                                                Hesabım
+                                            </Link>
+
+                                            <Link
+                                                href={route("dashboard")}
+                                                className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70"
+                                            >
+                                                Hesabım
+                                            </Link>
+                                        </>
                                     ) : (
                                         <>
                                             <Link
@@ -69,13 +79,23 @@ export default function HomeLayout({ auth, categories, children }) {
                                 </>
                             )}
                             {auth.store && (
-                                <Link
-                                    href={route("store.dashboard")}
-                                    className="rounded-md flex items-center gap-0.5 px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70"
-                                >
-                                    <CgProfile />
-                                    Hesabım
-                                </Link>
+                                <div className="flex justify-between">
+                                    <Link
+                                        href={route("store.dashboard")}
+                                        className="rounded-md flex items-center gap-0.5 px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70"
+                                    >
+                                        <CgProfile />
+                                        Hesabım
+                                    </Link>
+
+                                    <Link
+                                        href={`/magaza/${auth.store.slug}`}
+                                        className="rounded-md flex items-center gap-0.5 px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70"
+                                    >
+                                        <BiStoreAlt />
+                                        Mağaza Git
+                                    </Link>
+                                </div>
                             )}
                         </div>
                     </div>

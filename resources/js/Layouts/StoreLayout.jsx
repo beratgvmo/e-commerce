@@ -124,16 +124,6 @@ export default function StoreLayout({ user, header, children }) {
                                 >
                                     Muhasebe
                                 </NavLink>
-                                <NavLink
-                                    href={`/magaza/${user.slug}`}
-                                    className="group"
-                                >
-                                    Mağaza Git
-                                    <BiStoreAlt
-                                        size={20}
-                                        className=" text-gray-500 ml-1 group-hover:text-gray-700"
-                                    />
-                                </NavLink>
                             </div>
                         </div>
 

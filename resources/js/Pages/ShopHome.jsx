@@ -193,58 +193,100 @@ export default function ShopHome({ auth, categories, store, products }) {
                 )}
                 {store.banner ? (
                     <div className="px-2 flex mt-3 rounded-t-lg">
-                        <div className="relative w-[120px] h-[120px] mr-3 bg-white">
-                            {store.logo ? (
-                                <div className="absolute -top-16">
-                                    <img
-                                        src={store.logo}
-                                        alt="Avatar"
-                                        className="w-[120px] h-[120px] rounded-full border-4 border-white bg-white object-contain"
-                                    />
+                        {store.logo ? (
+                            <>
+                                <div className="relative w-[120px] h-[120px] mr-3 bg-white">
+                                    <div className="absolute -top-14">
+                                        <img
+                                            src={store.logo}
+                                            alt="Avatar"
+                                            className="w-[120px] h-[120px] rounded-full border-4 border-white bg-white object-contain"
+                                        />
+                                    </div>
+                                    {auth.store &&
+                                        store.id === auth.store.id && (
+                                            <button
+                                                className="text-white rounded-full absolute w-7 h-7 flex justify-center items-center bg-blue-500 hover:bg-blue-600 transition bottom-14 right-2"
+                                                onClick={() => {
+                                                    setModalOpen(true);
+                                                    setCurrentImgType("logo");
+                                                }}
+                                            >
+                                                <FaPen size={12} />
+                                            </button>
+                                        )}
                                 </div>
-                            ) : (
-                                <div className="w-[120px] h-[120px] rounded-full flex justify-center items-center border-2 border-gray-300 bg-white object-contain">
-                                    <BiStoreAlt className="w-[60%] h-[60%] text-gray-300" />
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <p className="text-3xl font-black text-gray-800 mr-2">
+                                            {store.store_name}
+                                        </p>
+                                        {(auth.store &&
+                                            store.id === auth.store.id) || (
+                                            <button className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:bg-blue-700 focus:outline-none focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out">
+                                                Takip Et
+                                            </button>
+                                        )}
+                                    </div>
+                                    <div className="flex mt-3 gap-2 items-center">
+                                        <p className="font-bold bg-green-500 text-xs py-0.5 px-2 rounded text-white">
+                                            {store.store_rating
+                                                ? store.store_rating
+                                                : 0}
+                                        </p>
+                                        <p className="text-blue-600 text-sm font-bold">
+                                            47B Takipçi • 257 ürün
+                                        </p>
+                                    </div>
                                 </div>
-                            )}
-                            {auth.store && store.id === auth.store.id && (
-                                <button
-                                    className="text-white rounded-full absolute w-7 h-7 flex justify-center items-center bg-blue-500 hover:bg-blue-600 transition bottom-16 right-2"
-                                    onClick={() => {
-                                        setModalOpen(true);
-                                        setCurrentImgType("logo");
-                                    }}
-                                >
-                                    <FaPen size={12} />
-                                </button>
-                            )}
-                        </div>
-
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <p className="text-3xl font-black text-gray-800 mr-2">
-                                    {store.store_name}
-                                </p>
-                                {(auth.store && store.id === auth.store.id) || (
-                                    <button className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:bg-blue-700 focus:outline-none focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out">
-                                        Takip Et
-                                    </button>
-                                )}
-                            </div>
-                            <div className="flex mt-3 gap-2 items-center">
-                                <p className="font-bold bg-green-500 text-xs py-0.5 px-2 rounded text-white">
-                                    {store.store_rating
-                                        ? store.store_rating
-                                        : 0}
-                                </p>
-                                <p className="text-blue-600 text-sm font-bold">
-                                    47B Takipçi • 257 ürün
-                                </p>
-                            </div>
-                        </div>
+                            </>
+                        ) : (
+                            <>
+                                <div className="relative mb-9 w-[120px] h-[120px] mr-3 bg-white">
+                                    <div className="w-[120px] h-[120px] rounded-full flex justify-center items-center border-2 border-gray-300 bg-white object-contain">
+                                        <BiStoreAlt className="w-[60%] h-[60%] text-gray-300" />
+                                    </div>
+                                    {auth.store &&
+                                        store.id === auth.store.id && (
+                                            <button
+                                                className="text-white rounded-full absolute w-7 h-7 flex justify-center items-center bg-blue-500 hover:bg-blue-600 transition bottom-0 right-2"
+                                                onClick={() => {
+                                                    setModalOpen(true);
+                                                    setCurrentImgType("logo");
+                                                }}
+                                            >
+                                                <FaPen size={12} />
+                                            </button>
+                                        )}
+                                </div>
+                                <div className="mt-6">
+                                    <div className="flex items-center gap-2">
+                                        <p className="text-3xl font-black text-gray-800 mr-2">
+                                            {store.store_name}
+                                        </p>
+                                        {(auth.store &&
+                                            store.id === auth.store.id) || (
+                                            <button className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:bg-blue-700 focus:outline-none focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out">
+                                                Takip Et
+                                            </button>
+                                        )}
+                                    </div>
+                                    <div className="flex mt-3 gap-2 items-center">
+                                        <p className="font-bold bg-green-500 text-xs py-0.5 px-2 rounded text-white">
+                                            {store.store_rating
+                                                ? store.store_rating
+                                                : 0}
+                                        </p>
+                                        <p className="text-blue-600 text-sm font-bold">
+                                            47B Takipçi • 257 ürün
+                                        </p>
+                                    </div>
+                                </div>
+                            </>
+                        )}
                     </div>
                 ) : (
-                    <div className="px-2 flex items-center mb-8 rounded-t-lg">
+                    <div className="px-2 flex items-center mb-8 mt-6 rounded-t-lg">
                         <div className="relative w-[120px] h-[120px] mr-5 bg-white">
                             {store.logo ? (
                                 <div className="">
@@ -261,7 +303,7 @@ export default function ShopHome({ auth, categories, store, products }) {
                             )}
                             {auth.store && store.id === auth.store.id && (
                                 <button
-                                    className="text-white rounded-full absolute w-7 h-7 flex justify-center items-center bg-blue-500 hover:bg-blue-600 transition bottom-10 right-1"
+                                    className="text-white rounded-full absolute w-7 h-7 flex justify-center items-center bg-blue-500 hover:bg-blue-600 transition bottom-0 right-2"
                                     onClick={() => {
                                         setModalOpen(true);
                                         setCurrentImgType("logo");
@@ -347,62 +389,58 @@ export default function ShopHome({ auth, categories, store, products }) {
             <div className="min-h-[10rem] py-3">
                 {currentTab === 1 && (
                     <div>
-                        <div className="gap-6 mb-6 grid grid-cols-2">
-                            {auth.store && store.id === auth.store.id ? (
-                                <>
-                                    {store.sub_banners.map(
-                                        (subBanner, index) => (
-                                            <div
-                                                key={index}
-                                                className="rounded-2xl relative overflow-hidden"
-                                            >
-                                                <img
-                                                    src={subBanner.img}
-                                                    alt=""
-                                                    className="rounded-2xl transition-transform cursor-pointer object-contain hover:scale-105"
-                                                />
-                                                <div className="absolute flex gap-2 right-4 bottom-3">
-                                                    <button
-                                                        className="text-white rounded-full w-9 h-9 flex justify-center items-center bg-red-500 hover:bg-red-600 transition"
-                                                        onClick={() =>
-                                                            handleDeleteSubBanner(
-                                                                subBanner.id
-                                                            )
-                                                        }
-                                                    >
-                                                        <MdDelete size={17} />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )
-                                    )}
-                                    {store.sub_banners.length < 6 && (
-                                        <div className="flex items-center justify-center w-full">
-                                            <button
-                                                onClick={() => {
-                                                    setCurrentImgType(
-                                                        "subBanner"
-                                                    );
-                                                    setModalOpen(true);
-                                                }}
-                                                className="flex flex-col h-[294px] items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-                                            >
-                                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                    <LuUploadCloud
-                                                        size={30}
-                                                        className="mb-1"
-                                                    />
-                                                    <p>Yeni Banner Ekleyin</p>
-                                                </div>
-                                            </button>
-                                        </div>
-                                    )}
-                                </>
-                            ) : (
-                                store.sub_banners.map((subBanner, index) => (
+                        {auth.store && store.id === auth.store.id ? (
+                            <div className="gap-6 mb-6 grid grid-cols-2">
+                                {store.sub_banners.map((subBanner, index) => (
                                     <div
                                         key={index}
-                                        className="rounded-2xl overflow-hidden"
+                                        className="rounded-2xl relative overflow-hidden"
+                                    >
+                                        <img
+                                            src={subBanner.img}
+                                            alt=""
+                                            className="rounded-2xl transition-transform cursor-pointer object-contain hover:scale-105"
+                                        />
+                                        <div className="absolute flex gap-2 right-4 bottom-3">
+                                            <button
+                                                className="text-white rounded-full w-9 h-9 flex justify-center items-center bg-red-500 hover:bg-red-600 transition"
+                                                onClick={() =>
+                                                    handleDeleteSubBanner(
+                                                        subBanner.id
+                                                    )
+                                                }
+                                            >
+                                                <MdDelete size={17} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                                {store.sub_banners.length < 6 && (
+                                    <div className="flex items-center justify-center w-full">
+                                        <button
+                                            onClick={() => {
+                                                setCurrentImgType("subBanner");
+                                                setModalOpen(true);
+                                            }}
+                                            className="flex flex-col h-[294px] items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+                                        >
+                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                <LuUploadCloud
+                                                    size={30}
+                                                    className="mb-1"
+                                                />
+                                                <p>Yeni Banner Ekleyin</p>
+                                            </div>
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="gap-6 mb-6 flex items-center justify-center flex-wrap">
+                                {store.sub_banners.map((subBanner, index) => (
+                                    <div
+                                        key={index}
+                                        className="rounded-2xl w-[49%] overflow-hidden"
                                     >
                                         <img
                                             src={subBanner.img}
@@ -410,9 +448,9 @@ export default function ShopHome({ auth, categories, store, products }) {
                                             className="rounded-2xl transition-transform cursor-pointer object-contain hover:scale-105"
                                         />
                                     </div>
-                                ))
-                            )}
-                        </div>
+                                ))}
+                            </div>
+                        )}
 
                         <div>
                             <div className="my-4">

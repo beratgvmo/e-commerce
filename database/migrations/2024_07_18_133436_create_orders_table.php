@@ -16,9 +16,11 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('store_id');
             $table->decimal('total_amount', 10, 2);
+            $table->decimal('shipping_cost', 10, 2);
             $table->enum('status', ['Sipariş Alındı', 'Hazırlandı', 'Kargoya verildi', 'Teslim edildi'])->default('Sipariş Alındı');
-            $table->timestamp('order_date')->useCurrent();
-            $table->timestamp('delivered_date')->nullable();
+            $table->string('delivery_address');
+            $table->string('order_code')->unique();
+
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
