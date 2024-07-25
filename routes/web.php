@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginStoreController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StoreDashboardController;
+use App\Http\Controllers\UserDashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -17,17 +18,10 @@ Route::get('/urun/{slug}', [HomeController::class, "show"])->name("home.show");
 
 Route::get('/magaza/{slug}', [HomeController::class, "shop"])->name("home.magaza");
 
+Route::middleware('auth', 'verified')->group(function () {
+    Route::get('/dashboard', [UserDashboardController::class, 'dashboard'])->name("dashboard");
+    Route::get('/sepet', [UserDashboardController::class, 'cart'])->name("user.cart");
 
-Route::get('/profileimg', function () {
-    return Inertia::render('Profile');
-})->name('profile.img');
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-
-Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

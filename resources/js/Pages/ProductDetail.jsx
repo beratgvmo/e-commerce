@@ -9,6 +9,7 @@ import { BiMessageSquareAdd } from "react-icons/bi";
 import { MdOutlineInfo } from "react-icons/md";
 import { FaStar } from "react-icons/fa";
 import ProductSwiper from "@/Components/ProductSwiper";
+import PriceText from "@/Components/PriceText";
 
 export default function ProductDetail({
     auth,
@@ -102,7 +103,7 @@ export default function ProductDetail({
                     <h1 className="text-lg font-semibold">{product.name}</h1>
                     <div className="flex mt-3 items-center justify-between">
                         <p className="text-slate-800 text-3xl font-black mt-4">
-                            {product.price} TL
+                            <PriceText value={product.price} />
                         </p>
                         <div className="flex flex-col items-end self-center">
                             <div className="flex justify-center items-center mb-1">

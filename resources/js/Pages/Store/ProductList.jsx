@@ -1,13 +1,14 @@
-// resources/js/Pages/Products/Index.jsx
-
 import StoreLayout from "@/Layouts/StoreLayout";
 import { Head, usePage, Link } from "@inertiajs/react";
 import { IoIosArrowForward } from "react-icons/io";
 import { FaTruckRampBox } from "react-icons/fa6";
 import TextInput from "@/Components/TextInput";
+import PriceText from "@/Components/PriceText";
 
 export default function ProductList({ auth }) {
     const { products } = usePage().props;
+
+    console.log(products.data);
 
     return (
         <StoreLayout
@@ -141,10 +142,16 @@ export default function ProductList({ auth }) {
                                                 </p>
                                             </td>
                                             <td className="px-4 font-black border w-[10%]">
-                                                <p>{product.price}</p>
+                                                <PriceText
+                                                    value={product.price}
+                                                />
                                             </td>
                                             <td className="px-4 font-black border w-[10%]">
-                                                <p>{product.price}</p>
+                                                <PriceText
+                                                    value={
+                                                        product.discounted_price
+                                                    }
+                                                />
                                             </td>
                                             <td className="px-4 border">
                                                 <p>{product.stock_quantity}</p>
@@ -158,12 +165,16 @@ export default function ProductList({ auth }) {
                                                 </a>
                                             </td>
                                             <td className="px-4 border">
-                                                <a
-                                                    href="#"
-                                                    className="font-medium text-blue-600 hover:underline"
-                                                >
-                                                    <IoIosArrowForward />
-                                                </a>
+                                                <div className="w-full h-full flex justify-center">
+                                                    <div className="font-medium w-10 h-10 bg-gray-200 hover:bg-gray-300 transition duration-200 rounded-md text-lg hover:text-blue-600 text-blue-500 flex justify-center items-center">
+                                                        <Link
+                                                            key={product.id}
+                                                            href={`/urun/${product.slug}`}
+                                                        >
+                                                            <IoIosArrowForward />
+                                                        </Link>
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}

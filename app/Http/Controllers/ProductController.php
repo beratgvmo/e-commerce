@@ -50,10 +50,10 @@ class ProductController extends Controller
             'category_id' => $request->category_id,
             'description' => $request->description,
             'price' => $price,
-            'discounted_price' => $price,
             'stock_quantity' => $stockQuantity,
             'is_active' => $request->is_active,
             'slug' => $slug,
+            'discounted_price' => $price,
             'store_id' => Auth::id(),
         ]);
 

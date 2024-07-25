@@ -24,7 +24,7 @@ const CategoryList = ({ categories, setIsCategoryHovered }) => {
             {mainCategories.map((category) => (
                 <div className="group w-full" key={category.id}>
                     <div
-                        className="w-full cursor-pointer group mt-4 group-hover:bg-gray-100 relative"
+                        className="w-full cursor-pointer group group-hover:bg-gray-100 relative"
                         onMouseEnter={() => handleMouseEnter(category.id)}
                         onMouseLeave={handleMouseLeave}
                     >

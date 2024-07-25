@@ -4,8 +4,9 @@ import CategoryList from "@/Components/CategoryList";
 import { IoIosSearch } from "react-icons/io";
 import { FaGithub } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa";
-import { CgProfile } from "react-icons/cg";
 import { BiStoreAlt } from "react-icons/bi";
+import { IoCartOutline } from "react-icons/io5";
+import { VscAccount } from "react-icons/vsc";
 
 export default function HomeLayout({ auth, categories, children }) {
     const [isCategoryHovered, setIsCategoryHovered] = useState(false);
@@ -16,15 +17,19 @@ export default function HomeLayout({ auth, categories, children }) {
                 <div className="w-[1200px] mx-auto">
                     <div>
                         {!auth.store && (
-                            <div className="text-xs flex gap-3 justify-end">
-                                <Link href={route("store.login")}>
-                                    E-ticaret'da Satış Yap
-                                </Link>
-                                <p>Hakkımızda</p>
+                            <div>
+                                {!auth.user && (
+                                    <div className="text-xs flex gap-3 justify-end">
+                                        <Link href={route("store.login")}>
+                                            E-ticaret'da Satış Yap
+                                        </Link>
+                                        <p>Hakkımızda</p>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
-                    <div className="flex mt-2 justify-between items-center">
+                    <div className="flex mt-2 mb-4 justify-between items-center">
                         <Link
                             href="/"
                             className="text-xl font-medium text-blue-500"
@@ -45,21 +50,23 @@ export default function HomeLayout({ auth, categories, children }) {
                             {!auth.store && (
                                 <>
                                     {auth.user ? (
-                                        <>
+                                        <div className="flex justify-between gap-3">
                                             <Link
                                                 href={route("dashboard")}
-                                                className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70"
+                                                className="rounded-md hover:text-blue-500 duration-300 flex items-center gap-1 px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70"
                                             >
+                                                <VscAccount size={20} />
                                                 Hesabım
                                             </Link>
 
                                             <Link
                                                 href={route("dashboard")}
-                                                className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70"
+                                                className="rounded-md hover:text-blue-500 duration-300 flex items-center gap-1 px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70"
                                             >
-                                                Hesabım
+                                                <IoCartOutline size={23} />
+                                                Sepetim
                                             </Link>
-                                        </>
+                                        </div>
                                     ) : (
                                         <>
                                             <Link
@@ -84,7 +91,7 @@ export default function HomeLayout({ auth, categories, children }) {
                                         href={route("store.dashboard")}
                                         className="rounded-md flex items-center gap-0.5 px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70"
                                     >
-                                        <CgProfile />
+                                        <VscAccount />
                                         Hesabım
                                     </Link>
 
@@ -100,10 +107,12 @@ export default function HomeLayout({ auth, categories, children }) {
                         </div>
                     </div>
                     <div>
-                        <CategoryList
-                            categories={categories}
-                            setIsCategoryHovered={setIsCategoryHovered}
-                        />
+                        {categories && (
+                            <CategoryList
+                                categories={categories}
+                                setIsCategoryHovered={setIsCategoryHovered}
+                            />
+                        )}
                     </div>
                 </div>
             </header>
