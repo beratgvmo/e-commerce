@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import HomeLayout from "@/Layouts/HomeLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import RenderStars from "@/Components/RenderStars";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
@@ -24,13 +24,21 @@ export default function ProductDetail({
     totalReviews,
     products,
 }) {
-    //  properties, propertyType
+    const { post } = useForm({
+        product_id: product.id,
+    });
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [currentTab, setCurrentTab] = useState(1);
     const [isAddedToCart, setIsAddedToCart] = useState(false);
 
-    const addToCart = () => {
-        setIsAddedToCart(!isAddedToCart);
+    const addToCart = (e) => {
+        e.preventDefault();
+        setIsAddedToCart(true);
+        post(route("user.cartAdd"));
+        setTimeout(() => {
+            setIsAddedToCart(false);
+        }, 300);
     };
 
     const nextImage = () => {
@@ -119,16 +127,20 @@ export default function ProductDetail({
                         </div>
                     </div>
                     <div className="mt-4">
-                        <button
-                            onClick={addToCart}
-                            className={`text-white px-8 py-4 mt-1 w-full rounded-md transition-all duration-200 ${
-                                isAddedToCart
-                                    ? "bg-green-500"
-                                    : "bg-blue-500 hover:bg-blue-700"
-                            }`}
-                        >
-                            {isAddedToCart ? "Sepete Eklendi" : "Sepete Ekle"}
-                        </button>
+                        <form onSubmit={addToCart}>
+                            <button
+                                type="submit"
+                                className={`text-white px-8 py-4 mt-1 w-full rounded-md transition-all duration-200 ${
+                                    isAddedToCart
+                                        ? "bg-green-500"
+                                        : "bg-blue-500 hover:bg-blue-700"
+                                }`}
+                            >
+                                {isAddedToCart
+                                    ? "Sepete Eklendi"
+                                    : "Sepete Ekle"}
+                            </button>
+                        </form>
                     </div>
 
                     <div className="flex gap-2">
