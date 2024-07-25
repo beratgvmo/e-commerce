@@ -16,7 +16,7 @@ class ProductController extends Controller
 {
     public function indexList()
     {
-        $products = Product::with('category', 'images', "attributes")->paginate(12);
+        $products = Product::where("store_id", Auth::user()->id)->with('category', 'images', "attributes")->paginate(12);
 
         return Inertia::render('Store/ProductList', ['products' => $products]);
     }

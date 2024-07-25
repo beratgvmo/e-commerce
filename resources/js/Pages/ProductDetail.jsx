@@ -83,19 +83,19 @@ export default function ProductDetail({
                 </ol>
             </nav>
             <div className="flex rounded-md border border-gray-300">
-                <div className="relative group min-w-[34rem] flex justify-between items-center">
+                <div className="relative group min-w-[34rem]  flex justify-between items-center">
                     <button
                         onClick={prevImage}
                         className="absolute left-2 flex items-center justify-center w-14 h-14 text-3xl text-gray-400 bg-gray-200 rounded-full opacity-0 cursor-pointer group-hover:opacity-100 group-hover:flex hover:bg-gray-300 transition-opacity duration-300 z-10"
                     >
                         <IoIosArrowBack />
                     </button>
-                    <div className="flex items-center justify-center h-[42rem] overflow-hidden">
+                    <div className="flex items-center justify-center h-[42rem] w-full overflow-hidden">
                         {product.images && product.images.length > 0 && (
                             <img
                                 src={product.images[currentIndex].img}
                                 alt="Product Image"
-                                className="w-full h-auto"
+                                className="w-auto h-full object-contain "
                             />
                         )}
                     </div>
@@ -244,12 +244,12 @@ export default function ProductDetail({
                                         )}
                                     </div>
                                     <div className="flex mt-6">
-                                        <div className="h-52 w-52 mr-16">
+                                        <div className="h-52 w-52 mr-16 flex justify-center">
                                             {product.images && (
                                                 <img
                                                     src={product.images[0].img}
                                                     alt="Product Image"
-                                                    className="w-full h-auto"
+                                                    className="w-auto h-full object-contain rounded-md"
                                                 />
                                             )}
                                         </div>

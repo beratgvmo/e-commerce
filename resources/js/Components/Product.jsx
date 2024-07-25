@@ -9,7 +9,7 @@ export default function Product({ product }) {
             <div className="group max-w-56 duration-200 bg-white border border-gray-200 hover:border-gray-400 rounded-lg shadow flex flex-col overflow-hidden">
                 <div className="aspect-square relative overflow-hidden">
                     <img
-                        className="object-contain select-none duration-300 md:object-cover w-full h-full absolute inset-0 transition-transform group-hover:scale-105"
+                        className="object-contain select-none duration-300 w-full h-full absolute inset-0 transition-transform group-hover:scale-105"
                         loading="lazy"
                         src={product.images[0]?.img}
                         alt={product.name}
