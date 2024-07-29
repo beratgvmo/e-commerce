@@ -10,6 +10,8 @@ import { MdOutlineInfo } from "react-icons/md";
 import { FaStar } from "react-icons/fa";
 import ProductSwiper from "@/Components/ProductSwiper";
 import PriceText from "@/Components/PriceText";
+import "react-quill/dist/quill.snow.css";
+import "quill/dist/quill.core.css";
 
 export default function ProductDetail({
     auth,
@@ -214,14 +216,16 @@ export default function ProductDetail({
                         </button>
                     </div>
 
-                    <div className="min-h-[10rem] py-3">
+                    <div className="min-h-[10rem] w-full py-3">
                         {currentTab === 1 && (
-                            <div
-                                className="px-4"
-                                dangerouslySetInnerHTML={{
-                                    __html: product.description,
-                                }}
-                            ></div>
+                            <div className="px-4 mx-4 w-full">
+                                <div
+                                    className=" html"
+                                    dangerouslySetInnerHTML={{
+                                        __html: product.description,
+                                    }}
+                                ></div>
+                            </div>
                         )}
 
                         {currentTab === 2 && (

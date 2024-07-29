@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,10 +18,33 @@ class UserDashboardController extends Controller
 
     public function cart()
     {
-        $carts = Cart::where("user_id", Auth::user()->id)->with("product.images", "store")->get(); // product resimleri al 
+        $carts = Cart::where('user_id', Auth::user()->id)
+            ->with('product.images', 'store')
+            ->get()
+            ->groupBy('store.id')
+            ->map(function ($storeCarts) {
+                return [
+                    'id' => $storeCarts->first()->store->id,
+                    'storeName' => $storeCarts->first()->store->store_name,
+                    'slug' => $storeCarts->first()->store->slug,
+                    'storeRating' => $storeCarts->first()->store->store_rating,
+                    'products' => $storeCarts->map(function ($cart) {
+                        return [
+                            'id' => $cart->id,
+                            'quantity' => $cart->quantity,
+                            'product' => $cart->product,
+                            'is_active' => $cart->is_active,
+                        ];
+                    }),
+                ];
+            })
+            ->values();
+
+        $products = Product::with("images")->get();
 
         return Inertia::render("Cart", [
-            "carts" => $carts
+            "carts" => $carts,
+            'products' => $products,
         ]);
     }
 
@@ -33,7 +55,7 @@ class UserDashboardController extends Controller
         ]);
 
         if (!Auth::user()) {
-            return redirect()->intended(route('login', absolute: false));
+            return redirect()->route('login');
         }
 
         $product = Product::findOrFail($request->product_id);
@@ -49,30 +71,50 @@ class UserDashboardController extends Controller
             ]
         );
 
-        return redirect()->back()->with('success', 'sepet güncellendi.');
+        return redirect()->back()->with([
+            'message' => "Sepet Başarıyla Güncellendi",
+            'type' => 'success',
+        ]);
     }
 
-
-    public function reduceToCart(Request $request)
+    public function reduceFromCart(Request $request)
     {
         $request->validate([
             'product_id' => 'required|exists:products,id'
         ]);
 
         if (!Auth::user()) {
-            return redirect()->intended(route('login', absolute: false));
+            return redirect()->route('login');
         }
 
-        $cartItem = Cart::where([
-            ['user_id', '=', Auth::id()],
-            ['product_id', '=', $request->product_id],
-        ])->first();
+        Cart::where('user_id', Auth::user()->id)
+            ->where('product_id', $request->product_id)
+            ->where('quantity', '>', 1)
+            ->decrement('quantity');
 
-        if ($cartItem->quantity > 1) {
-            $cartItem->quantity -= 1;
-            $cartItem->save();
+        return redirect()->back()->with([
+            'message' => "Sepet Başarıyla Güncellendi",
+            'type' => 'success',
+        ]);
+    }
+
+    public function removeFromCart(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id'
+        ]);
+
+        if (!Auth::user()) {
+            return redirect()->route('login');
         }
 
-        return redirect()->back()->with('success', 'sepet güncellendi.');
+        Cart::where('user_id', Auth::user()->id)
+            ->where('product_id', $request->product_id)
+            ->delete();
+
+        return redirect()->route('user.cart')->with([
+            'message' => "Ürün Sepetten Kaldırıldı",
+            'type' => 'success',
+        ]);
     }
 }

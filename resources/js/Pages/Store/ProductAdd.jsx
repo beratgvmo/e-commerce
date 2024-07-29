@@ -263,7 +263,7 @@ export default function ProductAdd({ auth, categories, subCategories }) {
                                                                 img
                                                             )}
                                                             alt=""
-                                                            className="h-44 w-44 border-2 rounded-lg cursor-pointer p-2 mr-2 object-cover"
+                                                            className="h-44 w-44 border-2 rounded-lg cursor-pointer p-2 mr-2 object-contain"
                                                         />
                                                     </div>
                                                 </div>

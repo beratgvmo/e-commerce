@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.html > .ql-align-center {
+    text-align: center !important;
+}
+
+.html > .ql-align-left {
+    text-align: left !important;
+}
+
+.html > .ql-align-right {
+    text-align: right !important;
+}
+
+.html > .ql-align-justify {
+    text-align: justify !important;
+}
+
+.html > h1 {
+    font-size: 28px;
+}
+.html > h2 {
+    font-size: 24px;
+}
+
+.html > ul {
+    list-style: outside;
+}

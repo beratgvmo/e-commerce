@@ -23,12 +23,15 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::get('/sepet', [UserDashboardController::class, 'cart'])->name("user.cart");
 
     Route::post('/sepet/add', [UserDashboardController::class, 'addToCart'])->name("user.cartAdd");
-    Route::post('/sepet/add', [UserDashboardController::class, 'reduceToCart'])->name("user.cartReduce");
+    Route::post('/sepet/reduce', [UserDashboardController::class, 'reduceFromCart'])->name("user.reduceToCart");
+    Route::post('/sepet/remove', [UserDashboardController::class, 'removeFromCart'])->name("user.removeFromCart");
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+
 
 
 Route::middleware('auth:store')->group(function () {

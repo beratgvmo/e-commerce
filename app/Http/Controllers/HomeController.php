@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\ProductAttribute;
 use App\Models\Store;
 use App\Models\Attribute;
+use App\Models\Cart;
 use App\Models\ProductReview;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -32,7 +33,8 @@ class HomeController extends Controller
         return Inertia::render('Home', [
             'categories' => $categories,
             'bestSellingProducts' => $bestSellingProducts,
-            'stores' => $stores
+            'stores' => $stores,
+            'cart' => Cart::count()
         ]);
     }
 
@@ -100,7 +102,8 @@ class HomeController extends Controller
             'ratingPercentages' => $ratingPercentages,
             'ratingsCount' => $ratings,
             'totalReviews' => $totalReviews,
-            'products' => $products
+            'products' => $products,
+            'cart' => Cart::count()
         ]);
     }
 
@@ -182,7 +185,8 @@ class HomeController extends Controller
             'categoryHierarchy' => $categoryHierarchy,
             'attributesMain' => $attributesMain,
             'categorySubMain' => $categorySubMain,
-            'categoryMain' => $categoryMain
+            'categoryMain' => $categoryMain,
+            'cart' => Cart::count()
         ]);
     }
 
@@ -198,6 +202,7 @@ class HomeController extends Controller
             'categories' => $categories,
             'store' => $store,
             'products' => $products,
+            'cart' => Cart::count()
         ]);
     }
 }

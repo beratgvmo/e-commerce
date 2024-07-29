@@ -28,6 +28,7 @@
         "react-input-mask": "^2.0.4",
         "react-number-format": "^5.4.0",
         "react-quill": "^2.0.0",
+        "react-toastify": "^10.0.5",
         "swiper": "^11.1.5"
     }
 }

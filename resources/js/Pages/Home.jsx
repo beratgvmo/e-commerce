@@ -9,9 +9,10 @@ export default function Home({
     categories,
     bestSellingProducts,
     stores,
+    cart,
 }) {
     return (
-        <HomeLayout auth={auth} categories={categories}>
+        <HomeLayout auth={auth} categories={categories} cart={cart}>
             <Head title="Welcome" />
 
             <Swiper slidesPerViewState={9} slidesPerGroupState={1}>

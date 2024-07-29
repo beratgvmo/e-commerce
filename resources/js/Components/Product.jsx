@@ -3,7 +3,7 @@ import RenderStars from "./RenderStars";
 import { NumericFormat } from "react-number-format";
 import PriceText from "./PriceText";
 
-export default function Product({ product }) {
+export default function Product({ product, cart = true }) {
     return (
         <Link key={product.id} href={`/urun/${product.slug}`}>
             <div className="group max-w-56 duration-200 bg-white border border-gray-200 hover:border-gray-400 rounded-lg shadow flex flex-col overflow-hidden">
@@ -29,9 +29,11 @@ export default function Product({ product }) {
                             <PriceText value={product.price} />
                         </p>
                     </div>
-                    <button className="group-hover:flex flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-full py-2 text-sm font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600">
-                        Sepete Ekle
-                    </button>
+                    {cart && (
+                        <button className="group-hover:flex flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-full py-2 text-sm font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600">
+                            Sepete Ekle
+                        </button>
+                    )}
                 </div>
             </div>
         </Link>

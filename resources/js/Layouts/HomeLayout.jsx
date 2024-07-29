@@ -7,12 +7,14 @@ import { FaLinkedin } from "react-icons/fa";
 import { BiStoreAlt } from "react-icons/bi";
 import { IoCartOutline } from "react-icons/io5";
 import { VscAccount } from "react-icons/vsc";
+import { ToastContainer } from "react-toastify";
 
-export default function HomeLayout({ auth, categories, children }) {
+export default function HomeLayout({ auth, categories, children, cart }) {
     const [isCategoryHovered, setIsCategoryHovered] = useState(false);
 
     return (
         <div>
+            <ToastContainer />
             <header className="pt-2 border-b bg-gray-50 border-gray-200">
                 <div className="w-[1200px] mx-auto">
                     <div>
@@ -61,10 +63,18 @@ export default function HomeLayout({ auth, categories, children }) {
 
                                             <Link
                                                 href={route("dashboard")}
-                                                className="rounded-md hover:text-blue-500 duration-300 flex items-center gap-1 px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70"
+                                                className="rounded-md group relative hover:text-blue-500 duration-500 flex items-center gap-1 px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70"
                                             >
                                                 <IoCartOutline size={23} />
-                                                Sepetim
+                                                <p>Sepetim</p>
+                                                {cart && (
+                                                    <span class="absolute -right-0.5 top-0.5 flex h-5 w-5 transition duration-500">
+                                                        <span class="animate-ping transition duration-500 absolute inline-flex h-full w-full rounded-full group-hover:bg-blue-400 bg-blue-200 opacity-65"></span>
+                                                        <span class="relative transition duration-500 flex justify-center items-center rounded-full text-xs h-5 w-5 group-hover:bg-blue-500  text-gray-50 bg-blue-300">
+                                                            {cart}
+                                                        </span>
+                                                    </span>
+                                                )}
                                             </Link>
                                         </div>
                                     ) : (
