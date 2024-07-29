@@ -21,6 +21,7 @@ Route::get('/magaza/{slug}', [HomeController::class, "shop"])->name("home.magaza
 Route::middleware('auth', 'verified')->group(function () {
     Route::get('/dashboard', [UserDashboardController::class, 'dashboard'])->name("dashboard");
     Route::get('/sepet', [UserDashboardController::class, 'cart'])->name("user.cart");
+    Route::get('/odeme-yap', [UserDashboardController::class, 'payment'])->name("user.payment");
 
     Route::post('/sepet/add', [UserDashboardController::class, 'addToCart'])->name("user.cartAdd");
     Route::post('/sepet/reduce', [UserDashboardController::class, 'reduceFromCart'])->name("user.reduceToCart");

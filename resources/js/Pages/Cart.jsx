@@ -186,28 +186,30 @@ export default function Cart({ auth, carts, products }) {
                     </div>
                     <div className="w-60 mt-20">
                         <div className="w-full sticky top-[20px]">
-                            <div className="rounded-lg shadow-md bg-white px-3 py-2 border-2 border-gray-200">
-                                <p className="text-xl mb-4 mt-2">
-                                    Sipariş Özeti
+                            <div className="rounded-lg shadow-md bg-white px-4 py-2 border-2 border-gray-200">
+                                <p className="text-sm font-semibold text-blue-500 mb-3 mt-2">
+                                    SEÇİLEN ÜRÜNLER (1)
                                 </p>
+                                <div className="flex text-sm justify-between">
+                                    <p className="text-2xl font-semibold">
+                                        30.500,00 TL
+                                    </p>
+                                </div>
+                                <Link
+                                    href={route("user.payment")}
+                                    className="items-center px-4 bg-blue-500 border border-transparent rounded-md font-semibold text-white uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 w-full py-3 shadow-md my-4 text-2xl flex justify-center"
+                                >
+                                    Alışverişi tamamla
+                                </Link>
                                 <div className="flex text-sm mb-2 justify-between">
-                                    <p>Ürünün Toplamı</p>
+                                    <p>Ürünler</p>
                                     <p>30.500,00 TL</p>
                                 </div>
                                 <div className="flex text-sm mb-2 justify-between">
-                                    <p>Kargo Toplam</p>
-                                    <p>30 TL</p>
-                                </div>
-                                <div className="flex border-t-2 mb-1 pt-1.5 justify-between">
-                                    <p className="text-sm">Toplam</p>
-                                    <p className="font-semibold text-blue-500">
-                                        1.004,89 TL
-                                    </p>
+                                    <p>Kargo</p>
+                                    <p>50 TL</p>
                                 </div>
                             </div>
-                            <Button className="w-full shadow-md py-3 mt-5 text-2xl flex justify-center">
-                                Sepeti Onayla
-                            </Button>
                         </div>
                     </div>
                 </div>

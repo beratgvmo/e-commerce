@@ -117,4 +117,10 @@ class UserDashboardController extends Controller
             'type' => 'success',
         ]);
     }
+
+    public function payment()
+    {
+
+        return Inertia::render("Payment");
+    }
 }

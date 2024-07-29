@@ -13,6 +13,8 @@ import PriceText from "@/Components/PriceText";
 import "react-quill/dist/quill.snow.css";
 import "quill/dist/quill.core.css";
 
+import { RiAddLargeFill } from "react-icons/ri";
+
 export default function ProductDetail({
     auth,
     categories,
@@ -231,7 +233,7 @@ export default function ProductDetail({
                         {currentTab === 2 && (
                             <div>
                                 <div
-                                    className={`px-4 ${
+                                    className={`px-6 mt-2 ${
                                         product.reviews.length > 0 &&
                                         "border-b-2"
                                     }`}
@@ -240,7 +242,7 @@ export default function ProductDetail({
                                         <p className="w-[70%] font-semibold">
                                             {product.name} Değerlendirmeleri
                                         </p>
-                                        {product.reviews.length > 0 || (
+                                        {product.reviews.length > 0 && (
                                             <p className="font-semibold">
                                                 Tüm değerlendirmeler (
                                                 {product.reviews.length})
@@ -248,14 +250,14 @@ export default function ProductDetail({
                                         )}
                                     </div>
                                     <div className="flex mt-6">
-                                        <div className="h-52 w-52 mr-16 flex justify-center">
-                                            {product.images && (
+                                        <div className="mr-16 flex justify-center">
+                                            <div className="h-52 w-52 ">
                                                 <img
                                                     src={product.images[0].img}
                                                     alt="Product Image"
                                                     className="w-auto h-full object-contain rounded-md"
                                                 />
-                                            )}
+                                            </div>
                                         </div>
                                         <div>
                                             {product.reviews.length > 0 ? (
@@ -336,53 +338,103 @@ export default function ProductDetail({
                                             )}
                                         </div>
                                     </div>
-                                </div>
-                                {product.reviews.length > 0 &&
-                                    product.reviews.map((productCommet) => (
-                                        <div
-                                            key={productCommet.id}
-                                            className="flex px-4 m-2 mt-5 mb-16 w-[50rem]"
-                                        >
-                                            <div>
-                                                <div className="p-2 w-16 h-16 flex justify-center items-center border bg-gray-100 rounded-full mr-7 font-semibold">
-                                                    <p>
-                                                        {productCommet.user_name
-                                                            .split(" ")
-                                                            .map((name) =>
-                                                                name[0].toUpperCase()
-                                                            )
-                                                            .join("")}
-                                                    </p>
-                                                </div>
+                                    {product.reviews.length > 0 && (
+                                        <div className="mb-3">
+                                            <div className="flex mt-3 gap-3">
+                                                <button className="py-3 px-7 font-semibold rounded-lg text-white flex gap-1 items-center bg-blue-500 hover:bg-blue-600 transition">
+                                                    Değerlendir{" "}
+                                                    <BiMessageSquareAdd />
+                                                </button>
+                                                <button className="py-3 px-7 font-semibold rounded-lg text-blue-600 bg-blue-100 hover:bg-blue-200 transition">
+                                                    Sepete ekle
+                                                </button>
                                             </div>
-                                            <div>
-                                                <div className="flex items-center mb-3">
-                                                    <RenderStars
-                                                        count={
-                                                            productCommet.rating
-                                                        }
-                                                    />
-                                                    <p className="ml-2 text-gray-600 text-sm">
-                                                        {
-                                                            productCommet.formatted_created_at
-                                                        }
-                                                    </p>
-                                                </div>
-                                                <div className="border bg-gray-100 w-[600px] p-5 text-sm leading-6 rounded-[16px]">
-                                                    <p
-                                                    // dangerouslySetInnerHTML={{
-                                                    //     __html: productCommet.comment.replace(
-                                                    //         /\n/g,
-                                                    //         "<br>"
-                                                    //     ),
-                                                    // }}
-                                                    >
-                                                        {productCommet.comment}
-                                                    </p>
-                                                </div>
+                                            <div className="flex items-center mt-2 gap-1 text-gray-700">
+                                                <MdOutlineInfo />
+                                                Değerlendirme yapabilmek için bu
+                                                ürünü satın almış olmalısınız.
                                             </div>
                                         </div>
-                                    ))}
+                                    )}
+                                </div>
+                                <div className="px-4 mt-5">
+                                    {/* <div className="flex">
+                                        <div className="flex px-3 py-1 items-center border rounded-full">
+                                            <FaStar className="text-yellow-400 mr-1" />
+                                            <p className="mr-1">
+                                                5 Çok İyi (200)
+                                            </p>
+                                            <RiAddLargeFill />
+                                        </div>
+                                        <div className="flex px-3 py-1 items-center border rounded-full">
+                                            <FaStar className="text-yellow-400 mr-1" />
+                                            <p className="mr-1">
+                                                5 Çok İyi (200)
+                                            </p>
+                                            <RiAddLargeFill />
+                                        </div>
+                                    </div> */}
+                                </div>
+                                {product.reviews.length > 0 && (
+                                    <div className="px-4">
+                                        <p className="text-gray-700 text-sm font-semibold">
+                                            Bu ürün ile ilgili 244 değerlendirme
+                                            var.
+                                        </p>
+                                        {product.reviews.map(
+                                            (productCommet) => (
+                                                <div
+                                                    key={productCommet.id}
+                                                    className="flex m-2 mt-5 mb-16 w-[50rem]"
+                                                >
+                                                    <div>
+                                                        <div className="p-2 w-16 h-16 flex justify-center items-center border bg-gray-100 rounded-full mr-7 font-semibold">
+                                                            <p>
+                                                                {productCommet.user_name
+                                                                    .split(" ")
+                                                                    .map(
+                                                                        (
+                                                                            name
+                                                                        ) =>
+                                                                            name[0].toUpperCase()
+                                                                    )
+                                                                    .join("")}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div className="flex items-center mb-3">
+                                                            <RenderStars
+                                                                count={
+                                                                    productCommet.rating
+                                                                }
+                                                            />
+                                                            <p className="ml-2 text-gray-600 text-sm">
+                                                                {
+                                                                    productCommet.formatted_created_at
+                                                                }
+                                                            </p>
+                                                        </div>
+                                                        <div className="border bg-gray-100 w-[600px] py-3 px-5 text-sm leading-6 rounded-[16px]">
+                                                            <p>
+                                                                {
+                                                                    productCommet.comment
+                                                                }
+                                                            </p>
+                                                            <p className="border-t mt-3 mb-1 pt-1 text-xs">
+                                                                Kullanıcı bu
+                                                                ürünü Monster
+                                                                Notebook
+                                                                satıcısından
+                                                                aldı.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         )}
 
