@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InputMask from "react-input-mask";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
@@ -17,15 +17,25 @@ export default function Payment({ auth }) {
         cvv: "",
     });
 
+    useEffect(() => {
+        if (isDrawerOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "auto";
+        }
+
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, [isDrawerOpen]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
         if (name === "name") {
-            // Allow only alphabetical characters for the name field
             const filteredValue = value.replace(/[^A-Za-z\s]/g, "");
             setData((prevCard) => ({ ...prevCard, [name]: filteredValue }));
         } else {
-            // For other fields, just update the value directly
             setData((prevCard) => ({ ...prevCard, [name]: value }));
         }
     };
@@ -35,49 +45,50 @@ export default function Payment({ auth }) {
 
     return (
         <HomeLayout auth={auth}>
-            <div className="flex gap-6 justify-between overflow-hidden">
-                <div className="w-full mt-6">
-                    <div>
-                        <p>Teslimat adresi</p>
-                        <button
-                            onClick={openDrawer}
-                            className="p-4 bg-blue-500 text-white rounded-md"
-                        >
-                            Drawer'ı Aç
-                        </button>
+            <div className="flex gap-6 justify-between">
+                <div>
+                    <p>Teslimat adresi</p>
+                    <button
+                        onClick={openDrawer}
+                        className="p-4 bg-blue-500 text-white rounded-md"
+                    >
+                        Drawer'ı Aç
+                    </button>
+                    <div
+                        className={`fixed inset-0 bg-black bg-opacity-50 transition-opacity ${
+                            isDrawerOpen ? "opacity-100" : "opacity-0"
+                        } ${
+                            isDrawerOpen
+                                ? "pointer-events-auto"
+                                : "pointer-events-none"
+                        }`}
+                    >
                         <div
-                            className={`fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity ${
-                                isDrawerOpen ? "opacity-100" : "opacity-0"
-                            } ${
+                            className={`fixed top-0 right-0 w-64 bg-white h-full shadow-lg transition-transform ${
                                 isDrawerOpen
-                                    ? "pointer-events-auto"
-                                    : "pointer-events-none"
+                                    ? "translate-x-0"
+                                    : "translate-x-full"
                             }`}
                         >
-                            <div
-                                className={`fixed top-0 right-0 w-64 bg-white h-full shadow-lg transition-transform ${
-                                    isDrawerOpen
-                                        ? "translate-x-0"
-                                        : "translate-x-full"
-                                }`}
+                            <button
+                                onClick={closeDrawer}
+                                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
                             >
-                                <button
-                                    onClick={closeDrawer}
-                                    className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-                                >
-                                    &times;
-                                </button>
-                                <div className="p-4">
-                                    <h2 className="text-lg font-semibold">
-                                        Drawer Başlığı
-                                    </h2>
-                                    <p className="mt-2">
-                                        Drawer içeriği buraya gelecek.
-                                    </p>
-                                </div>
+                                &times;
+                            </button>
+                            <div className="p-4">
+                                <h2 className="text-lg font-semibold">
+                                    Drawer Başlığı
+                                </h2>
+                                <p className="mt-2">
+                                    Drawer içeriği buraya gelecek.
+                                </p>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div className="w-full mt-6">
                     <div className="flex w-full justify-between border rounded-lg p-6">
                         <div className="w-96">
                             <div className="w-full mt-1">

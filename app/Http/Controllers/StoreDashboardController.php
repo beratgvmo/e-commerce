@@ -2,21 +2,69 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
+use App\Models\Order;
+use App\Models\Product;
 use App\Models\Store;
 use App\Models\StoreBanner;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Validator;
 
 class StoreDashboardController extends Controller
 {
+
     public function index()
     {
-        return Inertia::render('Store/Dashboard');
+        $storeId = Auth::guard('store')->user()->id;
+        $productCount = Product::where('store_id', $storeId)->count();
+        $todaySales = $this->getTodaySales($storeId);
+        $orders = Order::where('status', 'Sipariş Alındı')->where('store_id', $storeId)->count();
+
+        $startMonth = Carbon::now()->subMonths(11)->startOfMonth();
+        $endMonth = Carbon::now()->endOfMonth();
+        $months = [];
+        $salesData = [];
+
+        while ($startMonth <= $endMonth) {
+            $startMonth->setLocale('tr');
+            $months[] = $startMonth->translatedFormat('F');
+            $salesData[] = $this->getSalesForMonth($startMonth, $storeId);
+            $startMonth->addMonth();
+        }
+
+        $monthlyIncrease = round(($salesData[11] / $salesData[10]) * 100 - 100);
+
+        return Inertia::render('Store/Dashboard', [
+            'todaySales' => $todaySales,
+            'productCount' => $productCount,
+            'salesData' => $salesData,
+            'months' => $months,
+            'orders' => $orders,
+            'monthlyIncrease' => $monthlyIncrease
+        ]);
     }
+
+    private function getTodaySales($storeId)
+    {
+        return Order::where('status', 'Teslim edildi')
+            ->where('store_id', $storeId)
+            ->whereDate('created_at', Carbon::now('Europe/Istanbul')->toDateString())
+            ->sum('total_amount');
+    }
+
+    private function getSalesForMonth($date, $storeId)
+    {
+        return Order::where('status', 'Teslim edildi')
+            ->where('store_id', $storeId)
+            ->whereYear('created_at', $date->year)
+            ->whereMonth('created_at', $date->month)
+            ->sum('total_amount');
+    }
+
 
     private function getRelativePath($url)
     {
@@ -97,7 +145,7 @@ class StoreDashboardController extends Controller
             'img' => Storage::url($imagePath),
         ]);
 
-        return redirect()->back()->with('success', 'Sub-banner updated successfully.');
+        return redirect()->back()->with('success', 'Sub-banner güncellendi.');
     }
 
     public function deleteSubBanner($id)
@@ -108,6 +156,6 @@ class StoreDashboardController extends Controller
 
         $subBanner->delete();
 
-        return redirect()->back()->with('success', 'Sub-banner deleted successfully.');
+        return redirect()->back()->with('success', 'Sub-banner silindi.');
     }
 }
