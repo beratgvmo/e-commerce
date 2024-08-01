@@ -104,7 +104,6 @@ export default function Register({ categories, cargoCompanies }) {
         if (validateStep(step) && nameUnique) {
             post(route("store.register"));
         }
-        setStep(1);
     };
 
     return (

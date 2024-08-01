@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Models\AttributeType;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImg;
+use Attribute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -25,14 +27,22 @@ class ProductController extends Controller
     {
         $categories = Category::where('parent_id', Auth::user()->selling_category_id)->get();
         $subCategories = [];
+        $attributeTypes = [];
 
         foreach ($categories as $category) {
             $subCategories = array_merge($subCategories, Category::where('parent_id', $category->id)->get()->toArray());
         }
 
+        foreach ($subCategories as $subCategory) {
+            $attributeTypes[$subCategory['id']] = AttributeType::where('category_id', $subCategory['id'])
+                ->with('attributes')
+                ->get();
+        }
+
         return Inertia::render('Store/ProductAdd', [
             'categories' => $categories,
             'subCategories' => $subCategories,
+            'attributeTypes' => $attributeTypes
         ]);
     }
 
