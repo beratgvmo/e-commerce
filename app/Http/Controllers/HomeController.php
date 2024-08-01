@@ -47,6 +47,12 @@ class HomeController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
+        $expiresAt = now()->addMinutes(3);
+
+        views($product)
+            ->cooldown($expiresAt)
+            ->record();
+
         $products = Product::where("category_id", $product->category_id)->with("images")->get();
 
         // Ürün özellikleri

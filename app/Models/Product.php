@@ -5,9 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+use CyrildeWit\EloquentViewable\InteractsWithViews;
+use CyrildeWit\EloquentViewable\Contracts\Viewable;
+
+class Product extends Model implements Viewable
 {
     use HasFactory;
+    use InteractsWithViews;
 
     protected $fillable = [
         'name', 'slug', 'category_id', 'description', 'price', "discounted_price", 'stock_quantity',

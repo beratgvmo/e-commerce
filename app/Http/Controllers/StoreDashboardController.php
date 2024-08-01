@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Store;
@@ -16,7 +15,6 @@ use Illuminate\Support\Str;
 
 class StoreDashboardController extends Controller
 {
-
     public function index()
     {
         $storeId = Auth::guard('store')->user()->id;
@@ -24,27 +22,63 @@ class StoreDashboardController extends Controller
         $todaySales = $this->getTodaySales($storeId);
         $orders = Order::where('status', 'Sipariş Alındı')->where('store_id', $storeId)->count();
 
-        $startMonth = Carbon::now()->subMonths(11)->startOfMonth();
-        $endMonth = Carbon::now()->endOfMonth();
+        $storeProducts = Product::where("store_id", $storeId)->get();
+
+        $totalViews = 0;
+
+        foreach ($storeProducts as $product) {
+            $totalViews += $product->views()->count();
+        }
+
+        $startMonth = Carbon::now('Europe/Istanbul')->subMonths(11)->startOfMonth();
+        $endMonth = Carbon::now('Europe/Istanbul')->endOfMonth();
         $months = [];
-        $salesData = [];
+        $monthlySalesData = [];
 
         while ($startMonth <= $endMonth) {
-            $startMonth->setLocale('tr');
-            $months[] = $startMonth->translatedFormat('F');
-            $salesData[] = $this->getSalesForMonth($startMonth, $storeId);
+            $months[] = $startMonth->locale('tr')->translatedFormat('F');
+            $monthlySalesData[] = $this->getSalesForMonth($startMonth, $storeId);
             $startMonth->addMonth();
         }
 
-        $monthlyIncrease = round(($salesData[11] / $salesData[10]) * 100 - 100);
+        $startDay = Carbon::now('Europe/Istanbul')->startOfMonth();
+        $endDay = Carbon::now('Europe/Istanbul')->endOfMonth();
+        $days = [];
+        $dailySalesData = [];
+
+        while ($startDay <= $endDay) {
+            $days[] = $startDay->day;
+            $dailySalesData[] = $this->getSalesForDay($startDay, $storeId);
+            $startDay->addDay();
+        }
+
+        $hours = range(0, 23);
+        $hourlySalesData = [];
+        foreach ($hours as $hour) {
+            $hourlySalesData[] = $this->getSalesForHour($hour, $storeId);
+        }
+
+        $startMonth = Carbon::now('Europe/Istanbul')->subMonths(11)->startOfMonth();
+        $endMonth = Carbon::now('Europe/Istanbul')->endOfMonth();
+
+        $monthlyIncrease = round(($monthlySalesData[11] / $monthlySalesData[10]) * 100 - 100);
+
+        $yesterdaySales = $this->getSalesForDay(Carbon::yesterday('Europe/Istanbul'), $storeId);
+        $dailyIncrease = $yesterdaySales > 0 ? round(($todaySales / $yesterdaySales) * 100 - 100) : 0;
 
         return Inertia::render('Store/Dashboard', [
             'todaySales' => $todaySales,
             'productCount' => $productCount,
-            'salesData' => $salesData,
+            'monthlySalesData' => $monthlySalesData,
             'months' => $months,
+            'dailySalesData' => $dailySalesData,
+            'days' => $days,
+            'hourlySalesData' => $hourlySalesData,
+            'hours' => $hours,
             'orders' => $orders,
-            'monthlyIncrease' => $monthlyIncrease
+            'monthlyIncrease' => $monthlyIncrease,
+            'totalViews' => $totalViews,
+            'dailyIncrease' => $dailyIncrease
         ]);
     }
 
@@ -62,6 +96,24 @@ class StoreDashboardController extends Controller
             ->where('store_id', $storeId)
             ->whereYear('created_at', $date->year)
             ->whereMonth('created_at', $date->month)
+            ->sum('total_amount');
+    }
+
+    private function getSalesForDay($date, $storeId)
+    {
+        return Order::where('status', 'Teslim edildi')
+            ->where('store_id', $storeId)
+            ->whereDate('created_at', $date->toDateString())
+            ->sum('total_amount');
+    }
+
+    private function getSalesForHour($hour, $storeId)
+    {
+        return Order::where('status', 'Teslim edildi')
+            ->where('store_id', $storeId)
+            ->whereDate('created_at', Carbon::now('Europe/Istanbul')->toDateString())
+            ->whereTime('created_at', '>=', sprintf('%02d:00:00', $hour))
+            ->whereTime('created_at', '<', sprintf('%02d:00:00', $hour + 1))
             ->sum('total_amount');
     }
 
