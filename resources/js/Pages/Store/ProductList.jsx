@@ -8,7 +8,9 @@ import PriceText from "@/Components/PriceText";
 export default function ProductList({ auth }) {
     const { products } = usePage().props;
 
-    console.log(products.data);
+    const formatNumber = (number) => {
+        return new Intl.NumberFormat("tr-TR").format(number);
+    };
 
     return (
         <StoreLayout
@@ -34,7 +36,7 @@ export default function ProductList({ auth }) {
                             id="first_name"
                             name="first_name"
                             className="mt-1 block w-full"
-                            placeholder="Alt Kategori Seçimi"
+                            placeholder="Kategori Seçimi"
                         />
                         <TextInput
                             id="first_name"
@@ -45,7 +47,7 @@ export default function ProductList({ auth }) {
                     </div>
                     <div className="relative overflow-x-auto shadow border rounded">
                         <table className="w-full text-sm text-left text-gray-500">
-                            <thead className="text-gray-700 font-black uppercase bg-gray-50">
+                            <thead className="text-gray-700 font-black uppercase bg-gray-100">
                                 <tr>
                                     <th scope="col" className="p-3 border">
                                         Ürün bilgisi
@@ -66,7 +68,7 @@ export default function ProductList({ auth }) {
                                         Stok
                                     </th>
                                     <th scope="col" className="p-3 border">
-                                        içerik Güncelle
+                                        içerik
                                     </th>
                                     <th scope="col" className="p-3 border">
                                         Detay sayfası
@@ -114,24 +116,23 @@ export default function ProductList({ auth }) {
                                                 </div>
                                             </th>
                                             <td className="px-4 border w-[20%]">
-                                                <div className="flex gap-2">
+                                                <div className="flex justify-between">
                                                     {product.attributes
-                                                        .slice(0, 5)
+                                                        .slice(0, 4)
                                                         .map(
                                                             (
                                                                 attribute,
                                                                 index
                                                             ) => (
-                                                                <span
+                                                                <p
                                                                     key={index}
+                                                                    className="mx-0.5 text-sm font-medium"
                                                                 >
+                                                                    #
                                                                     {
                                                                         attribute.name
                                                                     }
-                                                                    {index <
-                                                                        4 &&
-                                                                        " | "}{" "}
-                                                                </span>
+                                                                </p>
                                                             )
                                                         )}
                                                 </div>
@@ -153,8 +154,12 @@ export default function ProductList({ auth }) {
                                                     }
                                                 />
                                             </td>
-                                            <td className="px-4 border">
-                                                <p>{product.stock_quantity}</p>
+                                            <td className="px-4 border font-medium">
+                                                <p>
+                                                    {formatNumber(
+                                                        product.stock_quantity
+                                                    )}
+                                                </p>
                                             </td>
                                             <td className="px-4 border">
                                                 <a
@@ -166,14 +171,14 @@ export default function ProductList({ auth }) {
                                             </td>
                                             <td className="px-4 border">
                                                 <div className="w-full h-full flex justify-center">
-                                                    <div className="font-medium w-10 h-10 bg-gray-200 hover:bg-gray-300 transition duration-200 rounded-md text-lg hover:text-blue-600 text-blue-500 flex justify-center items-center">
-                                                        <Link
-                                                            key={product.id}
-                                                            href={`/urun/${product.slug}`}
-                                                        >
+                                                    <Link
+                                                        key={product.id}
+                                                        href={`/urun/${product.slug}`}
+                                                    >
+                                                        <div className="font-medium w-10 h-10 bg-gray-200 hover:bg-gray-300 transition duration-200 rounded-md text-lg hover:text-blue-600 text-blue-500 flex justify-center items-center">
                                                             <IoIosArrowForward />
-                                                        </Link>
-                                                    </div>
+                                                        </div>
+                                                    </Link>
                                                 </div>
                                             </td>
                                         </tr>

@@ -1,5 +1,3 @@
-// resources/js/Components/FilterTab.jsx
-
 import React, { useState, useEffect, useCallback } from "react";
 import Checkbox from "./Checkbox";
 import TextInput from "./TextInput";
@@ -12,6 +10,9 @@ const FilterTab = ({ attributesMain, categorySubMain, categorySlug }) => {
         attributesMain.map(() => true)
     );
     const [selectedAttributes, setSelectedAttributes] = useState({});
+    const [searchQueries, setSearchQueries] = useState(
+        attributesMain.map(() => "")
+    );
 
     const toggleCategoryVisibility = () =>
         setIsCategoryVisible(!isCategoryVisible);
@@ -49,6 +50,21 @@ const FilterTab = ({ attributesMain, categorySubMain, categorySlug }) => {
         });
     };
 
+    const handleSearchChange = (index, value) => {
+        setSearchQueries((prevState) => {
+            const newState = [...prevState];
+            newState[index] = value;
+            return newState;
+        });
+    };
+
+    const filteredAttributes = (attributes, query) => {
+        if (!query) return attributes;
+        return attributes.filter((attribute) =>
+            attribute.name.toLowerCase().includes(query.toLowerCase())
+        );
+    };
+
     const fetchProducts = useCallback(() => {
         const formattedAttributes = Object.values(selectedAttributes).flat();
         router.visit(route("home.category", { slug: categorySlug }), {
@@ -83,10 +99,11 @@ const FilterTab = ({ attributesMain, categorySubMain, categorySlug }) => {
                     <div className="mb-2">
                         {isCategoryVisible &&
                             categorySubMain.map((category) => (
-                                <div className="">
+                                <div className="" key={category.id}>
                                     <Link
-                                        href={category.slug}
-                                        key={category.id}
+                                        href={route("home.category", {
+                                            slug: category.slug,
+                                        })}
                                         className="text-sm my-1 ml-2 text-gray-800 hover:text-gray-400"
                                     >
                                         {category.name}
@@ -113,33 +130,41 @@ const FilterTab = ({ attributesMain, categorySubMain, categorySlug }) => {
                         {visibleAttributes[index] && (
                             <>
                                 <TextInput
-                                    id="name"
-                                    name="name"
+                                    id={`search-${index}`}
+                                    name={`search-${index}`}
                                     className="block w-full h-6 px-2 py-3 text-xs"
                                     placeholder={`${attributeType.name} ara`}
+                                    value={searchQueries[index]}
+                                    onChange={(e) =>
+                                        handleSearchChange(
+                                            index,
+                                            e.target.value
+                                        )
+                                    }
                                 />
                                 <div className="py-1">
-                                    {attributeType.attributes.map(
-                                        (attribute) => (
-                                            <div
-                                                key={attribute.id}
-                                                className="text-sm py-1"
-                                            >
-                                                <Checkbox
-                                                    className="mr-2"
-                                                    onChange={(e) =>
-                                                        handleAttributeChange(
-                                                            attribute.id,
-                                                            e.target.checked,
-                                                            attributeType.name,
-                                                            attribute.name
-                                                        )
-                                                    }
-                                                />
-                                                {attribute.name}
-                                            </div>
-                                        )
-                                    )}
+                                    {filteredAttributes(
+                                        attributeType.attributes,
+                                        searchQueries[index]
+                                    ).map((attribute) => (
+                                        <div
+                                            key={attribute.id}
+                                            className="text-sm py-1"
+                                        >
+                                            <Checkbox
+                                                className="mr-2"
+                                                onChange={(e) =>
+                                                    handleAttributeChange(
+                                                        attribute.id,
+                                                        e.target.checked,
+                                                        attributeType.name,
+                                                        attribute.name
+                                                    )
+                                                }
+                                            />
+                                            {attribute.name}
+                                        </div>
+                                    ))}
                                 </div>
                             </>
                         )}

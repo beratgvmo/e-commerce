@@ -4,7 +4,6 @@ import { Head } from "@inertiajs/react";
 import Chart from "react-apexcharts";
 import { IoArrowDown, IoArrowUpOutline, IoCart } from "react-icons/io5";
 import { IoMdBasket } from "react-icons/io";
-import { MdOutlineVisibility } from "react-icons/md";
 import { IoEye } from "react-icons/io5";
 import { TbClockX } from "react-icons/tb";
 import { GoCommentDiscussion } from "react-icons/go";

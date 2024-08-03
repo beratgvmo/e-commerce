@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductRequest;
 use App\Models\AttributeType;
 use App\Models\Category;
+use App\Models\Order;
 use App\Models\Product;
+use App\Models\ProductAttribute;
 use App\Models\ProductImg;
 use Attribute;
 use Illuminate\Http\Request;
@@ -81,8 +83,20 @@ class ProductController extends Controller
             }
         }
 
-        return redirect()->route('store.productAdd')->with('success', 'Product added successfully');
+        if ($request->product_attributes) {
+            foreach ($request->product_attributes as $attribute) {
+                $attributeId = $attribute['attribute_id'];
+                ProductAttribute::create([
+                    'product_id' => $product->id,
+                    'attribute_id' => $attributeId,
+                ]);
+            }
+        }
+
+        return redirect()->route('store.productList')->with('success', 'Product added successfully');
     }
+
+
 
     private function formatPrice($price)
     {

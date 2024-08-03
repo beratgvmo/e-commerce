@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\LoginStoreController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StoreDashboardController;
 use App\Http\Controllers\UserDashboardController;
+use App\Models\Order;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -39,10 +41,12 @@ Route::middleware('auth:store')->group(function () {
     Route::get('/store/dashboard', [StoreDashboardController::class, "index"])->name("store.dashboard");
 
     Route::get('/store/productlist', [ProductController::class, "indexList"])->name('store.productList');
-
     Route::get('/store/productadd', [ProductController::class, "indexAdd"])->name('store.productAdd');
-
     Route::post('/store/productadd', [ProductController::class, "productAdd"]);
+
+    Route::get('/store/order', [OrderController::class, "orderList"])->name('store.order');
+    Route::get('/store/order/{order_code}', [OrderController::class, "orderDetail"])->name('store.orderDetail');
+    Route::get('/store/order/{id}/pdf', [OrderController::class, 'generatePdf'])->name('orders.pdf');
 
     Route::post('/store/logout', [LoginStoreController::class, 'destroy'])
         ->name('store.logout');

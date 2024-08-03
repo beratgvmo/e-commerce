@@ -28,9 +28,9 @@ class ProductRequest extends FormRequest
             'price' => 'required|min:2',
             'stock_quantity' => 'required|min:2',
             'is_active' => 'required|boolean',
-            'images' => ['required', 'array', 'min:2'],
+            'images' => ['required', 'array', 'min:3'],
             'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
-            'productAttribute' => ['required', 'array', 'min:5'],
+            'product_attributes' => ['required', 'array', 'min:5'],
         ];
     }
 
@@ -50,11 +50,12 @@ class ProductRequest extends FormRequest
             'is_active.required' => 'Ürün durumu gereklidir.',
             'is_active.boolean' => 'Ürün durumu doğru veya yanlış olmalıdır.',
             'images.required' => 'Resimler yüklenmelidir.',
-            'images.array' => 'Resimler bir dizi olmalıdır.',
-            'images.min' => 'En az iki resim yüklemeniz gerekmektedir.',
+            'images.min' => 'En az üç resim yüklemeniz gerekmektedir.',
             'images.*.image' => 'Geçerli bir resim dosyası yükleyiniz.',
             'images.*.mimes' => 'Resim dosyası jpeg, png, jpg veya webp formatında olmalıdır.',
             'images.*.max' => 'Resim dosyası boyutu en fazla :max KB olmalıdır.',
+            'product_attributes.required' => 'Ürün özellikleri gereklidir.',
+            'product_attributes.min' => 'En az beş ürün özelliği eklemelisiniz.',
         ];
     }
 }

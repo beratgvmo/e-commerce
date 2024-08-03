@@ -27,7 +27,7 @@ export default function ProductAdd({
         stock_quantity: "",
         is_active: true,
         images: [],
-        productAttribute: [],
+        product_attributes: [],
     });
 
     const [step, setStep] = useState(1);
@@ -87,19 +87,40 @@ export default function ProductAdd({
         setData("images", newImages);
     };
 
+    const handleProductAttributes = (attributeId) => {
+        const existingAttributeIndex = data.product_attributes.findIndex(
+            (attr) => attr.attribute_id === attributeId
+        );
+
+        let updatedAttributes;
+        if (existingAttributeIndex > -1) {
+            updatedAttributes = [...data.product_attributes];
+            updatedAttributes[existingAttributeIndex] = {
+                attribute_id: attributeId,
+            };
+        } else {
+            updatedAttributes = [
+                ...data.product_attributes,
+                { attribute_id: attributeId },
+            ];
+        }
+
+        setData("product_attributes", updatedAttributes);
+    };
+
     const validateStep = (currentStep) => {
         switch (currentStep) {
             case 1:
                 return (
-                    data.name.length > 0 &&
-                    data.category_id.length > 0 &&
-                    data.description.length > 0 &&
-                    data.price.length > 0 &&
+                    data.name.length >= 15 &&
+                    data.category_id.length &&
+                    data.description.length > 40 &&
+                    data.price.length > 1 &&
                     data.stock_quantity.length > 0 &&
-                    data.images.length > 0
+                    data.images.length >= 3
                 );
             case 2:
-                return data.productAttribute.length >= 5;
+                return data.product_attributes.length >= 5;
             default:
                 return false;
         }
@@ -117,7 +138,7 @@ export default function ProductAdd({
 
     const submit = (e) => {
         e.preventDefault();
-        if (validateStep(step)) {
+        if (validateStep(2)) {
             post(route("store.productAdd"));
         }
     };
@@ -337,10 +358,19 @@ export default function ProductAdd({
                                         />
                                     </div>
                                     <div className="mt-4 mb-8">
-                                        <InputLabel
-                                            htmlFor="images"
-                                            value="Ürün Görselleri"
-                                        />
+                                        <div className="flex items-center mb-0.5">
+                                            <InputLabel
+                                                htmlFor="images"
+                                                value="Ürün Görselleri"
+                                            />
+                                            <div className="flex items-center group">
+                                                <HiMiniQuestionMarkCircle className="ml-1 mr-2 text-lg" />
+                                                <div className="font-medium text-sm text-gray-200 bg-gray-800 rounded-xl px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                    En az üç resim yüklemeniz
+                                                    gerekmektedir
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div className="h-44 flex mt-2">
                                             {data.images.map((img, index) => (
                                                 <div key={index}>
@@ -417,25 +447,25 @@ export default function ProductAdd({
                                         />
                                     </div>
                                     <div className="mt-4">
-                                        <InputLabel
-                                            htmlFor="is_active"
-                                            value={
-                                                data.is_active
-                                                    ? "Aktif (Ürün Anasyafa Gösteri Açık)"
-                                                    : "Pasif (Ürün Anasyafa Gösteri Kapalı)"
-                                            }
-                                        />
-                                        <Checkbox
-                                            id="is_active"
-                                            name="is_active"
-                                            checked={data.is_active}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "is_active",
-                                                    e.target.checked
-                                                )
-                                            }
-                                        />
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={data.is_active}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "is_active",
+                                                        e.target.checked
+                                                    )
+                                                }
+                                                class="sr-only peer"
+                                            />
+                                            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300  rounded-full peer  peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                            <span class="ms-3 text-sm font-medium text-gray-900">
+                                                {data.is_active
+                                                    ? "Aktif (Ürün Anasayfa Gösterimi Açık)"
+                                                    : "Pasif (Ürün Anasayfa Gösterimi Kapalı)"}
+                                            </span>
+                                        </label>
                                         <InputError
                                             message={errors.is_active}
                                             className="mt-2"
@@ -455,9 +485,18 @@ export default function ProductAdd({
 
                             {step === 2 && (
                                 <div className="p-6 text-gray-900">
-                                    <h1 className="text-xl font-bold mb-5">
-                                        Ürün Özelikleri
-                                    </h1>
+                                    <div className="flex items-center mb-5">
+                                        <h1 className="text-xl font-bold">
+                                            Ürün Özelikleri
+                                        </h1>
+                                        <div className="flex items-center group">
+                                            <HiMiniQuestionMarkCircle className="ml-1 mr-2 text-lg" />
+                                            <div className="font-medium text-sm text-gray-200 bg-gray-800 rounded-xl px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                En az beş ürün özelliği
+                                                eklemelisiniz
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         {data.category_id &&
                                             attributeTypes[
@@ -467,23 +506,15 @@ export default function ProductAdd({
                                                     <InputLabel
                                                         htmlFor={`attribute_${attribute.id}`}
                                                         value={attribute.name}
+                                                        className="mb-0.5"
                                                     />
                                                     <select
                                                         id={`attribute_${attribute.id}`}
                                                         name={`attribute_${attribute.id}`}
                                                         className="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                                                         onChange={(e) =>
-                                                            setData(
-                                                                "productAttribute",
-                                                                [
-                                                                    ...data.productAttribute,
-                                                                    {
-                                                                        id: attribute.id,
-                                                                        value: e
-                                                                            .target
-                                                                            .value,
-                                                                    },
-                                                                ]
+                                                            handleProductAttributes(
+                                                                e.target.value
                                                             )
                                                         }
                                                     >
@@ -508,6 +539,10 @@ export default function ProductAdd({
                                                 </div>
                                             ))}
                                     </div>
+                                    <InputError
+                                        message={errors.product_attributes}
+                                        className="mt-2"
+                                    />
                                     <div className="flex items-center justify-between mt-4">
                                         <PrimaryButton
                                             type="button"
@@ -531,7 +566,7 @@ export default function ProductAdd({
                             {step === 3 && (
                                 <div className="p-6 text-gray-900">
                                     <h1 className="text-xl font-bold mb-5">
-                                        Bitiş
+                                        Ürün Kayıt Sonu
                                     </h1>
                                     <p>
                                         Tüm bilgileri doğru girdiğinizden emin
