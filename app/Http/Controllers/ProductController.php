@@ -22,7 +22,9 @@ class ProductController extends Controller
     {
         $products = Product::where("store_id", Auth::user()->id)->with('category', 'images', "attributes")->paginate(12);
 
-        return Inertia::render('Store/ProductList', ['products' => $products]);
+        $productsCount = Product::where("store_id", Auth::user()->id)->count();
+
+        return Inertia::render('Store/ProductList', ['products' => $products, 'productsCount' => $productsCount]);
     }
 
     public function indexAdd()

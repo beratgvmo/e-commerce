@@ -3,22 +3,41 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use Barryvdh\DomPDF\PDF;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class OrderController extends Controller
 {
-    public function orderList()
+    public function orderList(Request $request)
     {
-        $orders = Order::where("store_id", Auth::user()->id)
-            ->with(['orderItems', 'user'])
-            ->paginate(12);
+        $query = Order::where("store_id", Auth::user("store")->id)
+            ->with(['orderItems', 'user']);
 
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
 
-        return Inertia::render('Store/OrderList', ['orders' => $orders]);
+        if ($request->filled('date')) {
+            switch ($request->date) {
+                case 'yeni':
+                    $query->orderBy('created_at', 'desc');
+                    break;
+                case 'eski':
+                    $query->orderBy('created_at', 'asc');
+                    break;
+                case 'para':
+                    $query->orderBy('total_amount', 'desc');
+                    break;
+            }
+        }
+
+        $orders = $query->paginate(12);
+
+        return Inertia::render('Store/OrderList', [
+            'orders' => $orders,
+        ]);
     }
-
 
     public function orderDetail($order_code)
     {

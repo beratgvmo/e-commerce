@@ -35,8 +35,6 @@ Route::middleware('auth', 'verified')->group(function () {
 });
 
 
-
-
 Route::middleware('auth:store')->group(function () {
     Route::get('/store/dashboard', [StoreDashboardController::class, "index"])->name("store.dashboard");
 

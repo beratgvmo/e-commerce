@@ -103,19 +103,14 @@ export default function StoreLayout({ user, header, children }) {
 
                                         <Dropdown.Content align="left">
                                             <Dropdown.Link
-                                                href={route("store.logout")}
+                                                href={route("store.order")}
                                             >
-                                                Kargo İşlemleri
+                                                Siparis Listesi
                                             </Dropdown.Link>
                                             <Dropdown.Link
-                                                href={route("store.productAdd")}
+                                                href={route("store.order")}
                                             >
                                                 İade İşlemleri
-                                            </Dropdown.Link>
-                                            <Dropdown.Link
-                                                href={route("store.productAdd")}
-                                            >
-                                                Ürün Soruları
                                             </Dropdown.Link>
                                         </Dropdown.Content>
                                     </Dropdown>

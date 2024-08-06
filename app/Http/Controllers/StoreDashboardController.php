@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\StoreBanner;
@@ -20,7 +21,11 @@ class StoreDashboardController extends Controller
         $storeId = Auth::guard('store')->user()->id;
         $productCount = Product::where('store_id', $storeId)->count();
         $todaySales = $this->getTodaySales($storeId);
-        $orders = Order::where('status', 'Sipariş Alındı')->where('store_id', $storeId)->count();
+        $orders = OrderItem::where('status', 'Sipariş Alındı')
+            ->whereHas('order', function ($query) use ($storeId) {
+                $query->where('store_id', $storeId);
+            })
+            ->count();
 
         $storeProducts = Product::where("store_id", $storeId)->get();
 
@@ -58,10 +63,12 @@ class StoreDashboardController extends Controller
             $hourlySalesData[] = $this->getSalesForHour($hour, $storeId);
         }
 
-        $startMonth = Carbon::now('Europe/Istanbul')->subMonths(11)->startOfMonth();
-        $endMonth = Carbon::now('Europe/Istanbul')->endOfMonth();
 
-        $monthlyIncrease = round(($monthlySalesData[11] / $monthlySalesData[10]) * 100 - 100);
+        if ($monthlySalesData[10] != 0) {
+            $monthlyIncrease = round(($monthlySalesData[11] / $monthlySalesData[10]) * 100 - 100);
+        } else {
+            $monthlyIncrease = 0;
+        }
 
         $yesterdaySales = $this->getSalesForDay(Carbon::yesterday('Europe/Istanbul'), $storeId);
         $dailyIncrease = $yesterdaySales > 0 ? round(($todaySales / $yesterdaySales) * 100 - 100) : 0;
@@ -84,38 +91,47 @@ class StoreDashboardController extends Controller
 
     private function getTodaySales($storeId)
     {
-        return Order::where('status', 'Teslim edildi')
-            ->where('store_id', $storeId)
+        return OrderItem::where('status', 'Teslim edildi')
+            ->whereHas('order', function ($query) use ($storeId) {
+                $query->where('store_id', $storeId);
+            })
             ->whereDate('created_at', Carbon::now('Europe/Istanbul')->toDateString())
-            ->sum('total_amount');
+            ->sum('price');
     }
 
     private function getSalesForMonth($date, $storeId)
     {
-        return Order::where('status', 'Teslim edildi')
-            ->where('store_id', $storeId)
+        return OrderItem::where('status', 'Teslim edildi')
+            ->whereHas('order', function ($query) use ($storeId) {
+                $query->where('store_id', $storeId);
+            })
             ->whereYear('created_at', $date->year)
             ->whereMonth('created_at', $date->month)
-            ->sum('total_amount');
+            ->sum('price');
     }
 
     private function getSalesForDay($date, $storeId)
     {
-        return Order::where('status', 'Teslim edildi')
-            ->where('store_id', $storeId)
+        return OrderItem::where('status', 'Teslim edildi')
+            ->whereHas('order', function ($query) use ($storeId) {
+                $query->where('store_id', $storeId);
+            })
             ->whereDate('created_at', $date->toDateString())
-            ->sum('total_amount');
+            ->sum('price');
     }
 
     private function getSalesForHour($hour, $storeId)
     {
-        return Order::where('status', 'Teslim edildi')
-            ->where('store_id', $storeId)
+        return OrderItem::where('status', 'Teslim edildi')
+            ->whereHas('order', function ($query) use ($storeId) {
+                $query->where('store_id', $storeId);
+            })
             ->whereDate('created_at', Carbon::now('Europe/Istanbul')->toDateString())
             ->whereTime('created_at', '>=', sprintf('%02d:00:00', $hour))
             ->whereTime('created_at', '<', sprintf('%02d:00:00', $hour + 1))
-            ->sum('total_amount');
+            ->sum('price');
     }
+
 
 
     private function getRelativePath($url)

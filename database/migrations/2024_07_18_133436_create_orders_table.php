@@ -17,8 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('store_id');
             $table->decimal('total_amount', 8, 2);
             $table->decimal('shipping_cost', 8, 2);
-            $table->enum('status', ['Sipariş Alındı', 'Hazırlandı', 'Kargoya verildi', 'Teslim edildi'])->default('Sipariş Alındı');
             $table->string('delivery_address');
+            $table->enum('status', ['Sipariş sürüyor', 'Sipariş bitti'])->default('Sipariş sürüyor');
             $table->string('order_code')->unique();
 
             $table->timestamps();

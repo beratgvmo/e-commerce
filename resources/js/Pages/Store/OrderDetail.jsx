@@ -1,3 +1,4 @@
+import OutlineButton from "@/Components/OutlineButton";
 import PriceText from "@/Components/PriceText";
 import PrimaryButton from "@/Components/PrimaryButton";
 import StoreLayout from "@/Layouts/StoreLayout";
@@ -116,10 +117,19 @@ export default function OrderDetail({ auth }) {
                                 <th scope="col" className="p-3 border">
                                     Durum
                                 </th>
+                                <th scope="col" className="p-3 border ">
+                                    <div className="flex justify-center">
+                                        <OutlineButton>
+                                            Toplu Güncelle
+                                        </OutlineButton>
+                                    </div>
+                                </th>
                                 <th scope="col" className="p-3 border">
-                                    <PrimaryButton className="!text-gray-800 bg-white !border !border-gray-800 hover:!text-white">
-                                        Toplu Güncelle
-                                    </PrimaryButton>
+                                    <div className="flex justify-center">
+                                        <OutlineButton>
+                                            Toplu Fatura
+                                        </OutlineButton>
+                                    </div>
                                 </th>
                             </tr>
                         </thead>
@@ -192,12 +202,19 @@ export default function OrderDetail({ auth }) {
                                         {formatNumber(item.price)} TL
                                     </td>
                                     <td className="px-4 py-2 border">
-                                        {order.status}
+                                        {item.status}
                                     </td>
                                     <td className="px-4 py-2 border w-[14%]">
                                         <div className=" flex justify-center">
                                             <PrimaryButton>
                                                 Güncelle
+                                            </PrimaryButton>
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-2 border w-[14%]">
+                                        <div className=" flex justify-center">
+                                            <PrimaryButton>
+                                                Ürün Fatura
                                             </PrimaryButton>
                                         </div>
                                     </td>

@@ -5,11 +5,20 @@ import { FaTruckRampBox } from "react-icons/fa6";
 import TextInput from "@/Components/TextInput";
 import PriceText from "@/Components/PriceText";
 
-export default function ProductList({ auth }) {
+export default function ProductList({ auth, productsCount }) {
     const { products } = usePage().props;
 
     const formatNumber = (number) => {
         return new Intl.NumberFormat("tr-TR").format(number);
+    };
+
+    const translatePaginationLabel = (label) => {
+        if (label.includes("Previous")) {
+            return "< Önceki";
+        } else if (label.includes("Next")) {
+            return "Sonraki >";
+        }
+        return label;
     };
 
     return (
@@ -206,25 +215,27 @@ export default function ProductList({ auth }) {
                             </div>
                         )}
                     </div>
-                    {products.data.length > 10 && (
-                        <div className="flex justify-center mt-4">
-                            {products.links.map((link, index) => (
-                                <Link
-                                    key={index}
-                                    href={link.url}
-                                    className={`mx-1 px-4 py-2 border rounded ${
-                                        link.active
-                                            ? "bg-blue-500 text-white"
-                                            : "bg-white text-blue-500 border-blue-500"
-                                    }`}
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label,
-                                    }}
-                                />
-                            ))}
-                        </div>
-                    )}
                 </div>
+                {productsCount > 12 && (
+                    <div className="flex justify-center mt-4">
+                        {products.links.map((link, index) => (
+                            <Link
+                                key={index}
+                                href={link.url}
+                                className={`mx-1 px-4 py-2 border rounded transition ${
+                                    link.active
+                                        ? "bg-blue-500 text-white"
+                                        : "bg-white text-blue-500 border-blue-500  hover:bg-blue-100"
+                                }`}
+                                dangerouslySetInnerHTML={{
+                                    __html: translatePaginationLabel(
+                                        link.label
+                                    ),
+                                }}
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
         </StoreLayout>
     );

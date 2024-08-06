@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id');
             $table->integer('quantity');
             $table->decimal('price', 8, 2);
+            $table->enum('status', ['Sipariş alındı', "Siparişiniz hazırlaniyor", 'Kargoya verildi', 'Teslim edildi', 'İptal edildi', 'İade edildi'])->default('Sipariş Alındı');
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
