@@ -13,8 +13,6 @@ import PriceText from "@/Components/PriceText";
 import "react-quill/dist/quill.snow.css";
 import "quill/dist/quill.core.css";
 
-import { RiAddLargeFill } from "react-icons/ri";
-
 export default function ProductDetail({
     auth,
     categories,

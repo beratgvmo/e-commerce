@@ -1,36 +1,82 @@
+import Modal from "@/Components/Modal";
 import OutlineButton from "@/Components/OutlineButton";
 import PriceText from "@/Components/PriceText";
 import PrimaryButton from "@/Components/PrimaryButton";
+import SecondaryButton from "@/Components/SecondaryButton";
 import StoreLayout from "@/Layouts/StoreLayout";
-import { Head, usePage, Link } from "@inertiajs/react";
-import { IoIosArrowBack } from "react-icons/io";
-import { IoIosArrowForward } from "react-icons/io";
+import { Head, usePage, Link, useForm } from "@inertiajs/react";
+import { useState } from "react";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { FaTimes } from "react-icons/fa";
+import { MdOutlineInfo } from "react-icons/md";
 
 export default function OrderDetail({ auth }) {
     const { order } = usePage().props;
+    const { data, setData, post, put } = useForm({
+        id: "",
+        status: "",
+        order_code: order.order_code,
+    });
 
-    const formatNumber = (number) => {
-        return new Intl.NumberFormat("tr-TR").format(number);
-    };
+    const formatNumber = (number) =>
+        new Intl.NumberFormat("tr-TR").format(number);
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const options = { year: "numeric", month: "long", day: "numeric" };
-        const datePart = date.toLocaleDateString("tr-TR", options);
-        const timePart = date.toLocaleTimeString("tr-TR", {
+        return `${date.toLocaleDateString(
+            "tr-TR",
+            options
+        )} ${date.toLocaleTimeString("tr-TR", {
             hour: "2-digit",
             minute: "2-digit",
-        });
-        return `${datePart} ${timePart}`;
+        })}`;
     };
 
-    const quantity = (order_items) => {
-        let quantity = 0;
-        order_items.map((item) => {
-            quantity += item.quantity;
-        });
+    const quantity = (orderItems) =>
+        orderItems.reduce((total, item) => total + item.quantity, 0);
 
-        return quantity;
+    const [open, setOpen] = useState(false);
+    const [openOrder, setOpenOrder] = useState(false);
+
+    const openModal = () => {
+        setOpen(true);
+    };
+
+    const closeModal = () => {
+        setOpen(false);
+        setData("id", "");
+        setData("status", "");
+    };
+    const openModalOrder = () => {
+        setOpenOrder(true);
+    };
+
+    const closeModalOrder = () => {
+        setOpenOrder(false);
+        setData("status", "");
+    };
+
+    const updateOrder = (e) => {
+        e.preventDefault();
+        put(route("update.orderDetail", { id: data.id }), {
+            preserveScroll: true,
+            onSuccess: () => {
+                closeModal();
+                setData("id", "");
+                setData("status", "");
+            },
+        });
+    };
+    const updateAllOrder = (e) => {
+        e.preventDefault();
+        put(route("allUpdate.orderDetail", { order_code: data.order_code }), {
+            preserveScroll: true,
+            onSuccess: () => {
+                closeModal();
+                setData("status", "");
+            },
+        });
     };
 
     return (
@@ -43,6 +89,144 @@ export default function OrderDetail({ auth }) {
             }
         >
             <Head title="Order Detail" />
+
+            <Modal show={open} onClose={closeModal} maxWidth="xl">
+                <div className="p-6">
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-xl font-bold text-gray-900">
+                            Sipariş Durumunu Güncelle
+                        </h2>
+                        <button
+                            type="button"
+                            className="rounded-md p-1 inline-flex items-center justify-center text-gray-400 focus:outline-none transition"
+                            onClick={closeModal}
+                        >
+                            <FaTimes />
+                        </button>
+                    </div>
+                    <form onSubmit={updateOrder} className="mt-4">
+                        <select
+                            value={data.status}
+                            onChange={(e) => setData("status", e.target.value)}
+                            className="block w-full font-medium p-2 border border-gray-300 rounded-md"
+                        >
+                            <option value="" className="font-medium">
+                                Durumunu Güncelleyin
+                            </option>
+                            <option
+                                value="Siparişiniz hazırlaniyor"
+                                className="font-medium"
+                            >
+                                Siparişiniz hazırlaniyor
+                            </option>
+                            <option
+                                value="Kargoya verildi"
+                                className="font-medium"
+                            >
+                                Kargoya verildi
+                            </option>
+                            <option
+                                className="font-medium"
+                                value="İptal edildi"
+                            >
+                                Siparişi İptal et
+                            </option>
+                        </select>
+                        <div className="flex h-6 gap-1 items-center  text-sm">
+                            {data.status === "Siparişiniz hazırlaniyor" && (
+                                <>
+                                    <MdOutlineInfo />
+                                    <p>
+                                        Siparişiniz hazırlanıdı ve en kısa
+                                        sürede kargoya verilecektir.
+                                    </p>
+                                </>
+                            )}
+                            {data.status === "Kargoya verildi" && (
+                                <>
+                                    <MdOutlineInfo />
+                                    <p>
+                                        Siparişiniz kargoya verildi. Kargo takip
+                                        numaranızla gönderinizi
+                                        izleyebilirsiniz.
+                                    </p>
+                                </>
+                            )}
+                            {data.status === "İptal edildi" && (
+                                <>
+                                    <MdOutlineInfo />
+                                    <p>
+                                        Siparişiniz iptal edildi. Mağaza puanı
+                                        ve ürün gösterimi etkilenebilir.
+                                    </p>
+                                </>
+                            )}
+                        </div>
+                        <div className="mt-3 flex justify-end gap-3">
+                            <SecondaryButton onClick={closeModal}>
+                                Kapat
+                            </SecondaryButton>
+                            <PrimaryButton type="submit">Kaydet</PrimaryButton>
+                        </div>
+                    </form>
+                </div>
+            </Modal>
+
+            <Modal show={openOrder} onClose={closeModalOrder} maxWidth="xl">
+                <div className="p-6">
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-xl font-bold text-gray-900">
+                            Toplu Sipariş Durumunu Güncelle
+                        </h2>
+                        <button
+                            type="button"
+                            className="rounded-md p-1 inline-flex items-center justify-center text-gray-400 focus:outline-none transition"
+                            onClick={closeModalOrder}
+                        >
+                            <FaTimes />
+                        </button>
+                    </div>
+                    <form onSubmit={updateAllOrder} className="mt-4">
+                        <select
+                            value={data.status}
+                            onChange={(e) => setData("status", e.target.value)}
+                            className="block w-full font-medium p-2 border border-gray-300 rounded-md"
+                        >
+                            <option value="" className="font-medium">
+                                Durumunu Güncelleyin
+                            </option>
+                            <option
+                                value="Siparişiniz hazırlaniyor"
+                                className="font-medium"
+                            >
+                                Siparişiniz hazırlaniyor
+                            </option>
+                            <option
+                                value="Kargoya verildi"
+                                className="font-medium"
+                            >
+                                Kargoya verildi
+                            </option>
+                            <option
+                                className="font-medium"
+                                value="İptal edildi"
+                            >
+                                Siparişi İptal et
+                            </option>
+                        </select>
+                        <div className="flex h-6 gap-1 items-center  text-sm">
+                            <MdOutlineInfo />
+                            <p>Secimiz Siparişiniz bütün etkilicek</p>
+                        </div>
+                        <div className="mt-3 flex justify-end gap-3">
+                            <SecondaryButton onClick={closeModalOrder}>
+                                Kapat
+                            </SecondaryButton>
+                            <PrimaryButton type="submit">Kaydet</PrimaryButton>
+                        </div>
+                    </form>
+                </div>
+            </Modal>
 
             <div className="py-12">
                 <div className="bg-white p-4 text-gray-900 px-6 overflow-hidden shadow-sm rounded-lg">
@@ -93,12 +277,6 @@ export default function OrderDetail({ auth }) {
                             </div>
                         </div>
                     </div>
-                    {/* <p>
-                        <strong>Durum:</strong> {order.status}
-                    </p>
-                    <p>
-                        <strong>Adres:</strong> {order.delivery_address}
-                    </p> */}
                     <h3 className="text-lg font-bold mt-12 mb-2 ml-2">
                         - Sipariş Edilen Ürünler
                     </h3>
@@ -117,9 +295,13 @@ export default function OrderDetail({ auth }) {
                                 <th scope="col" className="p-3 border">
                                     Durum
                                 </th>
-                                <th scope="col" className="p-3 border ">
+                                <th scope="col" className="p-3 border">
                                     <div className="flex justify-center">
-                                        <OutlineButton>
+                                        <OutlineButton
+                                            onClick={() => {
+                                                openModalOrder();
+                                            }}
+                                        >
                                             Toplu Güncelle
                                         </OutlineButton>
                                     </div>
@@ -141,7 +323,7 @@ export default function OrderDetail({ auth }) {
                                 >
                                     <th
                                         scope="row"
-                                        className="px-4 w-[34%] text-sm py-2 border font-medium text-gray-900 "
+                                        className="px-4 w-[34%] text-sm py-2 border font-medium text-gray-900"
                                     >
                                         <div className="flex items-center">
                                             <img
@@ -157,14 +339,13 @@ export default function OrderDetail({ auth }) {
                                                     <p className="text-sm mb-2">
                                                         {item.product.name
                                                             .length > 40
-                                                            ? item.product.name.slice(
+                                                            ? `${item.product.name.slice(
                                                                   0,
                                                                   40
-                                                              ) + "..."
+                                                              )}...`
                                                             : item.product.name}
                                                     </p>
                                                     <Link
-                                                        key={order.id}
                                                         href={`/urun/${item.product.slug}`}
                                                     >
                                                         <div className="font-medium w-6 h-6 hover:bg-gray-200 transition duration-200 rounded-md text-lg hover:text-blue-600 text-blue-500 flex justify-center items-center">
@@ -205,14 +386,19 @@ export default function OrderDetail({ auth }) {
                                         {item.status}
                                     </td>
                                     <td className="px-4 py-2 border w-[14%]">
-                                        <div className=" flex justify-center">
-                                            <PrimaryButton>
+                                        <div className="flex justify-center">
+                                            <PrimaryButton
+                                                onClick={() => {
+                                                    openModal();
+                                                    setData("id", item.id);
+                                                }}
+                                            >
                                                 Güncelle
                                             </PrimaryButton>
                                         </div>
                                     </td>
                                     <td className="px-4 py-2 border w-[14%]">
-                                        <div className=" flex justify-center">
+                                        <div className="flex justify-center">
                                             <PrimaryButton>
                                                 Ürün Fatura
                                             </PrimaryButton>
@@ -227,147 +413,3 @@ export default function OrderDetail({ auth }) {
         </StoreLayout>
     );
 }
-
-/*
-                        <table className="w-full text-sm text-left text-gray-500">
-                            <thead className="text-gray-700 font-black uppercase bg-gray-100">
-                                <tr>
-                                    <th scope="col" className="p-3 border">
-                                        Ürün bilgisi
-                                    </th>
-                                    <th scope="col" className="p-3 border">
-                                        Özellikleri
-                                    </th>
-                                    <th scope="col" className="p-3 border">
-                                        Komisyon
-                                    </th>
-                                    <th scope="col" className="p-3 border">
-                                        Piyasa Satiş fiyatı
-                                    </th>
-                                    <th scope="col" className="p-3 border">
-                                        İndirimli Satiş fiyatı
-                                    </th>
-                                    <th scope="col" className="p-3 border">
-                                        Stok
-                                    </th>
-                                    <th scope="col" className="p-3 border">
-                                        içerik
-                                    </th>
-                                    <th scope="col" className="p-3 border">
-                                        Detay sayfası
-                                    </th>
-                                </tr>
-                            </thead>
-                            {products.data.length > 0 && (
-                                <tbody>
-                                    {products.data.map((product) => (
-                                        <tr
-                                            key={product.id}
-                                            className="bg-white border-t"
-                                        >
-                                            <th
-                                                scope="row"
-                                                className="px-4 w-[33%] text-sm py-2 font-medium text-gray-900 "
-                                            >
-                                                <div className="flex items-center">
-                                                    <img
-                                                        className="select-none w-20 h-full object-cover mr-4 rounded-md border-2"
-                                                        loading="lazy"
-                                                        src={
-                                                            product.images[0]
-                                                                ?.img
-                                                        }
-                                                        alt={product.name}
-                                                    />
-                                                    <div className="">
-                                                        <p className="text-sm mb-2">
-                                                            {product.name
-                                                                .length > 60
-                                                                ? product.name.slice(
-                                                                      0,
-                                                                      47
-                                                                  ) + "..."
-                                                                : product.name}
-                                                        </p>
-                                                        <p className="text-gray-500 mt-2">
-                                                            {
-                                                                product.category
-                                                                    .name
-                                                            }
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </th>
-                                            <td className="px-4 border w-[20%]">
-                                                <div className="flex justify-between">
-                                                    {product.attributes
-                                                        .slice(0, 4)
-                                                        .map(
-                                                            (
-                                                                attribute,
-                                                                index
-                                                            ) => (
-                                                                <p
-                                                                    key={index}
-                                                                    className="mx-0.5 text-sm font-medium"
-                                                                >
-                                                                    #
-                                                                    {
-                                                                        attribute.name
-                                                                    }
-                                                                </p>
-                                                            )
-                                                        )}
-                                                </div>
-                                            </td>
-                                            <td className="px-4 border">
-                                                <p className=" bg-green-500 py-1 text-white rounded-full text-center">
-                                                    %10.0
-                                                </p>
-                                            </td>
-                                            <td className="px-4 font-black border w-[10%]">
-                                                <PriceText
-                                                    value={product.price}
-                                                />
-                                            </td>
-                                            <td className="px-4 font-black border w-[10%]">
-                                                <PriceText
-                                                    value={
-                                                        product.discounted_price
-                                                    }
-                                                />
-                                            </td>
-                                            <td className="px-4 border font-medium">
-                                                <p>
-                                                    {formatNumber(
-                                                        product.stock_quantity
-                                                    )}
-                                                </p>
-                                            </td>
-                                            <td className="px-4 border">
-                                                <a
-                                                    href="#"
-                                                    className="font-medium text-blue-600 hover:underline"
-                                                >
-                                                    Düzenle
-                                                </a>
-                                            </td>
-                                            <td className="px-4 border">
-                                                <div className="w-full h-full flex justify-center">
-                                                    <Link
-                                                        key={product.id}
-                                                        href={`/urun/${product.slug}`}
-                                                    >
-                                                        <div className="font-medium w-10 h-10 bg-gray-200 hover:bg-gray-300 transition duration-200 rounded-md text-lg hover:text-blue-600 text-blue-500 flex justify-center items-center">
-                                                            <IoIosArrowForward />
-                                                        </div>
-                                                    </Link>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            )}
-                        </table>
-
-*/

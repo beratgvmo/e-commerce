@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -16,6 +17,8 @@ class OrderController extends Controller
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
+        } else {
+            $query->where('status', "Sipariş sürüyor");
         }
 
         if ($request->filled('date')) {
@@ -29,6 +32,8 @@ class OrderController extends Controller
                 case 'para':
                     $query->orderBy('total_amount', 'desc');
                     break;
+                default:
+                    $query->orderBy('created_at', 'desc');
             }
         }
 
@@ -39,6 +44,7 @@ class OrderController extends Controller
         ]);
     }
 
+
     public function orderDetail($order_code)
     {
         $order = Order::where("store_id", Auth::user()->id)
@@ -47,6 +53,42 @@ class OrderController extends Controller
             ->firstOrFail();
 
         return Inertia::render('Store/OrderDetail', ['order' => $order]);
+    }
+
+    public function updateOrderDetail(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|string',
+        ]);
+
+        $orderItem = OrderItem::findOrFail($id);
+        $orderItem->status = $request->status;
+        $orderItem->save();
+
+        return redirect()->back()->with([
+            'message' => "Sipariş durumu başarıyla güncellendi",
+            'type' => 'success',
+        ]);
+    }
+
+    public function allUpdateOrderDetail(Request $request, $order_code)
+    {
+        $request->validate([
+            'status' => 'required|string',
+        ]);
+
+        $order = Order::where("order_code", $order_code)->with("orderItems")->firstOrFail();
+
+        foreach ($order->orderItems as $item) {
+            $orderItem = OrderItem::findOrFail($item->id);
+            $orderItem->status = $request->status;
+            $orderItem->save();
+        }
+
+        return redirect()->back()->with([
+            'message' => "Toplu sipariş durumu başarıyla güncellendi",
+            'type' => 'success',
+        ]);
     }
 
     public function generatePdf($id)

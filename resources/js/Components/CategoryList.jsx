@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Transition } from "@headlessui/react";
 import SubCategoryList from "./SubCategoryList";
 
@@ -8,13 +8,22 @@ const CategoryList = ({ categories, setIsCategoryHovered }) => {
     );
 
     const [openCategoryId, setOpenCategoryId] = useState(null);
+    const timerRef = useRef(null);
 
     const handleMouseEnter = (categoryId) => {
-        setOpenCategoryId(categoryId);
-        setIsCategoryHovered(true);
+        if (openCategoryId !== null) {
+            setOpenCategoryId(categoryId);
+            setIsCategoryHovered(true);
+        } else {
+            timerRef.current = setTimeout(() => {
+                setOpenCategoryId(categoryId);
+                setIsCategoryHovered(true);
+            }, 300);
+        }
     };
 
     const handleMouseLeave = () => {
+        clearTimeout(timerRef.current);
         setOpenCategoryId(null);
         setIsCategoryHovered(false);
     };
@@ -34,12 +43,13 @@ const CategoryList = ({ categories, setIsCategoryHovered }) => {
                     </div>
                     <Transition
                         show={openCategoryId === category.id}
-                        enter="transition-opacity duration-200"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="transition-opacity duration-200"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
+                        enter="transition-transform transition-opacity duration-300"
+                        enterFrom="transform scale-y-0 opacity-0"
+                        enterTo="transform scale-y-100 opacity-100"
+                        leave="transition-transform transition-opacity duration-300"
+                        leaveFrom="transform scale-y-100 opacity-100"
+                        leaveTo="transform scale-y-0 opacity-0"
+                        className="origin-top"
                     >
                         <div
                             className="z-50 absolute px-4 py-2 w-full left-0 rounded-b-md bg-gray-100 border border-gray-200 border-t-0"

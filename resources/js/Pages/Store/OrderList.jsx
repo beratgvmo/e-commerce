@@ -25,7 +25,7 @@ export default function OrderList({ auth }) {
     }, [data]);
 
     useEffect(() => {
-        const timeoutId = setTimeout(fetchOrder, 200);
+        const timeoutId = setTimeout(fetchOrder, 100);
         return () => clearTimeout(timeoutId);
     }, [data, fetchOrder]);
 
