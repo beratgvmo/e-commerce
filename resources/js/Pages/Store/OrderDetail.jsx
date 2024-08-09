@@ -16,9 +16,7 @@ import {
     TbBasketPin,
 } from "react-icons/tb";
 import { TbBasketShare } from "react-icons/tb";
-import LinkButton from "@/Components/LinkButton";
 import NoteBox from "@/Components/NoteBox";
-import Button from "@/Components/Button";
 
 export default function OrderDetail({ auth }) {
     const { order } = usePage().props;
