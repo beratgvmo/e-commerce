@@ -1,11 +1,17 @@
+import NoteBox from "@/Components/NoteBox";
 import PriceText from "@/Components/PriceText";
 import StoreLayout from "@/Layouts/StoreLayout";
 import { Head, usePage, Link, useForm, router } from "@inertiajs/react";
 import { useState, useEffect, useCallback } from "react";
 import { FaTruckRampBox } from "react-icons/fa6";
 import { IoIosArrowForward } from "react-icons/io";
-import { TbClock, TbClockX, TbClockCheck } from "react-icons/tb";
-
+import {
+    TbClock,
+    TbClockX,
+    TbBasketOff,
+    TbBasketCheck,
+    TbBasketDown,
+} from "react-icons/tb";
 export default function OrderList({ auth }) {
     const { orders } = usePage().props;
 
@@ -49,29 +55,19 @@ export default function OrderList({ auth }) {
 
         if (diffDays > 3) {
             return (
-                <div className="flex items-center">
-                    <div className="w-10 h-10 text-2xl mr-4 bg-red-800/15 text-red-600 rounded-lg flex justify-center items-center">
-                        <TbClockX size={26} />
-                    </div>
-                    <span className="text-red-600">
-                        {diffDays - 4 > 0 && `${diffDays - 4} gün`}
-                        {diffDays - 4 > 0 && diffHours > 0 ? "," : ""}
-                        {diffHours > 0 && ` ${diffHours} saat`} geçti
-                    </span>
-                </div>
+                <NoteBox icon={TbClockX} color="yellow">
+                    {diffDays - 4 > 0 && `${diffDays - 4} gün`}
+                    {diffDays - 4 > 0 && diffHours > 0 ? "," : ""}
+                    {diffHours > 0 && ` ${diffHours} saat`} geçti
+                </NoteBox>
             );
         } else {
             return (
-                <div className="flex items-center">
-                    <div className="w-10 h-10 text-2xl mr-4 bg-blue-800/15 text-blue-600 rounded-lg flex justify-center items-center">
-                        <TbClock size={26} />
-                    </div>
-                    <span className="text-blue-600">
-                        {3 - diffDays > 0 && `${3 - diffDays} gün`}
-                        {diffDays - 3 > 0 && 24 - diffHours > 0 ? "," : ""}
-                        {24 - diffHours > 0 && ` ${24 - diffHours} saat`} kaldı
-                    </span>
-                </div>
+                <NoteBox icon={TbClock} color="blue">
+                    {3 - diffDays > 0 && `${3 - diffDays} gün`}
+                    {diffDays - 3 > 0 && 24 - diffHours > 0 ? "," : ""}
+                    {24 - diffHours > 0 && ` ${24 - diffHours} saat`} kaldı
+                </NoteBox>
             );
         }
     };
@@ -80,7 +76,7 @@ export default function OrderList({ auth }) {
         <StoreLayout
             user={auth.store}
             header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                <h2 className="font-semibold text-xl  text-gray-800 leading-tight">
                     Sipariş Listesi
                 </h2>
             }
@@ -111,7 +107,13 @@ export default function OrderList({ auth }) {
                             <option value="Sipariş bitti">
                                 Tamamlanan Siparişler
                             </option>
-                            <option value="">Tüm Siparişler</option>
+                            <option value="İptal edildi">
+                                İptal edildi Siparişler
+                            </option>
+                            <option value="İade edildi">
+                                İade edillen Siparişler
+                            </option>
+                            <option value="all">Tüm Siparişler</option>
                         </select>
                     </div>
                     <div className="relative overflow-x-auto shadow border rounded">
@@ -157,19 +159,39 @@ export default function OrderList({ auth }) {
                                             </td>
                                             <td className="px-4 border">
                                                 {order.status ==
-                                                "Sipariş bitti" ? (
-                                                    <div className="flex items-center">
-                                                        <div className="w-10 h-10 text-2xl mr-4 bg-green-800/15 text-green-600 rounded-lg flex justify-center items-center">
-                                                            <TbClockCheck
-                                                                size={26}
-                                                            />
-                                                        </div>
-                                                        <span className="text-green-600">
-                                                            Sipariş Tamanladı
-                                                        </span>
-                                                    </div>
-                                                ) : (
-                                                    formatDate(order.created_at)
+                                                    "Sipariş sürüyor" &&
+                                                    formatDate(
+                                                        order.created_at
+                                                    )}
+
+                                                {order.status ==
+                                                    "Sipariş bitti" && (
+                                                    <NoteBox
+                                                        icon={TbBasketCheck}
+                                                        color="green"
+                                                    >
+                                                        Sipariş Tamanladı
+                                                    </NoteBox>
+                                                )}
+
+                                                {order.status ==
+                                                    "İade edildi" && (
+                                                    <NoteBox
+                                                        icon={TbBasketDown}
+                                                        color="orange"
+                                                    >
+                                                        Sipariş İade edildi
+                                                    </NoteBox>
+                                                )}
+
+                                                {order.status ==
+                                                    "İptal edildi" && (
+                                                    <NoteBox
+                                                        icon={TbBasketOff}
+                                                        color="red"
+                                                    >
+                                                        Sipariş İptal Edildi
+                                                    </NoteBox>
                                                 )}
                                             </td>
                                             <td className="px-4 border w-[6%]">

@@ -47,7 +47,7 @@ Route::middleware('auth:store')->group(function () {
     Route::put('/store/order/update/{id}', [OrderController::class, "updateOrderDetail"])->name('update.orderDetail');
     Route::put('/store/order/all-update/{order_code}', [OrderController::class, "allUpdateOrderDetail"])->name('allUpdate.orderDetail');
 
-    Route::get('/store/order/{id}/pdf', [OrderController::class, 'generatePdf'])->name('orders.pdf');
+    Route::get('/store/order/all-pdf/{order_code}', [OrderController::class, 'generatePdfAll']);
 
     Route::post('/store/logout', [LoginStoreController::class, 'destroy'])
         ->name('store.logout');

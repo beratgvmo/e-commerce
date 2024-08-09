@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -15,12 +16,9 @@ class OrderController extends Controller
         $query = Order::where("store_id", Auth::user("store")->id)
             ->with(['orderItems', 'user']);
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        } else {
-            $query->where('status', "Sipariş sürüyor");
+        if ($request->status != "all") {
+            $query->where('status', $request->status ?: 'Sipariş sürüyor');
         }
-
         if ($request->filled('date')) {
             switch ($request->date) {
                 case 'yeni':
@@ -59,11 +57,27 @@ class OrderController extends Controller
     {
         $request->validate([
             'status' => 'required|string',
+            'order_code' => 'required|string'
         ]);
 
         $orderItem = OrderItem::findOrFail($id);
         $orderItem->status = $request->status;
         $orderItem->save();
+
+        $order = Order::where("order_code", $request->order_code)->with("orderItems")->firstOrFail();
+
+        $allCancelled = true;
+        foreach ($order->orderItems as $item) {
+            if ($item->status != 'İptal edildi') {
+                $allCancelled = false;
+                break;
+            }
+        }
+
+        if ($allCancelled) {
+            $order->status = 'İptal edildi';
+            $order->save();
+        }
 
         return redirect()->back()->with([
             'message' => "Sipariş durumu başarıyla güncellendi",
@@ -85,17 +99,32 @@ class OrderController extends Controller
             $orderItem->save();
         }
 
+        $allCancelled = true;
+        foreach ($order->orderItems as $item) {
+            if ($item->status != 'İptal edildi') {
+                $allCancelled = false;
+                break;
+            }
+        }
+
+        if ($allCancelled) {
+            $order->status = 'İptal edildi';
+            $order->save();
+        }
+
         return redirect()->back()->with([
             'message' => "Toplu sipariş durumu başarıyla güncellendi",
             'type' => 'success',
         ]);
     }
 
-    public function generatePdf($id)
+
+    public function generatePdfAll($order_code)
     {
-        $order = Order::with('orderItems.product', 'user', 'store')->findOrFail($id);
-        $pdf = app('dompdf.wrapper');
-        $pdf->loadView('pdf.order_receipt', compact('order'));
+        $order = Order::with('user', 'store', 'orderItems.product')->where("store_id", Auth::user("store")->id)->where("order_code", $order_code)->first();
+
+        $pdf = Pdf::loadView('pdf.order_receipt', compact('order'))
+            ->setPaper('a4');
 
         return $pdf->download('order_receipt.pdf');
     }

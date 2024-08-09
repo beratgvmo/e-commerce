@@ -4,15 +4,25 @@ import PriceText from "@/Components/PriceText";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import StoreLayout from "@/Layouts/StoreLayout";
-import { Head, usePage, Link, useForm } from "@inertiajs/react";
+import { Head, usePage, Link, useForm, router } from "@inertiajs/react";
 import { useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { FaTimes } from "react-icons/fa";
 import { MdOutlineInfo } from "react-icons/md";
+import {
+    TbBasket,
+    TbBasketCancel,
+    TbBasketCheck,
+    TbBasketPin,
+} from "react-icons/tb";
+import { TbBasketShare } from "react-icons/tb";
+import LinkButton from "@/Components/LinkButton";
+import NoteBox from "@/Components/NoteBox";
+import Button from "@/Components/Button";
 
 export default function OrderDetail({ auth }) {
     const { order } = usePage().props;
-    const { data, setData, post, put } = useForm({
+    const { data, setData, post, put, get } = useForm({
         id: "",
         status: "",
         order_code: order.order_code,
@@ -73,10 +83,14 @@ export default function OrderDetail({ auth }) {
         put(route("allUpdate.orderDetail", { order_code: data.order_code }), {
             preserveScroll: true,
             onSuccess: () => {
-                closeModal();
+                closeModalOrder();
                 setData("status", "");
             },
         });
+    };
+
+    const handleButtonClick = (itemId) => {
+        setData("id", itemId);
     };
 
     return (
@@ -199,25 +213,55 @@ export default function OrderDetail({ auth }) {
                                 value="Siparişiniz hazırlaniyor"
                                 className="font-medium"
                             >
-                                Siparişiniz hazırlaniyor
+                                Siparişler hazırlaniyor
                             </option>
                             <option
                                 value="Kargoya verildi"
                                 className="font-medium"
                             >
-                                Kargoya verildi
+                                Siparişler Kargoya verildi
                             </option>
                             <option
                                 className="font-medium"
                                 value="İptal edildi"
                             >
-                                Siparişi İptal et
+                                Siparişler İptal et
                             </option>
                         </select>
                         <div className="flex h-6 gap-1 items-center  text-sm">
                             <MdOutlineInfo />
-                            <p>Secimiz Siparişiniz bütün etkilicek</p>
+                            {data.status === "" && (
+                                <>
+                                    <p>Secimiz Siparişiniz bütün etkilicek.</p>
+                                </>
+                            )}
+                            {data.status === "Siparişiniz hazırlaniyor" && (
+                                <>
+                                    <p>
+                                        Sipariş hazırlanıdı ve kısa sürede
+                                        kargoyacak.
+                                    </p>
+                                </>
+                            )}
+                            {data.status === "Kargoya verildi" && (
+                                <>
+                                    <p>
+                                        Sipariş kargoya verildi. Kargo takip
+                                        numaranızla gönderinizi
+                                        izleyebilirsiniz.
+                                    </p>
+                                </>
+                            )}
+                            {data.status === "İptal edildi" && (
+                                <>
+                                    <p>
+                                        Siparişiniz iptal edildi. Mağaza puanı
+                                        ve ürün gösterimi etkilenebilir.
+                                    </p>
+                                </>
+                            )}
                         </div>
+
                         <div className="mt-3 flex justify-end gap-3">
                             <SecondaryButton onClick={closeModalOrder}>
                                 Kapat
@@ -383,11 +427,55 @@ export default function OrderDetail({ auth }) {
                                         {formatNumber(item.price)} TL
                                     </td>
                                     <td className="px-4 py-2 border">
-                                        {item.status}
+                                        {item.status == "İptal edildi" && (
+                                            <NoteBox
+                                                icon={TbBasketCancel}
+                                                color="red"
+                                            >
+                                                {item.status}
+                                            </NoteBox>
+                                        )}
+                                        {item.status == "Sipariş alındı" && (
+                                            <NoteBox
+                                                icon={TbBasket}
+                                                color="blue"
+                                            >
+                                                {item.status}
+                                            </NoteBox>
+                                        )}
+                                        {item.status ==
+                                            "Siparişiniz hazırlaniyor" && (
+                                            <NoteBox
+                                                icon={TbBasketShare}
+                                                color="teal"
+                                            >
+                                                {item.status}
+                                            </NoteBox>
+                                        )}
+                                        {item.status == "Kargoya verildi" && (
+                                            <NoteBox
+                                                icon={TbBasketPin}
+                                                color="emerald"
+                                            >
+                                                {item.status}
+                                            </NoteBox>
+                                        )}
+                                        {item.status == "Teslim edildi" && (
+                                            <NoteBox
+                                                icon={TbBasketCheck}
+                                                color="green"
+                                            >
+                                                {item.status}
+                                            </NoteBox>
+                                        )}
                                     </td>
                                     <td className="px-4 py-2 border w-[14%]">
                                         <div className="flex justify-center">
                                             <PrimaryButton
+                                                disabled={
+                                                    item.status ==
+                                                    "İptal edildi"
+                                                }
                                                 onClick={() => {
                                                     openModal();
                                                     setData("id", item.id);
@@ -399,9 +487,12 @@ export default function OrderDetail({ auth }) {
                                     </td>
                                     <td className="px-4 py-2 border w-[14%]">
                                         <div className="flex justify-center">
-                                            <PrimaryButton>
+                                            <a
+                                                className={`inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 `}
+                                                href={`/store/order/all-pdf/${order.order_code}`}
+                                            >
                                                 Ürün Fatura
-                                            </PrimaryButton>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
