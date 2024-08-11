@@ -15,17 +15,19 @@ export default function VerifyEmail({ status }) {
         <GuestLayout>
             <Head title="Email Verification" />
 
-            <div className="mb-6 text-gray-600">
-                <p>Doğrulama maili gönderildi.</p>
-                <br />
-                <p>lütfen gelen kutunuzu veya</p>
-                <p>span(önemsiz) klasörünü kontrol edin.</p>
+            <div className="mb-6">
+                <p className="text-lg font-medium text-gray-800 mb-3">
+                    Doğrulama maili gönderildi.
+                </p>
+                <p className="text-gray-600">lütfen gelen kutunuzu veya</p>
+                <p className="text-gray-600">
+                    span(önemsiz) klasörünü kontrol edin.
+                </p>
             </div>
 
             {status === "verification-link-sent" && (
                 <div className="mb-4 font-medium text-sm text-green-600">
-                    A new verification link has been sent to the email address
-                    you provided during registration.
+                    E-posta adresine yeni bir doğrulama bağlantısı gönderildi.
                 </div>
             )}
 

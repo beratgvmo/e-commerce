@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('last_name', 30);
             $table->string('store_name', 50)->unique();
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('slug')->unique();
             $table->string('phone_number', 14);
             $table->string('iban_no', 32);

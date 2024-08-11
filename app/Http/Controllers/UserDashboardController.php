@@ -23,6 +23,14 @@ class UserDashboardController extends Controller
             ->get()
             ->groupBy('store.id')
             ->map(function ($storeCarts) {
+                $activeCarts = $storeCarts->where('is_active', true);
+
+                $totalPrice = $activeCarts->sum(function ($cart) {
+                    return $cart->product->price * $cart->quantity;
+                });
+
+                $shippingCost = ($totalPrice < 500 && $totalPrice > 0) ? 50 : 0;
+
                 return [
                     'id' => $storeCarts->first()->store->id,
                     'storeName' => $storeCarts->first()->store->store_name,
@@ -36,15 +44,30 @@ class UserDashboardController extends Controller
                             'is_active' => $cart->is_active,
                         ];
                     }),
+                    'totalPrice' => $totalPrice,
+                    'shippingCost' => $shippingCost,
+                    'PriceShipping' => ($totalPrice < 500 && $totalPrice > 0) ? 500 - $totalPrice  : 0,
                 ];
             })
             ->values();
 
+        $totalPriceAll = $carts->sum('totalPrice');
+        $totalShippingCost = $carts->sum('shippingCost');
+        $grandTotalPrice = $totalPriceAll + $totalShippingCost;
+
         $products = Product::with("images")->get();
+
+        $cartCount = Cart::where('user_id', Auth::user()->id)
+            ->where("is_active", true)
+            ->count();
 
         return Inertia::render("Cart", [
             "carts" => $carts,
+            "cartCount" => $cartCount,
             'products' => $products,
+            'totalPriceAll' => $totalPriceAll,
+            'totalShippingCost' => $totalShippingCost,
+            'grandTotalPrice' => $grandTotalPrice,
         ]);
     }
 
@@ -53,10 +76,6 @@ class UserDashboardController extends Controller
         $request->validate([
             'product_id' => 'required|exists:products,id'
         ]);
-
-        if (!Auth::user()) {
-            return redirect()->route('login');
-        }
 
         $product = Product::findOrFail($request->product_id);
 
@@ -83,10 +102,6 @@ class UserDashboardController extends Controller
             'product_id' => 'required|exists:products,id'
         ]);
 
-        if (!Auth::user()) {
-            return redirect()->route('login');
-        }
-
         Cart::where('user_id', Auth::user()->id)
             ->where('product_id', $request->product_id)
             ->where('quantity', '>', 1)
@@ -104,9 +119,6 @@ class UserDashboardController extends Controller
             'product_id' => 'required|exists:products,id'
         ]);
 
-        if (!Auth::user()) {
-            return redirect()->route('login');
-        }
 
         Cart::where('user_id', Auth::user()->id)
             ->where('product_id', $request->product_id)
@@ -118,9 +130,26 @@ class UserDashboardController extends Controller
         ]);
     }
 
+    public function activeCart(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id'
+        ]);
+
+        $cart = Cart::where('user_id', Auth::user()->id)
+            ->where('product_id', $request->product_id)->first();
+
+        $cart->is_active = !$cart->is_active;
+        $cart->save();
+
+        return redirect()->route('user.cart')->with([
+            'message' => "Sepet Başarıyla Güncellendi",
+            'type' => 'success',
+        ]);
+    }
+
     public function payment()
     {
-
         return Inertia::render("Payment");
     }
 }

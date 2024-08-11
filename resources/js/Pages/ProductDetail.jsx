@@ -84,8 +84,8 @@ export default function ProductDetail({
                     ))}
                 </ol>
             </nav>
-            <div className="flex rounded-md border border-gray-300">
-                <div className="relative group min-w-[34rem]  flex justify-between items-center">
+            <div className="flex">
+                <div className="relative group min-w-[34rem] rounded-md border border-gray-300  flex justify-between items-center">
                     <button
                         onClick={prevImage}
                         className="absolute left-2 flex items-center justify-center w-14 h-14 text-3xl text-gray-400 bg-gray-200 rounded-full opacity-0 cursor-pointer group-hover:opacity-100 group-hover:flex hover:bg-gray-300 transition-opacity duration-300 z-10"
@@ -109,7 +109,7 @@ export default function ProductDetail({
                     </button>
                 </div>
 
-                <div className="w-full p-6 bg-gray-100 rounded-e-md">
+                <div className="w-full px-6  rounded-e-md">
                     <h1 className="text-lg font-semibold">{product.name}</h1>
                     <div className="flex mt-3 items-center justify-between">
                         <p className="text-slate-800 text-3xl font-black mt-4">

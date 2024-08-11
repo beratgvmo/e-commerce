@@ -2,7 +2,7 @@ import { NumericFormat } from "react-number-format";
 
 export default function PriceText({ value }) {
     return (
-        <>
+        <div>
             <NumericFormat
                 value={value}
                 displayType={"text"}
@@ -12,6 +12,6 @@ export default function PriceText({ value }) {
                 decimalScale={2}
             />
             <span className="ml-1">TL</span>
-        </>
+        </div>
     );
 }

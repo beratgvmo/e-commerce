@@ -5,6 +5,9 @@ import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import HomeLayout from "@/Layouts/HomeLayout";
 import { Link, useForm } from "@inertiajs/react";
+import { FaTimes } from "react-icons/fa";
+import { IoAddCircleOutline } from "react-icons/io5";
+import { TbCheck, TbMapPin, TbX } from "react-icons/tb";
 
 export default function Payment({ auth }) {
     const [backface, setBackface] = useState(false);
@@ -18,12 +21,7 @@ export default function Payment({ auth }) {
     });
 
     useEffect(() => {
-        if (isDrawerOpen) {
-            document.body.style.overflow = "hidden";
-        } else {
-            document.body.style.overflow = "auto";
-        }
-
+        document.body.style.overflow = isDrawerOpen ? "hidden" : "auto";
         return () => {
             document.body.style.overflow = "auto";
         };
@@ -32,68 +30,89 @@ export default function Payment({ auth }) {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
-        if (name === "name") {
-            const filteredValue = value.replace(/[^A-Za-z\s]/g, "");
-            setData((prevCard) => ({ ...prevCard, [name]: filteredValue }));
-        } else {
-            setData((prevCard) => ({ ...prevCard, [name]: value }));
-        }
+        const filters = {
+            name: (val) => val.replace(/[^A-Za-zÜĞİŞÖÇüğışöç\s]/g, ""),
+            default: (val) => val,
+        };
+
+        const filteredValue = filters[name]
+            ? filters[name](value)
+            : filters.default(value);
+
+        setData((prevCard) => ({ ...prevCard, [name]: filteredValue }));
     };
 
-    const openDrawer = () => setIsDrawerOpen(true);
-    const closeDrawer = () => setIsDrawerOpen(false);
+    const toggleDrawer = () => setIsDrawerOpen((prev) => !prev);
 
     return (
         <HomeLayout auth={auth}>
             <div className="flex gap-6 justify-between">
-                <div>
-                    <p>Teslimat adresi</p>
-                    <button
-                        onClick={openDrawer}
-                        className="p-4 bg-blue-500 text-white rounded-md"
-                    >
-                        Drawer'ı Aç
-                    </button>
-                    <div
-                        className={`fixed inset-0 bg-black bg-opacity-50 transition-opacity ${
-                            isDrawerOpen ? "opacity-100" : "opacity-0"
-                        } ${
-                            isDrawerOpen
-                                ? "pointer-events-auto"
-                                : "pointer-events-none"
-                        }`}
-                    >
+                <div className="w-full">
+                    <p className="text-lg font-medium mt-8 mb-4">
+                        Teslimat adresi
+                    </p>
+                    <div className="border rounded-lg p-6">
+                        <div className="flex">
+                            <button className="px-4 w-52 py-1 flex items-center text-left bg-blue-500  text-white font-medium rounded-md">
+                                <TbMapPin className="mr-1.5" />
+                                Kayıtlı adresi kullan
+                            </button>
+                            <TbCheck
+                                className="text-green-600 ml-2"
+                                size={26}
+                            />
+                        </div>
+                        <div className="border flex flex-col w-max rounded-lg p-2 mt-3 mb-5">
+                            <p>İştanbul | 0511 1111 11 11</p>
+                            <p>mahalle, cadde, sokak, mevki, apartman</p>
+                            <p>numarası / daire numarası, İlçe/İl</p>
+                        </div>
+                        <button
+                            onClick={toggleDrawer}
+                            className="px-4 w-52 py-1 flex items-center text-left border-blue-500 border text-blue-500 rounded-md"
+                        >
+                            <IoAddCircleOutline className="mr-1.5" />
+                            Yeni adresi ekle
+                        </button>
                         <div
-                            className={`fixed top-0 right-0 w-64 bg-white h-full shadow-lg transition-transform ${
+                            className={`fixed inset-0 bg-black z-50 bg-opacity-50 transition-opacity ${
+                                isDrawerOpen ? "opacity-100" : "opacity-0"
+                            } ${
                                 isDrawerOpen
-                                    ? "translate-x-0"
-                                    : "translate-x-full"
+                                    ? "pointer-events-auto"
+                                    : "pointer-events-none"
                             }`}
                         >
-                            <button
-                                onClick={closeDrawer}
-                                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                            <div
+                                className={`fixed top-0 right-0 w-96 bg-white h-full shadow-lg transition-transform ${
+                                    isDrawerOpen
+                                        ? "translate-x-0"
+                                        : "translate-x-full"
+                                }`}
                             >
-                                &times;
-                            </button>
-                            <div className="p-4">
-                                <h2 className="text-lg font-semibold">
-                                    Drawer Başlığı
-                                </h2>
-                                <p className="mt-2">
-                                    Drawer içeriği buraya gelecek.
-                                </p>
+                                <div className="p-4">
+                                    <div className="flex justify-between items-center">
+                                        <h2 className="text-lg font-semibold">
+                                            Adres Ekle
+                                        </h2>
+                                        <button
+                                            type="button"
+                                            className="rounded-full p-2 inline-flex items-center justify-center text-black bg-gray-200 focus:outline-none transition"
+                                            onClick={toggleDrawer}
+                                        >
+                                            <TbX size={25} />
+                                        </button>
+                                    </div>
+                                    <p className="mt-2">Kis</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div className="w-full mt-6">
-                    <div className="flex w-full justify-between border rounded-lg p-6">
+                    <div className="flex w-full mt-6 justify-between border rounded-lg p-6">
                         <div className="w-96">
                             <div className="w-full mt-1">
                                 <InputLabel
-                                    htmlFor="phone_number"
+                                    htmlFor="number"
                                     value="Kart Numarası"
                                 />
                                 <InputMask
@@ -186,7 +205,11 @@ export default function Payment({ auth }) {
                                 </div>
                             </div>
                         </div>
-                        <div className={`card ${backface ? "flip" : ""}`}>
+                        <div
+                            className={`card ${
+                                backface ? "flip" : ""
+                            } text-white`}
+                        >
                             <div className="front border">
                                 <div className="card-number">
                                     {data.number || "0000 0000 0000 0000"}
@@ -209,7 +232,7 @@ export default function Payment({ auth }) {
                                     backface ? "" : "transform rotate-y-180"
                                 }`}
                             >
-                                <div className="card-back bg-white rounded-2xl">
+                                <div className="card-back bg-white  text-gray-900 font-bold rounded-2xl">
                                     CVV{" "}
                                     <p className="mr-3 ml-2">
                                         {data.cvv || "000"}
@@ -220,7 +243,7 @@ export default function Payment({ auth }) {
                     </div>
                 </div>
 
-                <div className="w-64 mt-6">
+                <div className="w-64 mt-[74px]">
                     <div className="w-full sticky top-[20px]">
                         <div className="rounded-lg shadow-md bg-white px-4 py-2 border-2 border-gray-200">
                             <p className="text-sm font-semibold text-blue-500 mb-3 mt-2">

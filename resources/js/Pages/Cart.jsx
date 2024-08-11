@@ -12,8 +12,17 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { IoCartOutline } from "react-icons/io5";
 import ProductContainer from "@/Components/ProductContainer";
+import PriceInput from "@/Components/PriceInput";
 
-export default function Cart({ auth, carts, products }) {
+export default function Cart({
+    auth,
+    carts,
+    products,
+    cartCount,
+    totalPriceAll,
+    totalShippingCost,
+    grandTotalPrice,
+}) {
     const { flash } = usePage().props;
     const { data, setData, post } = useForm({ product_id: "", action: "" });
 
@@ -26,22 +35,23 @@ export default function Cart({ auth, carts, products }) {
                 add: "user.cartAdd",
                 reduce: "user.reduceToCart",
                 remove: "user.removeFromCart",
+                active: "user.activeCart",
             };
             post(route(routes[data.action]), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    setIsUpdating(false);
                     if (flash.message) {
                         toast.success(flash.message, {
                             theme: "colored",
                             autoClose: 2000,
                         });
                     }
+                    setIsUpdating(false);
                 },
             });
             setData({ product_id: "", action: "" });
         }
-    }, [data, post, setData, flash.message]);
+    }, [data, post, setData]);
 
     useEffect(() => {
         handlePostRequest();
@@ -51,8 +61,6 @@ export default function Cart({ auth, carts, products }) {
         e.preventDefault();
         setData({ product_id: productId, action });
     };
-
-    console.log(flash);
 
     return (
         <HomeLayout auth={auth}>
@@ -77,20 +85,47 @@ export default function Cart({ auth, carts, products }) {
                 <div className="flex gap-6 justify-between">
                     <div className="mt-6">
                         <p className="text-2xl font-medium">
-                            Sepetim ({carts[0].products.length} Ürün)
+                            Sepetim
+                            {carts.map((cart) => {
+                                let productConunt = +cart.products.length;
+                                return productConunt;
+                            })}
+                            Ürün)
                         </p>
                         {carts.map((cart) => (
                             <div
                                 key={cart.storeId}
                                 className="border-2 shadow-md rounded-lg mt-6"
                             >
-                                <div className="flex items-center rounded-t-lg bg-gray-50 pl-3 px-2 py-3">
-                                    <p className="text-gray-500 mr-1 text-sm">
-                                        Satıcı:
-                                    </p>
-                                    <p className="font-medium text-sm">
-                                        {cart.storeName}
-                                    </p>
+                                <div className="flex justify-between items-center rounded-t-lg bg-gray-50 pl-3 px-2 py-3">
+                                    <div className="flex">
+                                        <p className="text-gray-500 mr-1 text-sm">
+                                            Satıcı:
+                                        </p>
+                                        <p className="font-medium text-sm">
+                                            {cart.storeName}
+                                        </p>
+                                    </div>
+                                    <div className="">
+                                        {cart.PriceShipping ? (
+                                            <p className="flex text-sm bg-gray-200 text-gray-700 px-1.5 rounded">
+                                                Kargonuzun bedava olması için
+                                                <span className="mx-1 flex font-semibold text-gray-800">
+                                                    <PriceText
+                                                        value={
+                                                            cart.PriceShipping
+                                                        }
+                                                    />
+                                                    'lik
+                                                </span>
+                                                ürün daha ekleyin
+                                            </p>
+                                        ) : (
+                                            <p className="text-sm text-green-600 font-bold">
+                                                Kargo bedava
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
                                 {cart.products.map((products) => (
                                     <div
@@ -99,8 +134,12 @@ export default function Cart({ auth, carts, products }) {
                                     >
                                         <div className="flex items-center">
                                             <Checkbox
+                                                onChange={handleAction(
+                                                    products.product.id,
+                                                    "active"
+                                                )}
                                                 checked={products.is_active}
-                                                className="mr-3 text-lg w-[18px] h-[18px]"
+                                                className="mr-3 text-lg w-[18px] h-[18px] border-2"
                                             />
                                             <img
                                                 className="select-none mr-3 border rounded duration-300 object-contain w-auto h-32"
@@ -169,7 +208,8 @@ export default function Cart({ auth, carts, products }) {
                                                     <PriceText
                                                         value={
                                                             products.product
-                                                                .price
+                                                                .price *
+                                                            products.quantity
                                                         }
                                                     />
                                                 </div>
@@ -188,12 +228,10 @@ export default function Cart({ auth, carts, products }) {
                         <div className="w-full sticky top-[20px]">
                             <div className="rounded-lg shadow-md bg-white px-4 py-2 border-2 border-gray-200">
                                 <p className="text-sm font-semibold text-blue-500 mb-3 mt-2">
-                                    SEÇİLEN ÜRÜNLER (1)
+                                    SEÇİLEN ÜRÜNLER ({cartCount})
                                 </p>
-                                <div className="flex text-sm justify-between">
-                                    <p className="text-2xl font-semibold">
-                                        30.500,00 TL
-                                    </p>
+                                <div className="flex text-2xl font-semibold">
+                                    <PriceText value={grandTotalPrice} />
                                 </div>
                                 <Link
                                     href={route("user.payment")}
@@ -203,11 +241,24 @@ export default function Cart({ auth, carts, products }) {
                                 </Link>
                                 <div className="flex text-sm mb-2 justify-between">
                                     <p>Ürünler</p>
-                                    <p>30.500,00 TL</p>
+                                    <PriceText value={totalPriceAll} />
                                 </div>
                                 <div className="flex text-sm mb-2 justify-between">
                                     <p>Kargo</p>
-                                    <p>50 TL</p>
+                                    {totalShippingCost > 0 ? (
+                                        <PriceText value={totalShippingCost} />
+                                    ) : (
+                                        <div className="flex">
+                                            <p className="mr-1.5 text-green-600 font-medium">
+                                                Bedava
+                                            </p>
+                                            <p className="line-through text-gray-500">
+                                                <PriceText
+                                                    value={totalShippingCost}
+                                                />
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

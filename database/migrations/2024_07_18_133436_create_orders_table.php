@@ -19,6 +19,9 @@ return new class extends Migration
             $table->decimal('shipping_cost', 8, 2);
             $table->string('delivery_address');
             $table->enum('status', ['Sipariş sürüyor', 'Sipariş bitti', 'İptal edildi', 'İade edildi'])->default('Sipariş sürüyor');
+            $table->string('phone_number', 14);
+            $table->string('city');
+            $table->string('address');
             $table->string('order_code')->unique();
 
             $table->timestamps();

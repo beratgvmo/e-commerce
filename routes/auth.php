@@ -11,11 +11,9 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\RegisteredStoreController;
 use App\Http\Controllers\Auth\LoginStoreController;
-use App\Http\Controllers\StoreDashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest', 'RedirectIfStore:store')->group(function () {
-    // users 
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
@@ -70,7 +68,4 @@ Route::middleware('auth')->group(function () {
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
-
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout');
 });
