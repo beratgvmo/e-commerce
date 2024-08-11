@@ -25,6 +25,7 @@ export default function ProductDetail({
     ratingsCount,
     totalReviews,
     products,
+    cart,
 }) {
     const { post } = useForm({
         product_id: product.id,
@@ -60,7 +61,7 @@ export default function ProductDetail({
     };
 
     return (
-        <HomeLayout auth={auth} categories={categories}>
+        <HomeLayout auth={auth} categories={categories} cart={cart}>
             <Head title="Welcome" />
             <nav className="flex py-5" aria-label="Breadcrumb">
                 <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">

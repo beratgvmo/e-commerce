@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\Store;
+use App\Models\StoreFollow;
+use App\Models\StoreFollower;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -55,6 +58,13 @@ class UserDashboardController extends Controller
         $totalShippingCost = $carts->sum('shippingCost');
         $grandTotalPrice = $totalPriceAll + $totalShippingCost;
 
+        $totalProductCount = 0;
+
+        foreach ($carts as $cart) {
+            $totalProductCount += count($cart['products']);
+        }
+
+
         $products = Product::with("images")->get();
 
         $cartCount = Cart::where('user_id', Auth::user()->id)
@@ -68,6 +78,7 @@ class UserDashboardController extends Controller
             'totalPriceAll' => $totalPriceAll,
             'totalShippingCost' => $totalShippingCost,
             'grandTotalPrice' => $grandTotalPrice,
+            'totalProductCount' => $totalProductCount,
         ]);
     }
 
@@ -151,5 +162,28 @@ class UserDashboardController extends Controller
     public function payment()
     {
         return Inertia::render("Payment");
+    }
+
+
+    public function follow($storeId)
+    {
+        $follow = StoreFollower::where("user_id", Auth::user("user")->id)->where("store_id", $storeId)->first();
+
+        if ($follow) {
+            $follow->delete();
+            return redirect()->back()->with([
+                'message' => 'Mağaza Takipten Çık',
+                'type' => 'success',
+            ]);
+        } else {
+            StoreFollower::create([
+                'user_id' => Auth::user("user")->id,
+                'store_id' => $storeId
+            ]);
+            return redirect()->back()->with([
+                'message' => 'Mağaza takip Ettiniz',
+                'type' => 'success',
+            ]);
+        }
     }
 }

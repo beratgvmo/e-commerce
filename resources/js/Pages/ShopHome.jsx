@@ -34,6 +34,10 @@ export default function ShopHome({ auth, categories, store, products }) {
         setCurrentTab(tabNumber);
     };
 
+    const handleFollow = () => {
+        post(route("stores.follow", store.id));
+    };
+
     const updateImage = (imgSrc) => {
         setData(currentImgType, imgSrc);
         setModalOpen(false);
@@ -206,13 +210,12 @@ export default function ShopHome({ auth, categories, store, products }) {
                                     {auth.store &&
                                         store.id === auth.store.id && (
                                             <button
-                                                className="text-white rounded-full absolute w-7 h-7 flex justify-center items-center bg-blue-500 hover:bg-blue-600 transition bottom-14 right-2"
-                                                onClick={() => {
-                                                    setModalOpen(true);
-                                                    setCurrentImgType("logo");
-                                                }}
+                                                onClick={handleFollow}
+                                                className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out"
                                             >
-                                                <FaPen size={12} />
+                                                {store.is_following
+                                                    ? "Takipten Çık"
+                                                    : "Takip Et"}
                                             </button>
                                         )}
                                 </div>
@@ -223,8 +226,13 @@ export default function ShopHome({ auth, categories, store, products }) {
                                         </p>
                                         {(auth.store &&
                                             store.id === auth.store.id) || (
-                                            <button className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:bg-blue-700 focus:outline-none focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out">
-                                                Takip Et
+                                            <button
+                                                onClick={handleFollow}
+                                                className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out"
+                                            >
+                                                {store.is_following
+                                                    ? "Takipten Çık"
+                                                    : "Takip Et"}
                                             </button>
                                         )}
                                     </div>
@@ -266,8 +274,13 @@ export default function ShopHome({ auth, categories, store, products }) {
                                         </p>
                                         {(auth.store &&
                                             store.id === auth.store.id) || (
-                                            <button className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:bg-blue-700 focus:outline-none focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out">
-                                                Takip Et
+                                            <button
+                                                onClick={handleFollow}
+                                                className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out"
+                                            >
+                                                {store.is_following
+                                                    ? "Takipten Çık"
+                                                    : "Takip Et"}
                                             </button>
                                         )}
                                     </div>
@@ -303,13 +316,12 @@ export default function ShopHome({ auth, categories, store, products }) {
                             )}
                             {auth.store && store.id === auth.store.id && (
                                 <button
-                                    className="text-white rounded-full absolute w-7 h-7 flex justify-center items-center bg-blue-500 hover:bg-blue-600 transition bottom-0 right-2"
-                                    onClick={() => {
-                                        setModalOpen(true);
-                                        setCurrentImgType("logo");
-                                    }}
+                                    onClick={handleFollow}
+                                    className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out"
                                 >
-                                    <FaPen size={12} />
+                                    {store.is_following
+                                        ? "Takipten Çık"
+                                        : "Takip Et"}
                                 </button>
                             )}
                         </div>
@@ -320,8 +332,13 @@ export default function ShopHome({ auth, categories, store, products }) {
                                     {store.store_name}
                                 </p>
                                 {(auth.store && store.id === auth.store.id) || (
-                                    <button className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:bg-blue-700 focus:outline-none focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out">
-                                        Takip Et
+                                    <button
+                                        onClick={handleFollow}
+                                        className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out"
+                                    >
+                                        {store.is_following
+                                            ? "Takipten Çık"
+                                            : "Takip Et"}
                                     </button>
                                 )}
                             </div>

@@ -77,4 +77,9 @@ class Store extends Authenticatable
     {
         return $this->hasMany(StoreBanner::class);
     }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'store_followers', 'store_id', 'user_id');
+    }
 }

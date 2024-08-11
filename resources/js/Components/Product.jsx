@@ -6,7 +6,7 @@ import PriceText from "./PriceText";
 export default function Product({ product, cart = true }) {
     return (
         <Link key={product.id} href={`/urun/${product.slug}`}>
-            <div className="group max-w-56 duration-200 bg-white border border-gray-200 hover:border-gray-400 rounded-lg shadow flex flex-col overflow-hidden">
+            <div className="group max-w-64 duration-200 bg-white border border-gray-200 hover:border-gray-400 rounded-lg shadow flex flex-col overflow-hidden">
                 <div className="aspect-square relative overflow-hidden">
                     <img
                         className="object-contain select-none duration-300 w-full h-full absolute inset-0 transition-transform group-hover:scale-105"
@@ -18,8 +18,8 @@ export default function Product({ product, cart = true }) {
                 <div className="p-2 rounded-lg bg-gray-50 flex flex-col justify-between min-h-[165px]">
                     <div>
                         <h1 className="font-medium text-sm text-gray-900 mb-1">
-                            {product.name.length > 60
-                                ? product.name.slice(0, 60) + "..."
+                            {product.name.length > 59
+                                ? product.name.slice(0, 59) + "..."
                                 : product.name}
                         </h1>
                         <div className="mb-1 flex">

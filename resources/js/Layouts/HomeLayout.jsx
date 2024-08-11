@@ -62,7 +62,7 @@ export default function HomeLayout({ auth, categories, children, cart }) {
                                             </Link>
 
                                             <Link
-                                                href={route("dashboard")}
+                                                href={route("user.cart")}
                                                 className="rounded-md group relative hover:text-blue-500 duration-500 flex items-center gap-1 px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70"
                                             >
                                                 <IoCartOutline size={23} />

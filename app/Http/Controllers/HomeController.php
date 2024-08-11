@@ -10,8 +10,10 @@ use App\Models\Store;
 use App\Models\Attribute;
 use App\Models\Cart;
 use App\Models\ProductReview;
+use App\Models\StoreFollower;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -30,11 +32,14 @@ class HomeController extends Controller
             ->take(10)
             ->get();
 
+        $cartCount
+            = Auth::user("user") ? Cart::where("user_id", Auth::user()->id)->count() : null;
+
         return Inertia::render('Home', [
             'categories' => $categories,
             'bestSellingProducts' => $bestSellingProducts,
             'stores' => $stores,
-            'cart' => Cart::count()
+            'cart' => $cartCount,
         ]);
     }
 
@@ -98,6 +103,9 @@ class HomeController extends Controller
             $comment->formatted_created_at = \Carbon\Carbon::parse($comment->created_at)->locale('tr')->isoFormat('D MMMM YYYY, dddd');
         }
 
+        $cartCount
+            = Auth::user("user") ? Cart::where("user_id", Auth::user()->id)->count() : null;
+
         return Inertia::render('ProductDetail', [
             'product' => $product,
             'attributes' => $attributes,
@@ -109,7 +117,7 @@ class HomeController extends Controller
             'ratingsCount' => $ratings,
             'totalReviews' => $totalReviews,
             'products' => $products,
-            'cart' => Cart::count()
+            'cart' => $cartCount,
         ]);
     }
 
@@ -185,6 +193,9 @@ class HomeController extends Controller
         }
         $categoryHierarchy = array_reverse($categoryHierarchy);
 
+        $cartCount
+            = Auth::user("user") ? Cart::where("user_id", Auth::user()->id)->count() : null;
+
         return Inertia::render('CategoryProducts', [
             'categories' => $categories,
             'products' => $products,
@@ -192,7 +203,7 @@ class HomeController extends Controller
             'attributesMain' => $attributesMain,
             'categorySubMain' => $categorySubMain,
             'categoryMain' => $categoryMain,
-            'cart' => Cart::count()
+            'cart' => $cartCount,
         ]);
     }
 
@@ -204,11 +215,17 @@ class HomeController extends Controller
 
         $products = Product::where('store_id', $store->id)->with('images', 'reviews')->get();
 
+        $cartCount
+            = Auth::user("user") ? Cart::where("user_id", Auth::user()->id)->count() : null;
+
+        $StoreFollower = StoreFollower::where("user_id", Auth::user("user")->id)->where("store_id", $store->id)->first();
+
         return Inertia::render('ShopHome', [
             'categories' => $categories,
             'store' => $store,
             'products' => $products,
-            'cart' => Cart::count()
+            'cart' => $cartCount,
+            'StoreFollower' => $StoreFollower,
         ]);
     }
 }
