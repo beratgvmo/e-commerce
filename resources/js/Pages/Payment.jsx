@@ -8,16 +8,25 @@ import { Link, useForm } from "@inertiajs/react";
 import { FaTimes } from "react-icons/fa";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { TbCheck, TbMapPin, TbX } from "react-icons/tb";
+import { cities } from "@/data/cities";
+import Button from "@/Components/Button";
+import OutlineButton from "@/Components/OutlineButton";
+import Checkbox from "@/Components/Checkbox";
 
 export default function Payment({ auth }) {
     const [backface, setBackface] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-    const { data, setData, errors } = useForm({
-        number: "",
+    const { data, setData, errors, post } = useForm({
+        iban_no: "",
         name: "",
         expire: "",
         cvv: "",
+        first_name: "",
+        last_name: "",
+        phone_number: "05",
+        city: "",
+        address: "",
     });
 
     useEffect(() => {
@@ -52,27 +61,32 @@ export default function Payment({ auth }) {
                         Teslimat adresi
                     </p>
                     <div className="border rounded-lg p-6">
-                        <div className="flex">
-                            <button className="px-4 w-52 py-1 flex items-center text-left bg-blue-500  text-white font-medium rounded-md">
-                                <TbMapPin className="mr-1.5" />
-                                Kayıtlı adresi kullan
-                            </button>
-                            <TbCheck
-                                className="text-green-600 ml-2"
-                                size={26}
-                            />
-                        </div>
-                        <div className="border flex flex-col w-max rounded-lg p-2 mt-3 mb-5">
-                            <p>İştanbul | 0511 1111 11 11</p>
-                            <p>mahalle, cadde, sokak, mevki, apartman</p>
-                            <p>numarası / daire numarası, İlçe/İl</p>
+                        <p className="text-blue-600 font-medium">
+                            Kayıtlı adres (Değiştir için tıkla)
+                        </p>
+                        <div className="border flex justify-between items-center w-full rounded-lg p-2 mt-3 mb-5">
+                            <div className="flex items-center">
+                                <Checkbox className="rounded-full w-6 h-6 ml-2 mr-5" />
+                                <div className="">
+                                    <p className="text-lg font-medium">
+                                        Berat Güven
+                                    </p>
+                                    <p className="text-gray-600 text-sm">
+                                        İştanbul | 0511 1111 11 11
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex items-center text-indigo-600 bg-indigo-600/15 px-3 py-2 rounded-md">
+                                <TbMapPin className="mr-1.5" size={20} />
+                                <p>Kayıtlı adresi</p>
+                            </div>
                         </div>
                         <button
                             onClick={toggleDrawer}
                             className="px-4 w-52 py-1 flex items-center text-left border-blue-500 border text-blue-500 rounded-md"
                         >
                             <IoAddCircleOutline className="mr-1.5" />
-                            Yeni adresi ekle
+                            farkli adresi ekle
                         </button>
                         <div
                             className={`fixed inset-0 bg-black z-50 bg-opacity-50 transition-opacity ${
@@ -84,53 +98,218 @@ export default function Payment({ auth }) {
                             }`}
                         >
                             <div
-                                className={`fixed top-0 right-0 w-96 bg-white h-full shadow-lg transition-transform ${
+                                className={`fixed top-0 right-0 w-[28rem] bg-white h-full shadow-lg transition-transform ${
                                     isDrawerOpen
                                         ? "translate-x-0"
                                         : "translate-x-full"
                                 }`}
                             >
-                                <div className="p-4">
+                                <div className="px-10 py-5">
                                     <div className="flex justify-between items-center">
-                                        <h2 className="text-lg font-semibold">
+                                        <h2 className="text-xl font-semibold">
                                             Adres Ekle
                                         </h2>
                                         <button
                                             type="button"
-                                            className="rounded-full p-2 inline-flex items-center justify-center text-black bg-gray-200 focus:outline-none transition"
+                                            className="rounded-full p-2 inline-flex items-center justify-center text-black bg-gray-200 hover:text-gray-700 hover:bg-gray-300 focus:outline-none transition"
                                             onClick={toggleDrawer}
                                         >
                                             <TbX size={25} />
                                         </button>
                                     </div>
-                                    <p className="mt-2">Kis</p>
+                                    <div className="mt-8">
+                                        <p className="text-blue-500 mb-5 w-full border-b-2">
+                                            Kisisel Bilgileriniz
+                                        </p>
+                                        <InputLabel value="Teslim alacak kişinin bilgileri" />
+                                        <div className="flex gap-3">
+                                            <div>
+                                                <TextInput
+                                                    id="ad"
+                                                    type="text"
+                                                    name="ad"
+                                                    // value={data.ad}
+                                                    className="mt-1 block w-full"
+                                                    autoComplete="username"
+                                                    placeholder="Ad"
+                                                    isFocused={true}
+                                                    // onChange={(e) =>
+                                                    //     setData(
+                                                    //         "ad",
+                                                    //         e.target.value
+                                                    //     )
+                                                    // }
+                                                />
+                                                <InputError
+                                                    // message={errors.ad}
+                                                    className="mt-2"
+                                                />
+                                            </div>
+                                            <div>
+                                                <TextInput
+                                                    id="ad"
+                                                    type="text"
+                                                    name="ad"
+                                                    // value={data.ad}
+                                                    className="mt-1 block w-full"
+                                                    autoComplete="username"
+                                                    placeholder="Soyad"
+                                                    isFocused={true}
+                                                    // onChange={(e) =>
+                                                    //     setData(
+                                                    //         "ad",
+                                                    //         e.target.value
+                                                    //     )
+                                                    // }
+                                                />
+                                                <InputError
+                                                    // message={errors.ad}
+                                                    className="mt-2"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="mt-4">
+                                            <InputLabel
+                                                htmlFor="phone_number"
+                                                value="Telefon"
+                                            />
+                                            <InputMask
+                                                mask="0599 999 99 99"
+                                                // value={data.phone_number}
+                                                placeholder="05"
+                                                // onChange={(e) =>
+                                                //     setData(
+                                                //         "phone_number",
+                                                //         e.target.value
+                                                //     )
+                                                // }
+                                            >
+                                                {(inputProps) => (
+                                                    <TextInput
+                                                        {...inputProps}
+                                                        id="phone_number"
+                                                        name="phone_number"
+                                                        className="mt-1 block w-full"
+                                                        autoComplete="phone_number"
+                                                        required
+                                                    />
+                                                )}
+                                            </InputMask>
+                                            <InputError
+                                                // message={errors.phone_number}
+                                                className="mt-2"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="mt-8">
+                                        <p className="text-blue-500 mb-5 w-full border-b-2">
+                                            Adres Bilgileriniz
+                                        </p>
+                                        <div className="mt-4">
+                                            <InputLabel
+                                                htmlFor="city"
+                                                value="Şehir"
+                                            />
+                                            <select
+                                                id="city"
+                                                name="city"
+                                                // value={data.city}
+                                                className="w-full border-gray-300 focus:border-indigo-500 mt-1 focus:ring-indigo-500 rounded-md shadow-sm"
+                                                // onChange={(e) =>
+                                                //     setData(
+                                                //         "city",
+                                                //         e.target.value
+                                                //     )
+                                                // }
+                                                required
+                                            >
+                                                <option value="">
+                                                    Seçiniz
+                                                </option>
+                                                {cities.map((city) => (
+                                                    <option
+                                                        key={city}
+                                                        value={city}
+                                                    >
+                                                        {city}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <InputError
+                                                // message={errors.city}
+                                                className="mt-2"
+                                            />
+                                        </div>
+                                        <div className="mt-4">
+                                            <InputLabel
+                                                htmlFor="address"
+                                                value="Adres"
+                                            />
+
+                                            <textarea
+                                                id="address"
+                                                rows="6"
+                                                maxlength="255"
+                                                className="block mt-1 resize-none p-2.5 w-full text-sm text-gray-900 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                                                name="address"
+                                                // value={data.address}
+                                                autoComplete="address"
+                                                // onChange={(e) =>
+                                                //     setData(
+                                                //         "address",
+                                                //         e.target.value
+                                                //     )
+                                                // }
+                                                required
+                                                placeholder="mahalle, cadde, sokak, mevki, apartman numarası / daire numarası, İlçe/İl. Seklide"
+                                            ></textarea>
+                                            <InputError
+                                                // message={errors.address}
+                                                className="mt-2"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-4 justify-between mt-8">
+                                        <Button className="!text-sm w-full flex justify-center">
+                                            Adresi kullan
+                                        </Button>
+                                        <OutlineButton
+                                            onClick={toggleDrawer}
+                                            className="!text-sm w-full flex justify-center"
+                                        >
+                                            Vazgeç
+                                        </OutlineButton>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <p className="text-lg font-medium mt-5 mb-3">
+                        Kart Bilgileri
+                    </p>
                     <div className="flex w-full mt-6 justify-between border rounded-lg p-6">
                         <div className="w-96">
                             <div className="w-full mt-1">
                                 <InputLabel
-                                    htmlFor="number"
+                                    htmlFor="iban_no"
                                     value="Kart Numarası"
                                 />
                                 <InputMask
                                     mask="9999 9999 9999 9999"
-                                    value={data.number}
+                                    value={data.iban_no}
                                     onChange={handleInputChange}
                                     placeholder="**** **** **** ****"
                                 >
                                     {(inputProps) => (
                                         <TextInput
                                             {...inputProps}
-                                            name="number"
+                                            name="iban_no"
                                             className="w-full mt-1 px-2 border rounded"
                                         />
                                     )}
                                 </InputMask>
                                 <InputError
-                                    message={errors.number}
+                                    message={errors.iban_no}
                                     className="mt-2"
                                 />
                             </div>
@@ -212,7 +391,7 @@ export default function Payment({ auth }) {
                         >
                             <div className="front border">
                                 <div className="card-number">
-                                    {data.number || "0000 0000 0000 0000"}
+                                    {data.iban_no || "0000 0000 0000 0000"}
                                 </div>
                                 <div className="card-bottom">
                                     <div>

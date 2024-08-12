@@ -3,7 +3,7 @@ import Button from "@/Components/Button";
 import Checkbox from "@/Components/Checkbox";
 import PriceText from "@/Components/PriceText";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link, useForm, usePage } from "@inertiajs/react";
+import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
 import { FaTruck } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import Modal from "@/Components/Modal";
@@ -12,7 +12,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { IoCartOutline } from "react-icons/io5";
 import ProductContainer from "@/Components/ProductContainer";
-import PriceInput from "@/Components/PriceInput";
 
 export default function Cart({
     auth,
@@ -29,6 +28,10 @@ export default function Cart({
 
     const [isUpdating, setIsUpdating] = useState(false);
 
+    const handlePaymentRedirect = () => {
+        router.get(route("user.payment"));
+    };
+
     const handlePostRequest = useCallback(() => {
         if (data.product_id && data.action) {
             setIsUpdating(true);
@@ -41,13 +44,15 @@ export default function Cart({
             post(route(routes[data.action]), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    if (flash.message) {
-                        toast.success(flash.message, {
-                            theme: "colored",
-                            autoClose: 2000,
-                        });
-                    }
                     setIsUpdating(false);
+                },
+                onBefore: () => {},
+                onStart: () => {},
+                onFinish: () => {
+                    toast.success(flash.message, {
+                        theme: "colored",
+                        autoClose: 2000,
+                    });
                 },
             });
             setData({ product_id: "", action: "" });
@@ -78,6 +83,7 @@ export default function Cart({
             }
         >
             <Head title="Sepetim" />
+            {flash.message && flash.message}
             <Modal
                 maxWidth="md"
                 show={isUpdating}
@@ -246,12 +252,12 @@ export default function Cart({
                                     <div className="flex text-2xl font-semibold">
                                         <PriceText value={grandTotalPrice} />
                                     </div>
-                                    <Link
-                                        href={route("user.payment")}
-                                        className="items-center px-4 bg-blue-500 border border-transparent rounded-md font-semibold text-white uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 w-full py-3 shadow-md my-4 text-xs flex justify-center"
+                                    <Button
+                                        onClick={handlePaymentRedirect}
+                                        className="w-full flex justify-center items-center py-3 px-4 my-4"
                                     >
                                         Alışverişi tamamla
-                                    </Link>
+                                    </Button>
                                     <div className="flex text-sm mb-2 justify-between">
                                         <p>Ürünler</p>
                                         <PriceText value={totalPriceAll} />

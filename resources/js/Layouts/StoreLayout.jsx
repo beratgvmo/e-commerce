@@ -5,6 +5,7 @@ import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link } from "@inertiajs/react";
 import { BiStoreAlt } from "react-icons/bi";
+import { ToastContainer } from "react-toastify";
 
 export default function StoreLayout({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
@@ -12,6 +13,7 @@ export default function StoreLayout({ user, header, children }) {
 
     return (
         <div className="min-h-screen bg-gray-100">
+            <ToastContainer />
             <nav className="bg-white border-b border-gray-100">
                 <div className="w-[1400px] mx-auto px-4">
                     <div className="flex justify-between h-16">
