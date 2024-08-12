@@ -168,9 +168,11 @@ class UserDashboardController extends Controller
     public function follow($storeId)
     {
         $follow = StoreFollower::where("user_id", Auth::user("user")->id)->where("store_id", $storeId)->first();
+        $store = Store::find($storeId);
 
         if ($follow) {
             $follow->delete();
+            $store->updateFollowersCount();
             return redirect()->back()->with([
                 'message' => 'Mağaza Takipten Çık',
                 'type' => 'success',
@@ -180,6 +182,7 @@ class UserDashboardController extends Controller
                 'user_id' => Auth::user("user")->id,
                 'store_id' => $storeId
             ]);
+            $store->updateFollowersCount();
             return redirect()->back()->with([
                 'message' => 'Mağaza takip Ettiniz',
                 'type' => 'success',

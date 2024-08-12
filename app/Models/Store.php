@@ -33,7 +33,6 @@ class Store extends Authenticatable
         'selling_category_id',
         'cargo_companies_id',
         'store_rating',
-        'product_count',
         'followers_count',
         'reviews_count',
         'password',
@@ -81,5 +80,16 @@ class Store extends Authenticatable
     public function followers()
     {
         return $this->belongsToMany(User::class, 'store_followers', 'store_id', 'user_id');
+    }
+
+    public function getTotalFollowers()
+    {
+        return $this->followers()->count();
+    }
+
+    public function updateFollowersCount()
+    {
+        $this->followers_count = $this->followers()->count();
+        $this->save();
     }
 }

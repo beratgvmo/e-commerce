@@ -9,12 +9,25 @@ import { LuUploadCloud } from "react-icons/lu";
 import { useForm } from "@inertiajs/react";
 import ModalImg from "../Components/ModalImg";
 import { MdDelete } from "react-icons/md";
-
 import "react-image-crop/dist/ReactCrop.css";
-
 import { BiStoreAlt } from "react-icons/bi";
+import StoreFilterTab from "@/Components/StoreFilterTab";
+import ProductContainer from "@/Components/ProductContainer";
 
-export default function ShopHome({ auth, categories, store, products }) {
+export default function ShopHome({
+    auth,
+    categories,
+    store,
+    products,
+    productCount,
+    isFollower,
+    totalFollowers,
+    productsFilter,
+    attributesMain,
+    categorySubMain,
+    categoryMain,
+    categorySub,
+}) {
     const {
         data,
         setData,
@@ -211,9 +224,9 @@ export default function ShopHome({ auth, categories, store, products }) {
                                         store.id === auth.store.id && (
                                             <button
                                                 onClick={handleFollow}
-                                                className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out"
+                                                className="text-white bg-blue-500 border-2 border-transparent hover:border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:text-blue-500 focus:ring-0 hover:bg-white focus:ring-offset-0 transition ease-in-out"
                                             >
-                                                {store.is_following
+                                                {isFollower
                                                     ? "Takipten Çık"
                                                     : "Takip Et"}
                                             </button>
@@ -228,9 +241,9 @@ export default function ShopHome({ auth, categories, store, products }) {
                                             store.id === auth.store.id) || (
                                             <button
                                                 onClick={handleFollow}
-                                                className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out"
+                                                className="text-white bg-blue-500 border-2 border-transparent hover:border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:text-blue-500 focus:ring-0 hover:bg-white focus:ring-offset-0 transition ease-in-out"
                                             >
-                                                {store.is_following
+                                                {isFollower
                                                     ? "Takipten Çık"
                                                     : "Takip Et"}
                                             </button>
@@ -243,7 +256,8 @@ export default function ShopHome({ auth, categories, store, products }) {
                                                 : 0}
                                         </p>
                                         <p className="text-blue-600 text-sm font-bold">
-                                            47B Takipçi • 257 ürün
+                                            {totalFollowers} Takipçi •{" "}
+                                            {productCount} ürün
                                         </p>
                                     </div>
                                 </div>
@@ -276,9 +290,9 @@ export default function ShopHome({ auth, categories, store, products }) {
                                             store.id === auth.store.id) || (
                                             <button
                                                 onClick={handleFollow}
-                                                className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out"
+                                                className="text-white bg-blue-500 border-2 border-transparent hover:border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:text-blue-500 focus:ring-0 hover:bg-white focus:ring-offset-0 transition ease-in-out"
                                             >
-                                                {store.is_following
+                                                {isFollower
                                                     ? "Takipten Çık"
                                                     : "Takip Et"}
                                             </button>
@@ -291,7 +305,8 @@ export default function ShopHome({ auth, categories, store, products }) {
                                                 : 0}
                                         </p>
                                         <p className="text-blue-600 text-sm font-bold">
-                                            47B Takipçi • 257 ürün
+                                            {totalFollowers} Takipçi •{" "}
+                                            {productCount} ürün
                                         </p>
                                     </div>
                                 </div>
@@ -317,11 +332,9 @@ export default function ShopHome({ auth, categories, store, products }) {
                             {auth.store && store.id === auth.store.id && (
                                 <button
                                     onClick={handleFollow}
-                                    className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out"
+                                    className="text-white bg-blue-500 border-2 border-transparent hover:border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:text-blue-500 focus:ring-0 hover:bg-white focus:ring-offset-0 transition ease-in-out"
                                 >
-                                    {store.is_following
-                                        ? "Takipten Çık"
-                                        : "Takip Et"}
+                                    {isFollower ? "Takipten Çık" : "Takip Et"}
                                 </button>
                             )}
                         </div>
@@ -336,7 +349,7 @@ export default function ShopHome({ auth, categories, store, products }) {
                                         onClick={handleFollow}
                                         className="bg-white text-blue-500 border-2 border-blue-500 px-4 py-1.5 rounded-md font-bold text-xs tracking-widest hover:bg-blue-500 focus:ring-2 hover:text-white focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out"
                                     >
-                                        {store.is_following
+                                        {isFollower
                                             ? "Takipten Çık"
                                             : "Takip Et"}
                                     </button>
@@ -349,7 +362,8 @@ export default function ShopHome({ auth, categories, store, products }) {
                                         : 0}
                                 </p>
                                 <p className="text-blue-600 text-sm font-bold">
-                                    47B Takipçi • 257 ürün
+                                    {totalFollowers} Takipçi • {productCount}{" "}
+                                    ürün
                                 </p>
                             </div>
                         </div>
@@ -505,41 +519,25 @@ export default function ShopHome({ auth, categories, store, products }) {
 
                 {currentTab === 2 && (
                     <div>
-                        {/* <div className="flex gap-5">
+                        <div className="flex gap-5">
                             <div>
                                 {(categorySubMain.length > 0 ||
                                     attributesMain.length > 0) && (
-                                    <FilterTab
+                                    <StoreFilterTab
                                         attributesMain={attributesMain}
-                                        categorySubMain={categorySubMain}
-                                        categorySlug={categoryMain.slug}
+                                        categorySubMain={categorySub}
+                                        categorySlug={store.slug}
                                     />
                                 )}
                             </div>
                             <div className="w-full">
-                                {products.length > 0 ? (
-                                    <>
-                                        <div className=""></div>
-                                        <ProductContainer products={products} />
-                                    </>
-                                ) : (
-                                    <>
-                                        <div className="flex justify-center mt-8">
-                                            <div className="flex flex-col justify-center items-center">
-                                                <LuSearchX className="text-8xl text-orange-500" />
-                                                Aramanız için sonuç bulunamadı.
-                                                <Link
-                                                    href="/"
-                                                    className="text-orange-600 underline"
-                                                >
-                                                    Ana Sayfa
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    </>
+                                {productsFilter.length > 0 && (
+                                    <ProductContainer
+                                        products={productsFilter}
+                                    />
                                 )}
                             </div>
-                        </div> */}
+                        </div>
                     </div>
                 )}
 

@@ -207,7 +207,27 @@ class HomeController extends Controller
         ]);
     }
 
-    public function shop($slug)
+    function formatFollowersCount($value)
+    {
+        if ($value >= 1000000) {
+            $suffix = 'M';
+            $formattedValue = number_format($value / 1000000, 1);
+            if ($value % 1000000 === 0) {
+                $formattedValue = floor($value / 1000000);
+            }
+            return $formattedValue . $suffix;
+        } elseif ($value >= 1000) {
+            $suffix = 'k';
+            $formattedValue = number_format($value / 1000, 1);
+            if ($value % 1000 === 0) {
+                $formattedValue = floor($value / 1000);
+            }
+            return $formattedValue . $suffix;
+        }
+        return (string)$value;
+    }
+
+    public function shop(Request $request, $slug)
     {
         $categories = Category::all();
 
@@ -218,14 +238,85 @@ class HomeController extends Controller
         $cartCount
             = Auth::user("user") ? Cart::where("user_id", Auth::user()->id)->count() : null;
 
-        $StoreFollower = StoreFollower::where("user_id", Auth::user("user")->id)->where("store_id", $store->id)->first();
+        $isFollower = Auth::user("user")
+            ? StoreFollower::where("user_id", Auth::user("user")->id)->where("store_id", $store->id)->exists()
+            : false;
+
+        $totalFollowers = $store->getTotalFollowers();
+        $formattedFollowers = $this->formatFollowersCount($totalFollowers);
+
+        $categoryMain = Category::where('id', $store->selling_category_id)->firstOrFail();
+
+        $categorySubMain = $this->getAllSubCategories($categoryMain->id);
+
+        $categorySub = [];
+
+        foreach ($categorySubMain as $category) {
+            if (count($category['children']) > 0) {
+                foreach ($category['children'] as $child) {
+                    $categorySub[] = $child;
+                }
+            } else {
+                $categorySub[] = $category;
+            }
+        }
+
+        foreach ($categorySub as $sub) {
+            $attributes = AttributeType::where('category_id', $sub->id)->with('attributes')->get();
+
+            if ($attributes->isNotEmpty()) {
+                $attributesMain = $attributes;
+            }
+        }
+
+        $query = Product::with(['images', 'attributes'])
+            ->where('is_active', true)
+            ->where('category_id', $categoryMain->id);
+
+
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->input('search') . '%');
+        }
+
+        if ($request->has('category')) {
+            $query->where('category_id', $request->input('category'));
+        }
+
+
+        if ($request->has('attributes')) {
+            $attributeFilters = $request->input('attributes');
+            $query->whereHas('attributes', function ($q) use ($attributeFilters) {
+                $q->whereIn('attribute_id', $attributeFilters);
+            });
+        }
+
+        $productsFilter = $query->get();
+
+        if ($productsFilter->isEmpty() && $categorySubMain->isNotEmpty()) {
+
+            foreach ($categorySub as $category) {
+                $productsFilter = $productsFilter->merge(
+                    Product::with(['images'])
+                        ->where('is_active', true)
+                        ->where('category_id', $category->id)
+                        ->get()
+                );
+            }
+        }
 
         return Inertia::render('ShopHome', [
             'categories' => $categories,
             'store' => $store,
             'products' => $products,
+            'productCount' => $products->count(),
             'cart' => $cartCount,
-            'StoreFollower' => $StoreFollower,
+            'isFollower' => $isFollower,
+            'totalFollowers' => $formattedFollowers,
+            'productsFilter' => $productsFilter,
+            'attributesMain' => $attributesMain,
+            'categorySubMain' => $categorySubMain,
+            'categoryMain' => $categoryMain,
+            'categorySub' => $categorySub,
         ]);
     }
 }

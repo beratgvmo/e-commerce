@@ -237,7 +237,7 @@ export default function Cart({
                                 <ProductContainer products={products} />
                             </div>
                         </div>
-                        <div className="min-w-60 mt-6">
+                        <div className="min-w-60">
                             <div className="w-full sticky top-[20px]">
                                 <div className="rounded-lg bg-white px-4 py-2 border-2 border-gray-300">
                                     <p className="text-sm font-semibold text-blue-500 mb-3 mt-2">

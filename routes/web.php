@@ -20,6 +20,8 @@ Route::get('kategori/{slug}', [HomeController::class, 'categoryProducts'])->name
 Route::get('/urun/{slug}', [HomeController::class, "show"])->name("home.show");
 
 Route::get('/magaza/{slug}', [HomeController::class, "shop"])->name("home.magaza");
+// Route::get('/magaza/{slug}/{attribute}', [HomeController::class, "shopAttribute"])->name("home.magazaAttribute");
+
 
 Route::middleware('auth', 'verified')->group(function () {
     Route::get('/dashboard', [UserDashboardController::class, 'dashboard'])->name("dashboard");
