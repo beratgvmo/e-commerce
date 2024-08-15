@@ -64,7 +64,6 @@ class UserDashboardController extends Controller
             $totalProductCount += count($cart['products']);
         }
 
-
         $products = Product::with("images")->get();
 
         $cartCount = Cart::where('user_id', Auth::user()->id)
@@ -161,7 +160,49 @@ class UserDashboardController extends Controller
 
     public function payment()
     {
-        return Inertia::render("Payment");
+        $carts = Cart::where('user_id', Auth::user()->id)->where('is_active', true)
+            ->with('product.images', 'store')
+            ->get()
+            ->groupBy('store.id')
+            ->map(function ($storeCarts) {
+                $totalPrice = $storeCarts->sum(function ($cart) {
+                    return $cart->product->price * $cart->quantity;
+                });
+
+                $shippingCost = ($totalPrice < 500 && $totalPrice > 0) ? 50 : 0;
+
+                return [
+                    'id' => $storeCarts->first()->store->id,
+                    'storeName' => $storeCarts->first()->store->store_name,
+                    'slug' => $storeCarts->first()->store->slug,
+                    'storeRating' => $storeCarts->first()->store->store_rating,
+                    'products' => $storeCarts->map(function ($cart) {
+                        return [
+                            'id' => $cart->id,
+                            'quantity' => $cart->quantity,
+                            'product' => $cart->product,
+                            'is_active' => $cart->is_active,
+                        ];
+                    }),
+                    'totalPrice' => $totalPrice,
+                    'shippingCost' => $shippingCost,
+                ];
+            })
+            ->values();
+
+        $totalPriceAll = $carts->sum('totalPrice');
+        $totalShippingCost = $carts->sum('shippingCost');
+        $grandTotalPrice = $totalPriceAll + $totalShippingCost;
+
+        $products = Product::with("images")->get();
+
+        return Inertia::render("Payment", [
+            "carts" => $carts,
+            'products' => $products,
+            'totalPriceAll' => $totalPriceAll,
+            'totalShippingCost' => $totalShippingCost,
+            'grandTotalPrice' => $grandTotalPrice,
+        ]);
     }
 
 

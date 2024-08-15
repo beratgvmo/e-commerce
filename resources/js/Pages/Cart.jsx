@@ -46,14 +46,6 @@ export default function Cart({
                 onSuccess: () => {
                     setIsUpdating(false);
                 },
-                onBefore: () => {},
-                onStart: () => {},
-                onFinish: () => {
-                    toast.success(flash.message, {
-                        theme: "colored",
-                        autoClose: 2000,
-                    });
-                },
             });
             setData({ product_id: "", action: "" });
         }
@@ -62,6 +54,15 @@ export default function Cart({
     useEffect(() => {
         handlePostRequest();
     }, [handlePostRequest]);
+
+    useEffect(() => {
+        if (flash.message) {
+            toast[flash.type](flash.message, {
+                theme: "colored",
+                autoClose: 2000,
+            });
+        }
+    }, [flash]);
 
     const handleAction = (productId, action) => (e) => {
         e.preventDefault();
@@ -83,7 +84,6 @@ export default function Cart({
             }
         >
             <Head title="Sepetim" />
-            {flash.message && flash.message}
             <Modal
                 maxWidth="md"
                 show={isUpdating}

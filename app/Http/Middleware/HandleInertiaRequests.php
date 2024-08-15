@@ -37,8 +37,8 @@ class HandleInertiaRequests extends Middleware
                 'store' => Auth::guard('store')->user(),
             ],
             'flash' => [
-                'message' => fn () => $request->session()->get('message'),
-                'type' => fn () => $request->session()->get('type'),
+                'message' => $request->session()->get('message'),
+                'type' => $request->session()->get('type'),
             ],
         ];
     }
