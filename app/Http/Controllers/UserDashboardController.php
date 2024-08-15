@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\Store;
@@ -194,6 +195,8 @@ class UserDashboardController extends Controller
         $totalShippingCost = $carts->sum('shippingCost');
         $grandTotalPrice = $totalPriceAll + $totalShippingCost;
 
+        $addressList = Address::where("user_id", Auth::user()->id)->get();
+
         $products = Product::with("images")->get();
 
         return Inertia::render("Payment", [
@@ -202,6 +205,7 @@ class UserDashboardController extends Controller
             'totalPriceAll' => $totalPriceAll,
             'totalShippingCost' => $totalShippingCost,
             'grandTotalPrice' => $grandTotalPrice,
+            'addressList' => $addressList,
         ]);
     }
 
@@ -224,10 +228,61 @@ class UserDashboardController extends Controller
                 'store_id' => $storeId
             ]);
             $store->updateFollowersCount();
+
             return redirect()->back()->with([
                 'message' => 'Mağaza takip Ettiniz',
                 'type' => 'success',
             ]);
         }
+    }
+
+    public function userAddresses(Request $request)
+    {
+        $rules = [
+            'first_name' => 'required|string|max:30',
+            'last_name' => 'required|string|max:30',
+            'phone_number' => 'required|string|max:14',
+            'city' => 'required',
+            'address' => 'required|string|min:30',
+            'address_name' => 'required|max:40',
+        ];
+
+        $messages = [
+            'first_name.required' => 'Alıcı adı alanı zorunludur.',
+            'first_name.string' => 'Alıcı adı sadece metin içermelidir.',
+            'first_name.max' => 'Alıcı adı 60 karakterden fazla olamaz.',
+
+            'last_name.required' => 'Alıcı soyad alanı zorunludur.',
+            'last_name.string' => 'Alıcı soyad sadece metin içermelidir.',
+            'last_name.max' => 'Alıcı soyad 60 karakterden fazla olamaz.',
+
+            'phone_number.required' => 'Telefon numarası alanı zorunludur.',
+            'phone_number.max' => 'Telefon numarası 14 karakterden olmalı.',
+
+            'city.required' => 'Şehir adı alanı zorunludur.',
+
+            'address.required' => 'Adres alanı zorunludur.',
+            'address.string' => 'Adres geçerli bir metin olmalıdır.',
+            'address.min' => 'Adres metni en az 30 karakter uzunluğunda olmalıdır.',
+
+            'address_name.required' => 'Adres adı alanı zorunludur.',
+            'address_name.max' => 'Adres adı 40 karakterden fazla olamaz.',
+        ];
+
+        $request->validate($rules, $messages);
+
+        Address::create([
+            'user_id' => Auth::user()->id,
+            'recipient_name' => $request->first_name . " " . $request->last_name,
+            'phone_number' => $request->phone_number,
+            'city' => $request->city,
+            'address' => $request->address,
+            'address_name' => $request->address_name
+        ]);
+
+        return redirect()->back()->with([
+            'message' => 'Yeni adres ekledi',
+            'type' => 'success',
+        ]);
     }
 }

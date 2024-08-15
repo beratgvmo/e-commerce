@@ -9,6 +9,7 @@ import { Head, Link, useForm } from "@inertiajs/react";
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
+        surname: "",
         email: "",
         password: "",
         password_confirmation: "",
@@ -32,19 +33,32 @@ export default function Register() {
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="name" value="Ad" />
+                    <InputLabel htmlFor="name" value="Ad ve Soyad" />
 
-                    <TextInput
-                        id="name"
-                        name="name"
-                        value={data.name}
-                        className="mt-1 block w-full"
-                        autoComplete="name"
-                        isFocused={true}
-                        onChange={(e) => setData("name", e.target.value)}
-                        required
-                    />
-
+                    <div className="flex gap-3">
+                        <TextInput
+                            id="name"
+                            name="name"
+                            value={data.name}
+                            className="mt-1 block w-full"
+                            autoComplete="name"
+                            isFocused={true}
+                            onChange={(e) => setData("name", e.target.value)}
+                            required
+                            placeholder="Ad"
+                        />
+                        <TextInput
+                            id="surname"
+                            name="surname"
+                            value={data.surname}
+                            className="mt-1 block w-full"
+                            autoComplete="surname"
+                            isFocused={true}
+                            onChange={(e) => setData("surname", e.target.value)}
+                            required
+                            placeholder="Soyad"
+                        />
+                    </div>
                     <InputError message={errors.name} className="mt-2" />
                 </div>
 
@@ -60,6 +74,7 @@ export default function Register() {
                         autoComplete="username"
                         onChange={(e) => setData("email", e.target.value)}
                         required
+                        placeholder="E-posta"
                     />
 
                     <InputError message={errors.email} className="mt-2" />
@@ -77,6 +92,7 @@ export default function Register() {
                         autoComplete="new-password"
                         onChange={(e) => setData("password", e.target.value)}
                         required
+                        placeholder="Şifre"
                     />
 
                     <InputError message={errors.password} className="mt-2" />
@@ -99,6 +115,7 @@ export default function Register() {
                             setData("password_confirmation", e.target.value)
                         }
                         required
+                        placeholder="Şifreyi Onayla"
                     />
 
                     <InputError

@@ -15,9 +15,9 @@ export default function VerifyEmail({ status }) {
         <GuestLayout>
             <Head title="Email Verification" />
 
-            <div className="mb-6">
-                <p className="text-lg font-medium text-gray-800 mb-3">
-                    Doğrulama maili gönderildi.
+            <div className="mb-6 mt-2">
+                <p className="text-lg font-semibold text-gray-800 mb-2">
+                    Doğrulama maili gönderildi
                 </p>
                 <p className="text-gray-600">lütfen gelen kutunuzu veya</p>
                 <p className="text-gray-600">
