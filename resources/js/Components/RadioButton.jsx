@@ -4,7 +4,7 @@ export default function RadioButton({ className = "", ...props }) {
             {...props}
             type="radio"
             className={
-                "rounded-full border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 " +
+                "rounded-full cursor-pointer border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 " +
                 className
             }
         />

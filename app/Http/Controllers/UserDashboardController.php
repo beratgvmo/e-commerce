@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Address;
+use App\Models\CargoCompany;
 use App\Models\Cart;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\StoreFollow;
@@ -170,7 +173,9 @@ class UserDashboardController extends Controller
                     return $cart->product->price * $cart->quantity;
                 });
 
-                $shippingCost = ($totalPrice < 500 && $totalPrice > 0) ? 50 : 0;
+                $store = $storeCarts->first()->store;
+
+                $shippingCost = ($totalPrice < 500 && $totalPrice > 0) ? $this->calculateShippingCost($store->cargo_companies_id) : 0;
 
                 return [
                     'id' => $storeCarts->first()->store->id,
@@ -284,5 +289,64 @@ class UserDashboardController extends Controller
             'message' => 'Yeni adres ekledi',
             'type' => 'success',
         ]);
+    }
+
+    public function userProductOrder(Request $request)
+    {
+        $address = Address::where('user_id', Auth::user()->id)
+            ->where('id', $request->redio)
+            ->first();
+
+        $cartItems = Cart::where('user_id', Auth::user()->id)
+            ->where('is_active', 1)
+            ->get()
+            ->groupBy('store_id');
+
+        foreach ($cartItems as $storeId => $items) {
+            $totalAmount = $items->sum(function ($item) {
+                return $item->product->price * $item->quantity;
+            });
+
+
+            $shippingCost = ($totalAmount < 500 && $totalAmount > 0)
+                ? $this->calculateShippingCost($items->first()->store->cargo_companies_id) : 0;
+
+            $order = Order::create([
+                'user_id' => $address->user_id,
+                'store_id' => $storeId,
+                'total_amount' => $totalAmount,
+                'shipping_cost' => $shippingCost,
+                'recipient_name' => $address->recipient_name,
+                'phone_number' => $address->phone_number,
+                'city' => $address->city,
+                'address' => $address->address,
+                'order_code' => uniqid('ORD-'),
+            ]);
+
+            // Siparişe ait sipariş öğelerini ekle
+            foreach ($items as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item->product_id,
+                    'quantity' => $item->quantity,
+                    'price' => $item->product->price,
+                ]);
+            }
+        }
+
+        Cart::where('user_id', Auth::user()->id)
+            ->where('is_active', 1)
+            ->delete();
+
+        return redirect()->intended(route('dashboard'))->with([
+            'message' => 'Siparişiniz başarılı',
+            'type' => 'success',
+        ]);
+    }
+
+    protected function calculateShippingCost($cargoCompanyId)
+    {
+        $cargoCompany = CargoCompany::find($cargoCompanyId);
+        return $cargoCompany ? $cargoCompany->price : 0;
     }
 }

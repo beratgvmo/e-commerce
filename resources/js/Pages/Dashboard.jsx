@@ -1,7 +1,21 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Dashboard({ auth }) {
+    const { flash } = usePage().props;
+
+    useEffect(() => {
+        if (flash.message) {
+            toast[flash.type](flash.message, {
+                theme: "colored",
+                autoClose: 2000,
+            });
+        }
+    }, [flash]);
+
     return (
         <AuthenticatedLayout
             user={auth.user}

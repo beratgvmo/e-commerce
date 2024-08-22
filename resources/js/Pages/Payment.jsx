@@ -24,6 +24,7 @@ export default function Payment({
     totalPriceAll,
     totalShippingCost,
     grandTotalPrice,
+    addressList,
 }) {
     const [backface, setBackface] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -39,13 +40,18 @@ export default function Payment({
         city: "",
         address: "",
         address_name: "",
-        redio: "default",
+        redio: `${addressList[0].id}`,
     });
 
     const addressSave = (e) => {
         e.preventDefault();
         post(route("user.addresses"), { preserveScroll: true });
         addressCancel();
+    };
+
+    const submit = (e) => {
+        e.preventDefault();
+        post(route("user.productOrder"), { preserveScroll: true });
     };
 
     const addressCancel = () => {
@@ -102,61 +108,53 @@ export default function Payment({
                             <p className="text-blue-600 font-medium">
                                 Kayıtlı adres (Değiştir için tıkla)
                             </p>
-                            <div className="border flex justify-between items-center w-full rounded-lg p-2 mt-3 mb-5">
-                                <div className="flex items-center">
-                                    <RadioButton
-                                        id="address1"
-                                        value="default"
-                                        name="selection"
-                                        className="w-6 h-6 ml-2 mr-5"
-                                        onChange={handleChange}
-                                        checked={data.redio == "default"}
-                                    />
-                                    <div className="">
-                                        <p className="text-lg font-medium">
-                                            Berat Güven
-                                        </p>
-                                        <p className="text-gray-600 text-sm">
-                                            İştanbul | 0511 1111 11 11
-                                        </p>
+                            {addressList &&
+                                addressList.map((address) => (
+                                    <div className="border flex justify-between items-center w-full rounded-lg p-2 mt-3 mb-5">
+                                        <div className="flex items-center">
+                                            <RadioButton
+                                                id={`address-${address.id}`}
+                                                value={address.id}
+                                                name="selection"
+                                                className="w-6 h-6 ml-2 mr-5"
+                                                onChange={handleChange}
+                                                checked={
+                                                    address.id == data.redio
+                                                }
+                                            />
+                                            <div className="">
+                                                <p className="text-lg font-medium">
+                                                    {address.address_name}
+                                                </p>
+                                                <div className="text-gray-600 text-sm flex">
+                                                    <p>
+                                                        {address.recipient_name}
+                                                    </p>
+                                                    <p className="mx-1">•</p>
+                                                    <p>{address.city}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center text-indigo-600 bg-indigo-600/15 px-3 py-2 rounded-md">
+                                            <TbMapPin
+                                                className="mr-1.5"
+                                                size={20}
+                                            />
+                                            <p>Kayıtlı adresi</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="flex items-center text-indigo-600 bg-indigo-600/15 px-3 py-2 rounded-md">
-                                    <TbMapPin className="mr-1.5" size={20} />
-                                    <p>Kayıtlı adresi</p>
-                                </div>
-                            </div>
-                            <div className="border flex justify-between items-center w-full rounded-lg p-2 mt-3 mb-5">
-                                <div className="flex items-center">
-                                    <RadioButton
-                                        id="address1"
-                                        value="default"
-                                        name="selection"
-                                        className="w-6 h-6 ml-2 mr-5"
-                                        onChange={handleChange}
-                                        checked={data.redio == "default"}
-                                    />
-                                    <div className="">
-                                        <p className="text-lg font-medium">
-                                            Berat Güven
-                                        </p>
-                                        <p className="text-gray-600 text-sm">
-                                            İştanbul | 0511 1111 11 11
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center text-indigo-600 bg-indigo-600/15 px-3 py-2 rounded-md">
-                                    <TbMapPin className="mr-1.5" size={20} />
-                                    <p>Kayıtlı adresi</p>
-                                </div>
-                            </div>
-                            <button
-                                onClick={toggleDrawer}
-                                className="px-4 w-52 py-1 flex items-center text-left border-blue-500 border text-blue-500 rounded-md"
-                            >
-                                <IoAddCircleOutline className="mr-1.5" />
-                                Yeni adresi ekle
-                            </button>
+                                ))}
+                            {addressList.length >= 5 ? (
+                                <></>
+                            ) : (
+                                <button
+                                    onClick={toggleDrawer}
+                                    className="px-4 w-52 py-1 flex items-center text-left border-blue-500 border text-blue-500 rounded-md"
+                                >
+                                    <IoAddCircleOutline className="mr-1.5" />
+                                    Yeni adresi ekle
+                                </button>
+                            )}
                             <div
                                 className={`fixed inset-0 bg-black z-50 bg-opacity-50 transition-opacity ${
                                     isDrawerOpen ? "opacity-100" : "opacity-0"
@@ -622,9 +620,15 @@ export default function Payment({
                                 <div className="flex text-2xl font-semibold">
                                     <PriceText value={grandTotalPrice} />
                                 </div>
-                                <Button className="w-full flex justify-center items-center py-3 px-4 my-4">
-                                    Siparişi onayla
-                                </Button>
+                                <form
+                                    onSubmit={(e) => {
+                                        submit(e);
+                                    }}
+                                >
+                                    <Button className="w-full flex justify-center items-center py-3 px-4 my-4">
+                                        Siparişi onayla
+                                    </Button>
+                                </form>
                                 <div className="flex text-sm mb-2 justify-between">
                                     <p>Ürünler</p>
                                     <PriceText value={totalPriceAll} />

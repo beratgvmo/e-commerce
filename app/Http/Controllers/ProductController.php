@@ -98,6 +98,86 @@ class ProductController extends Controller
         return redirect()->route('store.productList')->with('success', 'Product added successfully');
     }
 
+    public function productUpdatePage(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);
+        $productImg = ProductImg::where("product_id", $id)->get();
+        $productAttribute = ProductAttribute::where("product_id", $id)->get();
+
+        $attributeTypes = AttributeType::where('category_id', $product->category_id)
+            ->with('attributes')
+            ->get();
+
+        return Inertia::render('Store/ProductUpdate', [
+            'product' => $product,
+            'productImg' => $productImg,
+            'productAttribute' => $productAttribute,
+            'attributeTypes' => $attributeTypes
+        ]);
+    }
+
+    public function productUpdateNumbers(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);
+
+        // Validate request data
+        $request->validate([
+            'price' => 'required',
+            'discounted_price' => 'required',
+            'stock_quantity' => 'required',
+        ]);
+
+        $price = $this->formatPrice($request->price);
+        $discountedPrice = $this->formatPrice($request->discounted_price);
+        $stockQuantity = $this->formatStockQuantity($request->stock_quantity);
+
+        if ($discountedPrice > $price) {
+            $discountedPrice = $price;
+        }
+
+        if ($price < 10) {
+            return redirect()->back()->with([
+                'message' => 'Ürün fiyatı en az 10 TL olmalıdır.',
+                'type' => 'error',
+            ]);
+        }
+
+        if ($discountedPrice < 10) {
+            return redirect()->back()->with([
+                'message' => 'İndirimli ürün fiyatı en az 10 TL olmalıdır.',
+                'type' => 'error',
+            ]);
+        }
+
+        // Ensure the price does not exceed the maximum allowed value
+        if ($price > 999999.99 || $discountedPrice > 999999.99) {
+            return redirect()->back()->with([
+                'message' => 'Ürün fiyatı en fazla 999.999,99 TL olabilir.',
+                'type' => 'error',
+            ]);
+        }
+
+        if ($stockQuantity < 0) {
+            return redirect()->back()->with([
+                'message' => 'Stok miktarı 0\'dan az olamaz.',
+                'type' => 'error',
+            ]);
+        }
+
+        $product->update([
+            'price' => $price,
+            'discounted_price' => $discountedPrice,
+            'stock_quantity' => $stockQuantity,
+        ]);
+
+        return redirect()->back()->with([
+            'message' => 'Ürün bilgileri başarıyla güncellendi.',
+            'type' => 'success',
+        ]);
+    }
+
+
+
 
 
     private function formatPrice($price)

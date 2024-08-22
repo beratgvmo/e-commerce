@@ -12,6 +12,8 @@ import PriceInput from "@/Components/PriceInput";
 import NumberInput from "@/Components/NumberInput";
 import { useState } from "react";
 import { HiMiniQuestionMarkCircle } from "react-icons/hi2";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ProductAdd({
     auth,
@@ -65,14 +67,22 @@ export default function ProductAdd({
 
             image.onload = () => {
                 if (image.width > 1200 || image.height > 1800) {
-                    alert(
-                        "Resim boyutu çok büyük! Lütfen 1200x1800 pikselden küçük bir resim seçin."
+                    toast.error(
+                        "Resim boyutu çok büyük! Lütfen 1200x1800 pikselden küçük bir resim seçin",
+                        {
+                            theme: "colored",
+                            autoClose: 2000,
+                        }
                     );
                     return;
                 }
                 if (image.width < 500 || image.height < 500) {
-                    alert(
-                        "Resim boyutu çok küçük! Lütfen 500x500 pikselden büyük bir resim seçin."
+                    toast.error(
+                        "Resim boyutu çok küçük! Lütfen 500x500 pikselden büyük bir resim seçin.",
+                        {
+                            theme: "colored",
+                            autoClose: 2000,
+                        }
                     );
                     return;
                 }

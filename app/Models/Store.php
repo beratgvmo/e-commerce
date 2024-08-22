@@ -27,7 +27,6 @@ class Store extends Authenticatable
         'iban_no',
         'city',
         'address',
-        'cargo_company',
         'logo',
         'banner',
         'selling_category_id',

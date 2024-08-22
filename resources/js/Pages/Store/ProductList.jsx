@@ -4,9 +4,24 @@ import { IoIosArrowForward } from "react-icons/io";
 import { FaTruckRampBox } from "react-icons/fa6";
 import TextInput from "@/Components/TextInput";
 import PriceText from "@/Components/PriceText";
+import { IoIosArrowBack } from "react-icons/io";
+import ProductRow from "@/Components/ProductRow";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useEffect } from "react";
 
 export default function ProductList({ auth, productsCount }) {
     const { products } = usePage().props;
+    const { flash } = usePage().props;
+
+    useEffect(() => {
+        if (flash.message) {
+            toast[flash.type](flash.message, {
+                theme: "colored",
+                autoClose: 2000,
+            });
+        }
+    }, [flash]);
 
     const formatNumber = (number) => {
         return new Intl.NumberFormat("tr-TR").format(number);
@@ -14,9 +29,9 @@ export default function ProductList({ auth, productsCount }) {
 
     const translatePaginationLabel = (label) => {
         if (label.includes("Previous")) {
-            return "< Önceki";
+            return <IoIosArrowBack size={19} />;
         } else if (label.includes("Next")) {
-            return "Sonraki >";
+            return <IoIosArrowForward size={19} />;
         }
         return label;
     };
@@ -80,117 +95,17 @@ export default function ProductList({ auth, productsCount }) {
                                         içerik
                                     </th>
                                     <th scope="col" className="p-3 border">
-                                        Detay sayfası
+                                        Detay
                                     </th>
                                 </tr>
                             </thead>
                             {products.data.length > 0 && (
                                 <tbody>
                                     {products.data.map((product) => (
-                                        <tr
+                                        <ProductRow
+                                            product={product}
                                             key={product.id}
-                                            className="bg-white border-t"
-                                        >
-                                            <th
-                                                scope="row"
-                                                className="px-4 w-[33%] text-sm py-2 font-medium text-gray-900 "
-                                            >
-                                                <div className="flex items-center">
-                                                    <img
-                                                        className="select-none w-20 h-full object-cover mr-4 rounded-md border-2"
-                                                        loading="lazy"
-                                                        src={
-                                                            product.images[0]
-                                                                ?.img
-                                                        }
-                                                        alt={product.name}
-                                                    />
-                                                    <div className="">
-                                                        <p className="text-sm mb-2">
-                                                            {product.name
-                                                                .length > 60
-                                                                ? product.name.slice(
-                                                                      0,
-                                                                      47
-                                                                  ) + "..."
-                                                                : product.name}
-                                                        </p>
-                                                        <p className="text-gray-500 mt-2">
-                                                            {
-                                                                product.category
-                                                                    .name
-                                                            }
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </th>
-                                            <td className="px-4 border w-[20%]">
-                                                <div className="flex justify-between">
-                                                    {product.attributes
-                                                        .slice(0, 4)
-                                                        .map(
-                                                            (
-                                                                attribute,
-                                                                index
-                                                            ) => (
-                                                                <p
-                                                                    key={index}
-                                                                    className="mx-0.5 text-sm font-medium"
-                                                                >
-                                                                    #
-                                                                    {
-                                                                        attribute.name
-                                                                    }
-                                                                </p>
-                                                            )
-                                                        )}
-                                                </div>
-                                            </td>
-                                            <td className="px-4 border">
-                                                <p className=" bg-green-500 py-1 text-white rounded-full text-center">
-                                                    %10.0
-                                                </p>
-                                            </td>
-                                            <td className="px-4 font-black border w-[10%]">
-                                                <PriceText
-                                                    value={product.price}
-                                                />
-                                            </td>
-                                            <td className="px-4 font-black border w-[10%]">
-                                                <PriceText
-                                                    value={
-                                                        product.discounted_price
-                                                    }
-                                                />
-                                            </td>
-                                            <td className="px-4 border font-medium">
-                                                <p>
-                                                    {formatNumber(
-                                                        product.stock_quantity
-                                                    )}
-                                                </p>
-                                            </td>
-                                            <td className="px-4 border">
-                                                <a
-                                                    href="#"
-                                                    className="font-medium text-blue-600 hover:underline"
-                                                >
-                                                    Düzenle
-                                                </a>
-                                            </td>
-                                            <td className="px-4 border">
-                                                <div className="w-full h-full flex justify-center">
-                                                    <Link
-                                                        key={product.id}
-                                                        href={`/urun/${product.slug}`}
-                                                    >
-                                                        <div className="font-medium w-10 h-10 bg-gray-200 hover:bg-gray-300 transition duration-200 rounded-md text-lg hover:text-blue-600 text-blue-500 flex justify-center items-center">
-                                                            <IoIosArrowForward />
-                                                        </div>
-                                                    </Link>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        />
                                     ))}
                                 </tbody>
                             )}
@@ -217,22 +132,20 @@ export default function ProductList({ auth, productsCount }) {
                     </div>
                 </div>
                 {productsCount > 12 && (
-                    <div className="flex justify-center mt-4">
+                    <div className="flex justify-center mt-6">
                         {products.links.map((link, index) => (
                             <Link
                                 key={index}
                                 href={link.url}
-                                className={`mx-1 px-4 py-2 border rounded transition ${
+                                disabled={!link.url}
+                                className={`mx-1 px-4 py-2 text-lg border rounded-md transition shadow-sm font-medium flex justify-center items-center ${
                                     link.active
-                                        ? "bg-blue-500 text-white"
-                                        : "bg-white text-blue-500 border-blue-500  hover:bg-blue-100"
+                                        ? "bg-indigo-500 text-white"
+                                        : "bg-white text-indigo-500 hover:bg-indigo-100"
                                 }`}
-                                dangerouslySetInnerHTML={{
-                                    __html: translatePaginationLabel(
-                                        link.label
-                                    ),
-                                }}
-                            />
+                            >
+                                {translatePaginationLabel(link.label)}
+                            </Link>
                         ))}
                     </div>
                 )}

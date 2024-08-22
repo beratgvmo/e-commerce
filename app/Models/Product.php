@@ -14,8 +14,16 @@ class Product extends Model implements Viewable
     use InteractsWithViews;
 
     protected $fillable = [
-        'name', 'slug', 'category_id', 'description', 'price', "discounted_price", 'stock_quantity',
-        'rating', 'is_active', 'store_id'
+        'name',
+        'slug',
+        'category_id',
+        'description',
+        'price',
+        "discounted_price",
+        'stock_quantity',
+        'rating',
+        'is_active',
+        'store_id'
     ];
 
     public function category()

@@ -15,8 +15,11 @@ class Order extends Model
         'total_amount',
         'shipping_cost',
         'status',
-        'delivery_address',
+        'address',
         'order_code',
+        'recipient_name',
+        'phone_number',
+        'city',
         'created_at'
     ];
 

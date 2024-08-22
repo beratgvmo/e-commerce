@@ -29,6 +29,8 @@ Route::middleware('auth', 'verified')->group(function () {
 
     Route::post("/user/addresses", [UserDashboardController::class, "userAddresses"])->name("user.addresses");
 
+    Route::post("/user/product-order", [UserDashboardController::class, "userProductOrder"])->name("user.productOrder");
+
     Route::get('/sepet', [UserDashboardController::class, 'cart'])->name("user.cart");
     Route::post('/sepet/add', [UserDashboardController::class, 'addToCart'])->name("user.cartAdd");
     Route::post('/sepet/reduce', [UserDashboardController::class, 'reduceFromCart'])->name("user.reduceToCart");
@@ -49,9 +51,13 @@ Route::middleware('auth', 'verified')->group(function () {
 Route::middleware('auth:store')->group(function () {
     Route::get('/store/dashboard', [StoreDashboardController::class, "index"])->name("store.dashboard");
 
-    Route::get('/store/productlist', [ProductController::class, "indexList"])->name('store.productList');
-    Route::get('/store/productadd', [ProductController::class, "indexAdd"])->name('store.productAdd');
-    Route::post('/store/productadd', [ProductController::class, "productAdd"]);
+    Route::get('/store/product-list', [ProductController::class, "indexList"])->name('store.productList');
+    Route::get('/store/product-add', [ProductController::class, "indexAdd"])->name('store.productAdd');
+    Route::post('/store/product-add', [ProductController::class, "productAdd"]);
+
+    Route::patch('/store/product-list/update/{id}', [ProductController::class, "productUpdatePage"])->name('store.productUpdate');
+
+    Route::patch('store/product-one/{id}', [ProductController::class, 'productUpdateNumbers'])->name('store.updateNumbers');
 
     Route::get('/store/order', [OrderController::class, "orderList"])->name('store.order');
     Route::get('/store/order/{order_code}', [OrderController::class, "orderDetail"])->name('store.orderDetail');

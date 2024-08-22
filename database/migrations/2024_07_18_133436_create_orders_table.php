@@ -15,9 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('store_id');
-            $table->decimal('total_amount', 8, 2);
-            $table->decimal('shipping_cost', 8, 2);
-            $table->string('delivery_address');
+            $table->decimal('total_amount', 10, 2);
+            $table->decimal('shipping_cost', 10, 2);
             $table->enum('status', ['Sipariş sürüyor', 'Sipariş bitti', 'İptal edildi', 'İade edildi'])->default('Sipariş sürüyor');
             $table->string('recipient_name', 50);
             $table->string('phone_number', 14);
