@@ -30,20 +30,31 @@ export default function Product({ product, cart = true }) {
                         alt={product.name}
                     />
                 </div>
-                <div className="p-2 rounded-lg bg-gray-50 flex flex-col justify-between">
-                    <div>
-                        <h1 className="font-medium text-sm text-gray-900 mb-1">
-                            {product.name.length > 52
-                                ? product.name.slice(0, 52) + "..."
-                                : product.name}
-                        </h1>
-                        <div className="mb-1 flex">
-                            <RenderStars count={product.rating} />
-                        </div>
+                <div className="p-2 rounded-lg bg-gray-50 h-[110px]">
+                    <h1 className="font-medium text-sm text-gray-900 mb-1">
+                        {product.name.length > 52
+                            ? product.name.slice(0, 52) + "..."
+                            : product.name}
+                    </h1>
+                    <div className="mb-1 flex">
+                        <RenderStars count={product.rating} />
+                    </div>
+                    {product.price != product.discounted_price ? (
+                        <p>
+                            <PriceText
+                                value={product.price}
+                                className="line-through font-normal text-gray-600 text-sm"
+                            />
+                            <PriceText
+                                value={product.discounted_price}
+                                className="text-green-600 font-semibold"
+                            />
+                        </p>
+                    ) : (
                         <p className="font-semibold">
                             <PriceText value={product.price} />
                         </p>
-                    </div>
+                    )}
                 </div>
             </Link>
             <div className="p-2 bg-gray-50 pt-5">

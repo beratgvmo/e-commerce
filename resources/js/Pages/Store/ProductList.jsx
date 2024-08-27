@@ -14,6 +14,8 @@ export default function ProductList({ auth, productsCount }) {
     const { products } = usePage().props;
     const { flash } = usePage().props;
 
+    console.log(products);
+
     useEffect(() => {
         if (flash.message) {
             toast[flash.type](flash.message, {
@@ -22,10 +24,6 @@ export default function ProductList({ auth, productsCount }) {
             });
         }
     }, [flash]);
-
-    const formatNumber = (number) => {
-        return new Intl.NumberFormat("tr-TR").format(number);
-    };
 
     const translatePaginationLabel = (label) => {
         if (label.includes("Previous")) {
@@ -48,88 +46,76 @@ export default function ProductList({ auth, productsCount }) {
             <Head title="ProductList" />
 
             <div className="py-12">
-                <div className="bg-white p-4 text-gray-900 px-6 overflow-hidden shadow-sm rounded-lg ">
-                    <div className="w-full flex gap-4 mb-8">
-                        <TextInput
-                            id="first_name"
-                            name="first_name"
-                            className="mt-1 block w-full"
-                            placeholder="Ürün Adı"
-                        />
-                        <TextInput
-                            id="first_name"
-                            name="first_name"
-                            className="mt-1 block w-full"
-                            placeholder="Kategori Seçimi"
-                        />
-                        <TextInput
-                            id="first_name"
-                            name="first_name"
-                            className="mt-1 block w-full"
-                            placeholder="Alt Kategori Seçimi"
-                        />
-                    </div>
-                    <div className="relative overflow-x-auto shadow border rounded">
-                        <table className="w-full text-sm text-left text-gray-500">
-                            <thead className="text-gray-700 font-black uppercase bg-gray-100">
-                                <tr>
-                                    <th scope="col" className="p-3 border">
-                                        Ürün bilgisi
-                                    </th>
-                                    <th scope="col" className="p-3 border">
+                <div className="bg-white text-gray-900  overflow-hidden shadow-sm rounded-lg ">
+                    <p className="p-4 text-gray-500 font-medium">
+                        <span className="text-gray-600 font-semibold">
+                            {productsCount}
+                        </span>{" "}
+                        üründen,
+                        <span className="text-gray-600 font-semibold">
+                            {products.from}-{products.to}
+                        </span>{" "}
+                        arasını görüntülüyorsunuz.
+                    </p>
+                    <table className="w-full border text-sm text-left text-gray-500">
+                        <thead className="text-gray-700 font-black uppercase bg-gray-100">
+                            <tr>
+                                <th scope="col" className="p-3">
+                                    Ürün bilgisi
+                                </th>
+                                {/* <th scope="col" className="p-3 border">
                                         Özellikleri
-                                    </th>
-                                    <th scope="col" className="p-3 border">
-                                        Komisyon
-                                    </th>
-                                    <th scope="col" className="p-3 border">
-                                        Piyasa Satiş fiyatı
-                                    </th>
-                                    <th scope="col" className="p-3 border">
-                                        İndirimli Satiş fiyatı
-                                    </th>
-                                    <th scope="col" className="p-3 border">
-                                        Stok
-                                    </th>
-                                    <th scope="col" className="p-3 border">
-                                        içerik
-                                    </th>
-                                    <th scope="col" className="p-3 border">
-                                        Detay
-                                    </th>
-                                </tr>
-                            </thead>
-                            {products.data.length > 0 && (
-                                <tbody>
-                                    {products.data.map((product) => (
-                                        <ProductRow
-                                            product={product}
-                                            key={product.id}
-                                        />
-                                    ))}
-                                </tbody>
-                            )}
-                        </table>
-                        {!products.data.length > 0 && (
-                            <div className="w-full h-72 flex justify-center items-center border">
-                                <FaTruckRampBox
-                                    className="mr-8 text-blue-500"
-                                    size={100}
-                                />
-                                <div className="w-1/2">
-                                    <p className="font-semibold mb-3 text-lg">
-                                        Kayıt Bulunamadı
-                                    </p>
-                                    <Link
-                                        href={route("store.productAdd")}
-                                        className="px-52 py-2  bg-blue-500 rounded-lg text-white font-medium  hover:bg-blue-600 transition"
-                                    >
-                                        Ürün Oluştur
-                                    </Link>
-                                </div>
-                            </div>
+                                    </th> */}
+                                <th scope="col" className="p-3 border-x">
+                                    Komisyon
+                                </th>
+                                <th scope="col" className="p-3 border-x">
+                                    Piyasa Satiş fiyatı
+                                </th>
+                                <th scope="col" className="p-3 border-x">
+                                    İndirimli Satiş fiyatı
+                                </th>
+                                <th scope="col" className="p-3 border-x">
+                                    Stok
+                                </th>
+                                <th scope="col" className="p-3 border-x">
+                                    içerik
+                                </th>
+                                <th scope="col" className="p-3">
+                                    Detay
+                                </th>
+                            </tr>
+                        </thead>
+                        {products.data.length > 0 && (
+                            <tbody>
+                                {products.data.map((product) => (
+                                    <ProductRow
+                                        product={product}
+                                        key={product.id}
+                                    />
+                                ))}
+                            </tbody>
                         )}
-                    </div>
+                    </table>
+                    {!products.data.length > 0 && (
+                        <div className="w-full h-72 flex justify-center items-center border">
+                            <FaTruckRampBox
+                                className="mr-8 text-blue-500"
+                                size={100}
+                            />
+                            <div className="w-1/2">
+                                <p className="font-semibold mb-3 text-lg">
+                                    Kayıt Bulunamadı
+                                </p>
+                                <Link
+                                    href={route("store.productAdd")}
+                                    className="px-52 py-2  bg-blue-500 rounded-lg text-white font-medium  hover:bg-blue-600 transition"
+                                >
+                                    Ürün Oluştur
+                                </Link>
+                            </div>
+                        </div>
+                    )}
                 </div>
                 {productsCount > 12 && (
                     <div className="flex justify-center mt-6">

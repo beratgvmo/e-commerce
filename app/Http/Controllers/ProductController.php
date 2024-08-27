@@ -120,7 +120,6 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        // Validate request data
         $request->validate([
             'price' => 'required',
             'discounted_price' => 'required',
@@ -135,6 +134,10 @@ class ProductController extends Controller
             $discountedPrice = $price;
         }
 
+        if ($price != $product->price) {
+            $discountedPrice = $price;
+        }
+
         if ($price < 10) {
             return redirect()->back()->with([
                 'message' => 'Ürün fiyatı en az 10 TL olmalıdır.',
@@ -143,13 +146,13 @@ class ProductController extends Controller
         }
 
         if ($discountedPrice < 10) {
+
             return redirect()->back()->with([
                 'message' => 'İndirimli ürün fiyatı en az 10 TL olmalıdır.',
                 'type' => 'error',
             ]);
         }
 
-        // Ensure the price does not exceed the maximum allowed value
         if ($price > 999999.99 || $discountedPrice > 999999.99) {
             return redirect()->back()->with([
                 'message' => 'Ürün fiyatı en fazla 999.999,99 TL olabilir.',
@@ -177,7 +180,57 @@ class ProductController extends Controller
     }
 
 
+    public function updateImgOrder(Request $request)
+    {
+        // return $request;
+        foreach ($request->images as $images) {
+            ProductImg::where('id', $images["id"])->update(['order' => $images["order"]]);
+        }
 
+        return redirect()->back()->with([
+            'message' => 'Ürün Resimi Güncelledi.',
+            'type' => 'success',
+        ]);
+    }
+
+    public function productImgAdd(Request $request, $id)
+    {
+        return $request;
+        $images = $request->file('images');
+
+        $imagePath = $images->store('public/images');
+        $imageUrl = Storage::url($imagePath);
+
+        ProductImg::create([
+            'product_id' => $request->product->id,
+            'img' => $imageUrl,
+        ]);
+
+        return redirect()->back()->with([
+            'message' => 'Ürüne yeni Resmi eklendi',
+            'type' => 'success',
+        ]);
+    }
+
+    public function productImgDestroy($id)
+    {
+        $img = ProductImg::find($id);
+
+        if (!$img) {
+            return redirect()->back()->with([
+                'message' => 'Ürün resmi bulunamadı.',
+                'type' => 'error',
+            ]);
+        }
+
+        Storage::disk('public')->delete($img->img);
+        $img->delete();
+
+        return redirect()->back()->with([
+            'message' => 'Ürün resmi silindi.',
+            'type' => 'success',
+        ]);
+    }
 
 
     private function formatPrice($price)

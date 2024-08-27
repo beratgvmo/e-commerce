@@ -43,7 +43,7 @@ class Product extends Model implements Viewable
 
     public function images()
     {
-        return $this->hasMany(ProductImg::class);
+        return $this->hasMany(ProductImg::class)->orderBy('order', 'asc');
     }
 
     public function attributes()

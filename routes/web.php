@@ -55,9 +55,12 @@ Route::middleware('auth:store')->group(function () {
     Route::get('/store/product-add', [ProductController::class, "indexAdd"])->name('store.productAdd');
     Route::post('/store/product-add', [ProductController::class, "productAdd"]);
 
-    Route::patch('/store/product-list/update/{id}', [ProductController::class, "productUpdatePage"])->name('store.productUpdate');
+    Route::post('/store/product-list/images-add/{id}', [ProductController::class, 'productImgAdd'])->name('store.productImgAdd');
 
-    Route::patch('store/product-one/{id}', [ProductController::class, 'productUpdateNumbers'])->name('store.updateNumbers');
+    Route::post('/store/product-list/images-update', [ProductController::class, 'updateImgOrder'])->name('store.updateImgOrder');
+    Route::get('/store/product-list/update/{id}', [ProductController::class, "productUpdatePage"])->name('store.productUpdate');
+    Route::patch('store/product-list/update/{id}', [ProductController::class, 'productUpdateNumbers'])->name('store.updateNumbers');
+    Route::delete('/store/product-list/update-img/{id}', [ProductController::class, 'productImgDestroy'])->name('store.imgDestroy');
 
     Route::get('/store/order', [OrderController::class, "orderList"])->name('store.order');
     Route::get('/store/order/{order_code}', [OrderController::class, "orderDetail"])->name('store.orderDetail');

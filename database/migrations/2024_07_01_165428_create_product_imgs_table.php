@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('product_id');
             $table->string('img');
+            $table->integer('order')->nullable();
             $table->foreign('product_id')->references('id')->on('products');
             $table->timestamps();
         });
