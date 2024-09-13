@@ -37,6 +37,9 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::post('/sepet/remove', [UserDashboardController::class, 'removeFromCart'])->name("user.removeFromCart");
     Route::post('/sepet/active', [UserDashboardController::class, 'activeCart'])->name('user.activeCart');
 
+    Route::get('/siparislerim', [UserDashboardController::class, 'order'])->name("user.order");
+
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -55,12 +58,14 @@ Route::middleware('auth:store')->group(function () {
     Route::get('/store/product-add', [ProductController::class, "indexAdd"])->name('store.productAdd');
     Route::post('/store/product-add', [ProductController::class, "productAdd"]);
 
-    Route::post('/store/product-list/images-add/{id}', [ProductController::class, 'productImgAdd'])->name('store.productImgAdd');
+    Route::delete('/store/product-list/delete/{id}', [ProductController::class, 'productDelete'])->name('store.productDelete');
 
     Route::post('/store/product-list/images-update', [ProductController::class, 'updateImgOrder'])->name('store.updateImgOrder');
+    Route::post('/store/product-list/images-add/{id}', [ProductController::class, 'productImgAdd'])->name('store.productImgAdd');
+    Route::delete('/store/product-list/images-delete/{id}', [ProductController::class, 'productImgDestroy'])->name('store.imgDestroy');
+
     Route::get('/store/product-list/update/{id}', [ProductController::class, "productUpdatePage"])->name('store.productUpdate');
     Route::patch('store/product-list/update/{id}', [ProductController::class, 'productUpdateNumbers'])->name('store.updateNumbers');
-    Route::delete('/store/product-list/update-img/{id}', [ProductController::class, 'productImgDestroy'])->name('store.imgDestroy');
 
     Route::get('/store/order', [OrderController::class, "orderList"])->name('store.order');
     Route::get('/store/order/{order_code}', [OrderController::class, "orderDetail"])->name('store.orderDetail');

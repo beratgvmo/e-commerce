@@ -4,7 +4,7 @@ import { Head, Link, useForm } from "@inertiajs/react";
 import RenderStars from "@/Components/RenderStars";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
-import { FaHome } from "react-icons/fa";
+import { FaHome, FaRegStar } from "react-icons/fa";
 import { BiMessageSquareAdd } from "react-icons/bi";
 import { MdOutlineInfo } from "react-icons/md";
 import { FaStar } from "react-icons/fa";
@@ -12,6 +12,13 @@ import ProductSwiper from "@/Components/ProductSwiper";
 import PriceText from "@/Components/PriceText";
 import "react-quill/dist/quill.snow.css";
 import "quill/dist/quill.core.css";
+import {
+    TbBasketPlus,
+    TbClockExclamation,
+    TbMessage2,
+    TbMessage2Question,
+    TbMessage2Search,
+} from "react-icons/tb";
 
 export default function ProductDetail({
     auth,
@@ -47,12 +54,16 @@ export default function ProductDetail({
     const nextImage = () => {
         if (product.images.length - 1 > currentIndex) {
             setCurrentIndex(currentIndex + 1);
+        } else {
+            setCurrentIndex(0);
         }
     };
 
     const prevImage = () => {
         if (currentIndex > 0) {
             setCurrentIndex(currentIndex - 1);
+        } else {
+            setCurrentIndex(product.images.length - 1);
         }
     };
 
@@ -86,25 +97,45 @@ export default function ProductDetail({
                 </ol>
             </nav>
             <div className="flex">
-                <div className="relative group min-w-[34rem] rounded-md border border-gray-300  flex justify-between items-center">
+                <div className="relative  flex justify-between items-center">
                     <button
                         onClick={prevImage}
-                        className="absolute left-2 flex items-center justify-center w-14 h-14 text-3xl text-gray-400 bg-gray-200 rounded-full opacity-0 cursor-pointer group-hover:opacity-100 group-hover:flex hover:bg-gray-300 transition-opacity duration-300 z-10"
+                        className="absolute left-2 flex items-center justify-center w-12 h-12 text-3xl text-gray-500 bg-gray-100 rounded-full cursor-pointer shadow-[0px_0px_10px_3px_rgba(0,0,0,0.2)] hover:bg-gray-300 duration-300 z-10"
                     >
                         <IoIosArrowBack />
                     </button>
-                    <div className="flex items-center justify-center h-[42rem] w-full overflow-hidden">
-                        {product.images && product.images.length > 0 && (
-                            <img
-                                src={product.images[currentIndex].img}
-                                alt="Product Image"
-                                className="w-auto h-full object-contain "
-                            />
-                        )}
+                    <div>
+                        <img
+                            src={product.images[currentIndex].img}
+                            alt="Product Image"
+                            className="min-w-[34rem] h-[42rem] object-contain rounded-md border border-gray-300"
+                        />
+
+                        <div className="flex gap-5 overflow-hidden mt-3 justify-center">
+                            {product.images.map((image, index) =>
+                                image.img ===
+                                product.images[currentIndex].img ? (
+                                    <img
+                                        key={index}
+                                        src={image.img}
+                                        alt="Product Image"
+                                        className="w-14 h-16 object-contain border-2 rounded-lg border-blue-500"
+                                    />
+                                ) : (
+                                    <img
+                                        key={index}
+                                        src={image.img}
+                                        alt="Product Image"
+                                        onClick={() => setCurrentIndex(index)}
+                                        className="w-14 h-16 object-contain border rounded-lg cursor-pointer"
+                                    />
+                                )
+                            )}
+                        </div>
                     </div>
                     <button
                         onClick={nextImage}
-                        className="absolute right-2 flex items-center justify-center w-14 h-14 text-3xl text-gray-400 bg-gray-200 rounded-full opacity-0 cursor-pointer group-hover:opacity-100 group-hover:flex hover:bg-gray-300 transition-opacity duration-300 z-10 "
+                        className="absolute right-2 flex items-center justify-center w-12 h-12 text-3xl text-gray-500 bg-gray-100 rounded-full cursor-pointer shadow-[0px_0px_10px_3px_rgba(0,0,0,0.2)] hover:bg-gray-300 duration-300 z-10 "
                     >
                         <IoIosArrowForward />
                     </button>
@@ -112,114 +143,182 @@ export default function ProductDetail({
 
                 <div className="w-full px-6  rounded-e-md">
                     <h1 className="text-lg font-semibold">{product.name}</h1>
-                    <div className="flex mt-3 items-center justify-between">
-                        <p className="text-slate-800 text-3xl font-black mt-4">
-                            <PriceText value={product.price} />
-                        </p>
-                        <div className="flex flex-col items-end self-center">
-                            <div className="flex justify-center items-center mb-1">
-                                <p className="mr-1 ">{product.rating}</p>
-                                <RenderStars
-                                    count={product.rating}
-                                    size="large"
+                    <div className="mt-3 flex items-center">
+                        <div className="flex items-center mr-3">
+                            {product.rating > 0 ? (
+                                <>
+                                    <p className="mr-1 bg-blue-600/15 text-sm text-center font-semibold w-8 rounded-md">
+                                        {product.rating},0
+                                    </p>
+                                    <RenderStars
+                                        count={product.rating}
+                                        size="large"
+                                    />
+                                </>
+                            ) : (
+                                <p className="mr-1 text-sm flex items-center gap-1">
+                                    <FaRegStar className="text-yellow-400" />{" "}
+                                    Henüz değerlendirilmemiş
+                                </p>
+                            )}
+                        </div>
+                        {totalReviews > 0 ? (
+                            <p className="text-sm font-medium text-blue-500">
+                                <span className="text-blue-600 font-semibold">
+                                    {totalReviews}
+                                </span>{" "}
+                                Değerlendirme
+                            </p>
+                        ) : (
+                            <p className="text-sm font-medium text-blue-500 flex items-center gap-1">
+                                İlk sen değerlendir
+                                <TbMessage2 />
+                            </p>
+                        )}
+                    </div>
+                    <div className="mt-6">
+                        <div className="flex gap-2">
+                            <Link
+                                href={`/magaza/${store.slug}`}
+                                className="flex items-center gap-2 border p-1.5 rounded-md"
+                            >
+                                <p className="text-indigo-400 text-sm font-bold">
+                                    <span className="text-gray-400">
+                                        Satıcı:
+                                    </span>{" "}
+                                    {store.store_name}
+                                </p>
+                                <p className="bg-blue-600/15 text-sm text-center font-semibold w-8 rounded-md">
+                                    {
+                                        (store.store_rating
+                                            ? store.store_rating
+                                            : 0,
+                                        0)
+                                    }
+                                </p>
+                                <IoIosArrowForward />
+                            </Link>
+                            <div className="border p-1.5 rounded-md text-gray-700 text-sm font-semibold">
+                                Takip et
+                            </div>
+                            <div className="border flex gap-1 items-center p-1.5 rounded-md text-gray-700 text-sm font-semibold">
+                                <TbMessage2Question /> Satıcıya sor
+                            </div>
+                        </div>
+                        {product.price != product.discounted_price ? (
+                            <div className="flex items-center gap-4 mt-6">
+                                <p className="text-slate-800 text-3xl font-black">
+                                    <PriceText
+                                        value={product.discounted_price}
+                                    />
+                                </p>
+                                <PriceText
+                                    value={product.price}
+                                    className="line-through text-lg font-normal text-gray-400"
                                 />
                             </div>
-                            <p className="text-xs font-medium text-end">
-                                {totalReviews} Değerlendirme
+                        ) : (
+                            <p className="text-slate-800 text-3xl font-black mt-6">
+                                <PriceText value={product.price} />
                             </p>
-                        </div>
+                        )}
                     </div>
+                    {product.stock_quantity <= 10 && (
+                        <div className="flex justify-center items-center mt-3 gap-1 text-red-600 font-semibold w-24 rounded-md text-xs h-6 bottom-0 bg-red-200/50">
+                            <TbClockExclamation size={16} /> son{" "}
+                            {product.stock_quantity} ürün!
+                        </div>
+                    )}
                     <div className="mt-4">
                         <form onSubmit={addToCart}>
                             <button
                                 type="submit"
-                                className={`text-white px-8 py-4 mt-1 w-full rounded-md transition-all duration-200 ${
+                                className={`flex items-center justify-center gap-2 text-white font-bold text-lg px-8 py-3 mt-1 w-full rounded-md transition-all duration-200 ${
                                     isAddedToCart
                                         ? "bg-green-500"
                                         : "bg-blue-500 hover:bg-blue-700"
                                 }`}
                             >
+                                <TbBasketPlus size={25} />
                                 {isAddedToCart
                                     ? "Sepete Eklendi"
                                     : "Sepete Ekle"}
                             </button>
                         </form>
                     </div>
-
-                    <div className="flex gap-2">
-                        <div className="w-1/2 relative mt-4 p-2 px-3 bg-orange-100 border rounded-md">
-                            <div>
-                                <p className="text-indigo-400 text-sm font-bold">
-                                    {store.store_name}
-                                    <span className="ml-1 bg-green-500 py-1 px-2 rounded-md text-white">
-                                        {store.store_rating
-                                            ? store.store_rating
-                                            : 0}
-                                    </span>
-                                </p>
-                                <p className="text-xs font-medium mb-1 text-gray-700">
-                                    {store.followers_count} Takipçi
-                                </p>
-                            </div>
-                            <div className="w-full absolute left-3 -bottom-3 flex justify-center">
-                                <Link
-                                    href={`/magaza/${store.slug}`}
-                                    className="text-xs border bg-indigo-200 px-3 py-1 hover:bg-indigo-300 transition hover:scale-105 flex items-center rounded-full"
-                                >
-                                    MAĞAZAYA GİT
-                                    <IoIosArrowForward />
-                                </Link>
-                            </div>
-                        </div>
-                        <div className="w-1/2 mt-4 p-2 px-3 border bg-orange-100 rounded-md">
-                            <p className="text-sm">
-                                <span className="font-semibold">
-                                    Tahmini Kargoya Teslim
-                                </span>
-                                : 3 gün içinde
-                            </p>
-                        </div>
-                    </div>
                 </div>
             </div>
+
             <div className="mt-6">
                 <div className="border border-gray-300 rounded-lg">
                     <div className="flex w-full justify-between rounded-t-lg">
                         <button
                             onClick={() => switchTab(1)}
-                            className={`py-3 w-full font-medium rounded-tl-lg transition-all duration-300 ${
+                            className={`relative py-3 w-full font-medium border-b ${
                                 currentTab === 1
-                                    ? "bg-white"
-                                    : "bg-neutral-400 text-white"
+                                    ? "text-gray-900"
+                                    : "text-gray-400"
                             }`}
                         >
                             Ürün Açıklaması
+                            <div
+                                className={`w-full h-[3px] absolute bottom-0 rounded-t-[3px] bg-blue-500 ${
+                                    currentTab === 1 ? "block" : "hidden"
+                                }`}
+                            />
                         </button>
+
                         <button
                             onClick={() => switchTab(2)}
-                            className={`py-3 w-full font-medium transition-all duration-300 ${
+                            className={`relative py-3 w-full font-medium border-b ${
                                 currentTab === 2
-                                    ? "bg-white"
-                                    : "bg-neutral-400 text-white"
+                                    ? "text-gray-900"
+                                    : "text-gray-400"
                             }`}
                         >
                             Değerlendirmeler ({totalReviews})
+                            <div
+                                className={`w-full h-[3px] absolute bottom-0 rounded-t-[3px] bg-blue-500 ${
+                                    currentTab === 2 ? "block" : "hidden"
+                                }`}
+                            />
                         </button>
                         <button
                             onClick={() => switchTab(3)}
-                            className={`py-3 w-full rounded-tr-lg font-medium transition-all duration-300 ${
+                            className={`relative py-3 w-full font-medium border-b ${
                                 currentTab === 3
-                                    ? "bg-white"
-                                    : "bg-neutral-400 text-white"
+                                    ? "text-gray-900"
+                                    : "text-gray-400"
+                            }`}
+                        >
+                            Soru Cevap
+                            <div
+                                className={`w-full h-[3px] absolute bottom-0 rounded-t-[3px] bg-blue-500 ${
+                                    currentTab === 3 ? "block" : "hidden"
+                                }`}
+                            />
+                        </button>
+
+                        <button
+                            onClick={() => switchTab(4)}
+                            className={`relative py-3 w-full font-medium border-b ${
+                                currentTab === 4
+                                    ? "text-gray-900"
+                                    : "text-gray-400"
                             }`}
                         >
                             Ürün Özellikleri
+                            <div
+                                className={`w-full h-[3px] absolute bottom-0 rounded-t-[3px] bg-blue-500 ${
+                                    currentTab === 4 ? "block" : "hidden"
+                                }`}
+                            />
                         </button>
                     </div>
 
                     <div className="min-h-[10rem] w-full py-3">
                         {currentTab === 1 && (
-                            <div className="px-4 mx-4 w-full">
+                            <div className="py-6 px-5 mx-4 w-full">
                                 <div
                                     className=" html"
                                     dangerouslySetInnerHTML={{
@@ -230,7 +329,7 @@ export default function ProductDetail({
                         )}
 
                         {currentTab === 2 && (
-                            <div>
+                            <div className="px-6">
                                 <div
                                     className={`px-6 mt-2 ${
                                         product.reviews.length > 0 &&
@@ -248,20 +347,18 @@ export default function ProductDetail({
                                             </p>
                                         )}
                                     </div>
-                                    <div className="flex mt-6">
-                                        <div className="mr-16 flex justify-center">
-                                            <div className="h-52 w-52 ">
-                                                <img
-                                                    src={product.images[0].img}
-                                                    alt="Product Image"
-                                                    className="w-auto h-full object-contain rounded-md"
-                                                />
-                                            </div>
+                                    <div className="flex mt-12">
+                                        <div className="mr-8 flex justify-center">
+                                            <img
+                                                src={product.images[0].img}
+                                                alt="Product Image"
+                                                className="w-auto h-44 object-contain"
+                                            />
                                         </div>
                                         <div>
                                             {product.reviews.length > 0 ? (
                                                 <div className="flex">
-                                                    <div className="flex flex-col justify-center items-center gap-1 mr-8">
+                                                    <div className="flex flex-col justify-center items-center gap-1 mr-16">
                                                         <p className="text-6xl text-gray-800">
                                                             {product.rating}
                                                         </p>
@@ -338,7 +435,7 @@ export default function ProductDetail({
                                         </div>
                                     </div>
                                     {product.reviews.length > 0 && (
-                                        <div className="mb-3">
+                                        <div className="mb-3 mt-14">
                                             <div className="flex mt-3 gap-3">
                                                 <button className="py-3 px-7 font-semibold rounded-lg text-white flex gap-1 items-center bg-blue-500 hover:bg-blue-600 transition">
                                                     Değerlendir{" "}
@@ -348,34 +445,22 @@ export default function ProductDetail({
                                                     Sepete ekle
                                                 </button>
                                             </div>
-                                            <div className="flex items-center mt-2 gap-1 text-gray-700">
-                                                <MdOutlineInfo />
-                                                Değerlendirme yapabilmek için bu
-                                                ürünü satın almış olmalısınız.
+                                            <div className="mt-3 text-gray-700">
+                                                <p className="mb-0.5 text-blue-500 font-medium">
+                                                    Yorum Yayınlanma Kriterleri
+                                                </p>
+                                                <p className="flex gap-1 items-center">
+                                                    <MdOutlineInfo />
+                                                    Değerlendirme yapabilmek
+                                                    için bu ürünü satın almış
+                                                    olmalısınız.
+                                                </p>
                                             </div>
                                         </div>
                                     )}
                                 </div>
-                                <div className="px-4 mt-5">
-                                    {/* <div className="flex">
-                                        <div className="flex px-3 py-1 items-center border rounded-full">
-                                            <FaStar className="text-yellow-400 mr-1" />
-                                            <p className="mr-1">
-                                                5 Çok İyi (200)
-                                            </p>
-                                            <RiAddLargeFill />
-                                        </div>
-                                        <div className="flex px-3 py-1 items-center border rounded-full">
-                                            <FaStar className="text-yellow-400 mr-1" />
-                                            <p className="mr-1">
-                                                5 Çok İyi (200)
-                                            </p>
-                                            <RiAddLargeFill />
-                                        </div>
-                                    </div> */}
-                                </div>
                                 {product.reviews.length > 0 && (
-                                    <div className="px-4">
+                                    <div className="px-4 mt-4">
                                         <p className="text-gray-700 text-sm font-semibold">
                                             Bu ürün ile ilgili 244 değerlendirme
                                             var.
@@ -438,6 +523,46 @@ export default function ProductDetail({
                         )}
 
                         {currentTab === 3 && (
+                            <div className="py-6 px-5 mx-4 w-full">
+                                <div className="border-b-2 pb-7 mt-4">
+                                    <div className="w-[48rem]">
+                                        <p className="font-semibold ml-4">
+                                            Soru
+                                        </p>
+                                        <p className="bg-gray-100 text-gray-700 mt-2 p-4 rounded-2xl">
+                                            Ürünün yanında flas bellekle kurulum
+                                            programlarını gönderiyor musunuz
+                                        </p>
+                                    </div>
+                                    <div className="ml-2 mt-7 w-[48rem]">
+                                        <p className="font-semibold ml-4">
+                                            Cevap
+                                        </p>
+                                        <div className="bg-white text-gray-700 mt-2 shadow-[0_2px_10px_#00000014]  p-4 rounded-2xl">
+                                            <p>
+                                                Merhabalar. İncelemekte
+                                                olduğunuz modelimizin kutu
+                                                içeriğinde güncel driverları
+                                                içeren USB bellek mevcuttur.
+                                            </p>
+                                            <p className="text-sm mt-3">
+                                                <span className="text-blue-500 font-semibold">
+                                                    EXCALIBUR
+                                                </span>{" "}
+                                                satıcısı cevapladı
+                                            </p>
+                                        </div>
+
+                                        <p className="flex justify-end mt-2 text-sm text-gray-600">
+                                            23 Şubat • 9 saat içerisinde
+                                            cevapladı
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {currentTab === 4 && (
                             <div className="grid grid-cols-2 gap-5 mt-2 px-4">
                                 {attributeTypes.map((attributeType) =>
                                     attributes

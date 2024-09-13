@@ -67,7 +67,7 @@ export default function HomeLayout({ auth, categories, children, cart }) {
                                             >
                                                 <IoCartOutline size={23} />
                                                 <p>Sepetim</p>
-                                                {cart && (
+                                                {cart > 0 && (
                                                     <span class="absolute -right-0.5 top-0.5 flex h-5 w-5 transition duration-500">
                                                         <span class="animate-ping transition duration-500 absolute inline-flex h-full w-full rounded-full group-hover:bg-blue-400 bg-blue-200 opacity-65"></span>
                                                         <span class="relative transition duration-500 flex justify-center items-center rounded-full text-xs h-5 w-5 group-hover:bg-blue-500  text-gray-50 bg-blue-300">

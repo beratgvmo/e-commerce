@@ -238,91 +238,6 @@ export default function ProductUpdate({
                         <div className="p-6 text-gray-900 bg-white rounded-lg my-5 shadow-sm">
                             <div className="flex items-center mb-5">
                                 <h1 className="text-xl font-bold">
-                                    Ürün Görselleri
-                                </h1>
-                                <div className="flex items-center group">
-                                    <HiMiniQuestionMarkCircle className="ml-1 mr-2 text-lg" />
-                                    <div className="font-medium text-sm text-gray-200 bg-gray-800 rounded-xl px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        En az üç resim yüklemeniz gerekmektedir
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="mt-4 mb-8">
-                                <div className="h-44 flex mt-2">
-                                    {data.images.map((img, index) => (
-                                        <div key={index}>
-                                            <div className="relative flex justify-center">
-                                                <div className="group">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            handleImageRemove(
-                                                                index
-                                                            )
-                                                        }
-                                                        className="absolute bottom-2 right-4 mt-2 text-gray-50 text-lg bg-red-500 rounded-full h-8 w-8 hover:text-gray-200 hover:bg-red-600 group-hover:flex flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                    >
-                                                        <MdDelete />
-                                                    </button>
-                                                    <img
-                                                        src={URL.createObjectURL(
-                                                            img
-                                                        )}
-                                                        alt=""
-                                                        className="h-44 w-44 border-2 rounded-lg cursor-pointer p-2 mr-2 object-contain"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                    {data.images.length < 6 && (
-                                        <div className="flex items-center justify-center h-full w-44">
-                                            <label
-                                                htmlFor="dropzone-file"
-                                                className="flex h-full flex-col items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-                                            >
-                                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                    <svg
-                                                        className="w-8 h-8 mb-4 text-gray-500"
-                                                        aria-hidden="true"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none"
-                                                        viewBox="0 0 20 16"
-                                                    >
-                                                        <path
-                                                            stroke="currentColor"
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            strokeWidth="2"
-                                                            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                                                        />
-                                                    </svg>
-                                                    <p className="mb-2 text-sm text-gray-500 font-semibold">
-                                                        Ürün Resimi Yükle
-                                                    </p>
-                                                    <p className="text-xs text-center text-gray-500">
-                                                        PNG, JPG, WEBP, JPEG
-                                                    </p>
-                                                </div>
-                                                <input
-                                                    id="dropzone-file"
-                                                    type="file"
-                                                    className="hidden"
-                                                    onChange={handleImageChange}
-                                                />
-                                            </label>
-                                        </div>
-                                    )}
-                                </div>
-                                <InputError
-                                    message={errors.images}
-                                    className="mt-2"
-                                />
-                            </div>
-                        </div>
-                        <div className="p-6 text-gray-900 bg-white rounded-lg my-5 shadow-sm">
-                            <div className="flex items-center mb-5">
-                                <h1 className="text-xl font-bold">
                                     Ürün Özelikleri
                                 </h1>
                                 <div className="flex items-center group">
@@ -384,7 +299,11 @@ export default function ProductUpdate({
                             />
                         </div>
 
-                        <PrimaryButton>Ürün Güncelle</PrimaryButton>
+                        <div className="flex justify-end mt-6 mb-6">
+                            <PrimaryButton type="submit">
+                                Ürün Güncelle
+                            </PrimaryButton>
+                        </div>
                     </form>
                 </div>
             </div>

@@ -344,6 +344,8 @@ class UserDashboardController extends Controller
         ]);
     }
 
+    public function order(Request $request) {}
+
     protected function calculateShippingCost($cargoCompanyId)
     {
         $cargoCompany = CargoCompany::find($cargoCompanyId);

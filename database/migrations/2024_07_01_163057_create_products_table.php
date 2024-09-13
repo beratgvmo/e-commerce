@@ -18,15 +18,19 @@ return new class extends Migration
             $table->unsignedBigInteger('category_id');
             $table->text('description')->nullable();
             $table->decimal('price', 8, 2);
+            $table->integer('kdv')->default(0);
             $table->decimal('discounted_price', 8, 2);
             $table->integer('stock_quantity');
             $table->integer('sales_count')->default(0);
-            $table->float('rating')->default(0);
+            $table->decimal('rating', 3, 1)->default(0);
             $table->boolean('is_active')->default(true);
             $table->unsignedBigInteger('store_id');
+            $table->boolean('is_confirmation')->default(false);
+            $table->text("red_message")->nullable();
+            $table->enum('status', ['onay bekliyor', 'onaylandi', 'reddedildi'])->default('onay bekliyor');
             $table->timestamps();
 
-            $table->foreign('category_id')->references('id')->on('categories');
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
         });
     }

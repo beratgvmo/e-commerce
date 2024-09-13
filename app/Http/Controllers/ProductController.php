@@ -43,12 +43,36 @@ class ProductController extends Controller
                 ->get();
         }
 
+        $sellingCategory = Category::find(Auth::user()->selling_category_id);
+
         return Inertia::render('Store/ProductAdd', [
             'categories' => $categories,
             'subCategories' => $subCategories,
-            'attributeTypes' => $attributeTypes
+            'attributeTypes' => $attributeTypes,
+            'categoryStore' => $sellingCategory->name
         ]);
     }
+
+    public function productDelete($id)
+    {
+        $product = Product::with('images')->find($id);
+
+        foreach ($product->images as $image) {
+            if (Storage::exists('public/images/' . $image->img)) {
+                Storage::delete('public/images/' . $image->img);
+            }
+        }
+
+        $product->images()->delete();
+
+        $product->delete();
+
+        return redirect()->back()->with([
+            'message' => 'Ürün silindi',
+            'type' => 'success',
+        ]);
+    }
+
 
     public function productAdd(ProductRequest $request)
     {
@@ -67,6 +91,7 @@ class ProductController extends Controller
             'stock_quantity' => $stockQuantity,
             'is_active' => $request->is_active,
             'slug' => $slug,
+            'slug' => $request->kdv,
             'discounted_price' => $price,
             'store_id' => Auth::id(),
         ]);
@@ -182,7 +207,6 @@ class ProductController extends Controller
 
     public function updateImgOrder(Request $request)
     {
-        // return $request;
         foreach ($request->images as $images) {
             ProductImg::where('id', $images["id"])->update(['order' => $images["order"]]);
         }
@@ -195,14 +219,16 @@ class ProductController extends Controller
 
     public function productImgAdd(Request $request, $id)
     {
-        return $request;
-        $images = $request->file('images');
+        $request->validate([
+            'imagesAdd' => 'required|image',
+        ]);
 
-        $imagePath = $images->store('public/images');
+        $image = $request->file('imagesAdd');
+        $imagePath = $image->store('public/images');
         $imageUrl = Storage::url($imagePath);
 
         ProductImg::create([
-            'product_id' => $request->product->id,
+            'product_id' => $id,
             'img' => $imageUrl,
         ]);
 
@@ -223,14 +249,18 @@ class ProductController extends Controller
             ]);
         }
 
-        Storage::disk('public')->delete($img->img);
+        if (Storage::disk('public')->exists($img->img)) {
+            Storage::disk('public')->delete($img->img);
+        }
+
         $img->delete();
 
         return redirect()->back()->with([
-            'message' => 'Ürün resmi silindi.',
+            'message' => 'Ürün resmi başarıyla silindi.',
             'type' => 'success',
         ]);
     }
+
 
 
     private function formatPrice($price)

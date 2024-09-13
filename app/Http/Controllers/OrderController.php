@@ -37,8 +37,11 @@ class OrderController extends Controller
 
         $orders = $query->paginate(12);
 
+        $orderCount = Order::where("store_id", Auth::user()->id)->count();
+
         return Inertia::render('Store/OrderList', [
             'orders' => $orders,
+            'orderCount' => $orderCount
         ]);
     }
 

@@ -3,6 +3,7 @@ import RenderStars from "./RenderStars";
 import { NumericFormat } from "react-number-format";
 import PriceText from "./PriceText";
 import { useState } from "react";
+import { TbClockExclamation } from "react-icons/tb";
 
 export default function Product({ product, cart = true }) {
     const { post } = useForm({
@@ -29,6 +30,12 @@ export default function Product({ product, cart = true }) {
                         src={product.images[0]?.img}
                         alt={product.name}
                     />
+                    {product.stock_quantity <= 10 && (
+                        <div className="absolute flex items-center gap-1 text-white text-xs justify-center w-full h-5 bottom-0 bg-red-500">
+                            <TbClockExclamation /> son {product.stock_quantity}{" "}
+                            ürün!
+                        </div>
+                    )}
                 </div>
                 <div className="p-2 rounded-lg bg-gray-50 h-[110px]">
                     <h1 className="font-medium text-sm text-gray-900 mb-1">

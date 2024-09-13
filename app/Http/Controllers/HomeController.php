@@ -26,9 +26,7 @@ class HomeController extends Controller
         $bestSellingProducts = Product::with('images')->where('is_active', true)->orderBy('sales_count', 'desc')->get();
 
         $stores = Store::whereNotNull('logo')
-            ->orderBy('store_rating', 'desc')
-            ->orderBy('reviews_count', 'desc')
-            ->orderBy('product_count', 'desc')
+            ->orderBy('rating', 'desc')
             ->take(10)
             ->get();
 

@@ -26,10 +26,8 @@ return new class extends Migration
             $table->string('banner')->nullable();
             $table->unsignedBigInteger('selling_category_id');
             $table->unsignedBigInteger('cargo_companies_id');
-            $table->float('store_rating', 2, 1)->default(0);
-            $table->integer('product_count')->default(0);
+            $table->decimal('rating', 3, 1)->default(0);
             $table->integer('followers_count')->default(0);
-            $table->integer('reviews_count')->default(0);
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

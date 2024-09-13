@@ -14,9 +14,9 @@ import PriceInput from "./PriceInput";
 import NumberInput from "./NumberInput";
 import Button from "./Button";
 import OutlineButton from "./OutlineButton";
-import { FaArrowsAltV } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { LuUploadCloud } from "react-icons/lu";
+import { toast } from "react-toastify";
 
 export default function ProductRow({ product }) {
     const {
@@ -25,13 +25,12 @@ export default function ProductRow({ product }) {
         patch,
         post,
         delete: destroy,
-        errors,
     } = useForm({
         price: product.price,
         discounted_price: product.discounted_price,
         stock_quantity: product.stock_quantity,
         images: product.images,
-        imagesAdd: [],
+        imagesAdd: null,
     });
 
     const [needsUpdate, setNeedsUpdate] = useState(false);
@@ -104,6 +103,9 @@ export default function ProductRow({ product }) {
         e.preventDefault();
         post(route("store.updateImgOrder"), {
             preserveScroll: true,
+            onSuccess: () => {
+                toggleDrawer();
+            },
         });
     };
 
@@ -122,15 +124,53 @@ export default function ProductRow({ product }) {
         };
     }, [isDrawerOpen]);
 
+    useEffect(() => {
+        if (data.imagesAdd) {
+            post(route("store.productImgAdd", product.id));
+        }
+    }, [data.imagesAdd]);
+
     const toggleDrawer = () => setIsDrawerOpen((prev) => !prev);
 
     const [isHoveredDrop, setIsHoveredDrop] = useState(false);
 
-    const handleImageChange = (e, id) => {
-        setData("imagesAdd", e.target.files);
-        e.preventDefault();
+    const handleImageChange = (e) => {
+        const files = Array.from(e.target.files);
+        e.target.value = null;
 
-        post(route("store.productImgAdd", id), {
+        files.forEach((file) => {
+            const image = new Image();
+            image.src = URL.createObjectURL(file);
+
+            image.onload = () => {
+                if (image.width > 1200 || image.height > 1800) {
+                    toast.error(
+                        "Resim boyutu çok büyük! Lütfen 1200x1800 pikselden küçük bir resim seçin",
+                        {
+                            theme: "colored",
+                            autoClose: 2000,
+                        }
+                    );
+                    return;
+                }
+                if (image.width < 500 || image.height < 500) {
+                    toast.error(
+                        "Resim boyutu çok küçük! Lütfen 500x500 pikselden büyük bir resim seçin.",
+                        {
+                            theme: "colored",
+                            autoClose: 2000,
+                        }
+                    );
+                    return;
+                }
+                setData("imagesAdd", file);
+            };
+        });
+    };
+
+    const deleteProduct = (e, id) => {
+        e.preventDefault();
+        destroy(route("store.productDelete", id), {
             preserveScroll: true,
         });
     };
@@ -242,7 +282,7 @@ export default function ProductRow({ product }) {
                                                                                 alt={
                                                                                     item.name
                                                                                 }
-                                                                                className="rounded-md mr-2 border select-none w-16 h-full object-cover transition-transform"
+                                                                                className="rounded-md mr-2 border select-none w-20 h-20 object-contain transition-transform"
                                                                             />
                                                                             <p>
                                                                                 Resim
@@ -277,9 +317,9 @@ export default function ProductRow({ product }) {
                                         )}
                                     </Droppable>
                                 </DragDropContext>
-                                {product.images.length < 6 && (
+                                {product.images.length < 5 && (
                                     <div className="flex items-center justify-center pt-2">
-                                        <div className="h-20 w-full">
+                                        <div className="h-24 w-full">
                                             <label
                                                 htmlFor="dropzone-file"
                                                 className="flex h-full items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
@@ -295,12 +335,7 @@ export default function ProductRow({ product }) {
                                                     type="file"
                                                     multiple
                                                     className="hidden"
-                                                    onChange={(e) =>
-                                                        handleImageChange(
-                                                            e,
-                                                            product.id
-                                                        )
-                                                    }
+                                                    onChange={handleImageChange}
                                                 />
                                             </label>
                                         </div>
@@ -327,7 +362,7 @@ export default function ProductRow({ product }) {
             </div>
 
             <tr key={product.id} className="bg-white border-t">
-                <th className="px-4 w-[33%] text-sm py-2 font-medium text-gray-900">
+                <th className="px-4 w-[30%] text-sm py-2 font-medium text-gray-900">
                     <div className="flex items-center">
                         <div
                             className="relative mr-4 overflow-hidden rounded-md border-2"
@@ -408,20 +443,28 @@ export default function ProductRow({ product }) {
                 </td>
                 <td className="px-4 border w-[10%]">
                     <Link href={route("store.productUpdate", product.id)}>
-                        <div className="font-medium flex text-blue-600 bg-blue-600/15 px-5 py-2 rounded hover:bg-blue-500/5 transition border border-transparent hover:border-blue-500">
+                        <div className="font-medium flex text-blue-600 bg-blue-600/15 px-5 py-1.5 mb-2 rounded hover:bg-blue-500/5 transition border border-transparent hover:border-blue-500">
                             <div className="bg-blue-600 p-1 rounded-full mr-1">
                                 <TbPencil className="text-white" />
                             </div>
-                            <p>Edit</p>
+                            <p>Düzenle</p>
                         </div>
                     </Link>
+                    <button onClick={(e) => deleteProduct(e, product.id)}>
+                        <div className="font-medium flex text-red-600 bg-red-600/15 px-5 py-1.5 rounded hover:bg-red-500/5 transition border border-transparent hover:border-red-500">
+                            <div className="bg-red-600 p-1 rounded-full mr-1">
+                                <MdDelete className="text-white" />
+                            </div>
+                            <p>Ürünü sil</p>
+                        </div>
+                    </button>
                 </td>
                 <td className="px-4 w-[12%]">
                     {product.is_active ? (
                         <Link href={`/urun/${product.slug}`}>
                             <div className="font-medium text-green-600 bg-green-600/15 px-5 py-2 rounded transition border border-transparent hover:bg-green-500/5 hover:border-green-500">
                                 <p className="flex items-center justify-center">
-                                    Open for Sale
+                                    Satışa Açık
                                     <TbArrowRight className="ml-1" />
                                 </p>
                             </div>
@@ -429,7 +472,7 @@ export default function ProductRow({ product }) {
                     ) : (
                         <div className="font-medium text-red-600 bg-red-600/15 px-5 py-2 rounded">
                             <p className="flex items-center justify-center">
-                                Closed for Sale
+                                Satışa Kapalı
                                 <TbEyeOff className="ml-1" />
                             </p>
                         </div>

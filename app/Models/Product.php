@@ -23,6 +23,7 @@ class Product extends Model implements Viewable
         'stock_quantity',
         'rating',
         'is_active',
+        'kdv',
         'store_id'
     ];
 

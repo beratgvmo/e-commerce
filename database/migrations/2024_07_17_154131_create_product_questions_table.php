@@ -11,18 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_reviews', function (Blueprint $table) {
+        Schema::create('product_questions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('user_id');
-            $table->text('comment');
-            $table->integer('rating');
-            $table->enum('status', ['onay bekliyor', 'onaylandi', 'reddedildi'])->default('onay bekliyor');
-            $table->string('reason')->nullable();
+            $table->text('text');
+            $table->enum('status', ['cevap bekliyor', 'cevaplandı', 'reddedildi'])->default('cevap bekliyor');
             $table->timestamps();
 
-            $table->foreign('product_id')->references('id')->on('products');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -31,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_reviews');
+        Schema::dropIfExists('product_questions');
     }
 };

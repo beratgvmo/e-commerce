@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->string('slug')->unique();
+            $table->integer('commission')->default(0);
 
             $table->foreign('parent_id')->references('id')->on('categories');
             $table->timestamps();

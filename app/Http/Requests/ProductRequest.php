@@ -26,6 +26,7 @@ class ProductRequest extends FormRequest
             'category_id' => 'required|exists:categories,id',
             'description' => 'required|string|min:40',
             'price' => 'required|min:2',
+            'kdv' => 'required',
             'stock_quantity' => 'required|min:2',
             'is_active' => 'required|boolean',
             'images' => ['required', 'array', 'min:3'],

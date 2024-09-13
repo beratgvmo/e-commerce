@@ -14,8 +14,6 @@ export default function ProductList({ auth, productsCount }) {
     const { products } = usePage().props;
     const { flash } = usePage().props;
 
-    console.log(products);
-
     useEffect(() => {
         if (flash.message) {
             toast[flash.type](flash.message, {
@@ -47,25 +45,30 @@ export default function ProductList({ auth, productsCount }) {
 
             <div className="py-12">
                 <div className="bg-white text-gray-900  overflow-hidden shadow-sm rounded-lg ">
-                    <p className="p-4 text-gray-500 font-medium">
-                        <span className="text-gray-600 font-semibold">
-                            {productsCount}
-                        </span>{" "}
-                        üründen,
-                        <span className="text-gray-600 font-semibold">
-                            {products.from}-{products.to}
-                        </span>{" "}
-                        arasını görüntülüyorsunuz.
-                    </p>
-                    <table className="w-full border text-sm text-left text-gray-500">
+                    {products.data.length > 0 ? (
+                        <p className="p-4 text-gray-500 font-medium">
+                            <span className="text-gray-600 font-semibold">
+                                {productsCount}
+                            </span>{" "}
+                            üründen,
+                            <span className="text-gray-600 font-semibold">
+                                {products.from}-{products.to}
+                            </span>{" "}
+                            arasını görüntülüyorsunuz.
+                        </p>
+                    ) : (
+                        <Link href={route("store.productAdd")}>
+                            <p className="p-4 text-gray-500 font-medium">
+                                Yeni ürün eklemek için tıkla
+                            </p>
+                        </Link>
+                    )}
+                    <table className="w-full border rounded-b-lg text-sm text-left text-gray-500">
                         <thead className="text-gray-700 font-black uppercase bg-gray-100">
                             <tr>
                                 <th scope="col" className="p-3">
                                     Ürün bilgisi
                                 </th>
-                                {/* <th scope="col" className="p-3 border">
-                                        Özellikleri
-                                    </th> */}
                                 <th scope="col" className="p-3 border-x">
                                     Komisyon
                                 </th>
@@ -119,20 +122,29 @@ export default function ProductList({ auth, productsCount }) {
                 </div>
                 {productsCount > 12 && (
                     <div className="flex justify-center mt-6">
-                        {products.links.map((link, index) => (
-                            <Link
-                                key={index}
-                                href={link.url}
-                                disabled={!link.url}
-                                className={`mx-1 px-4 py-2 text-lg border rounded-md transition shadow-sm font-medium flex justify-center items-center ${
-                                    link.active
-                                        ? "bg-indigo-500 text-white"
-                                        : "bg-white text-indigo-500 hover:bg-indigo-100"
-                                }`}
-                            >
-                                {translatePaginationLabel(link.label)}
-                            </Link>
-                        ))}
+                        {products.links.map((link, index) =>
+                            link.url ? (
+                                <Link
+                                    key={index}
+                                    href={link.url}
+                                    disabled={!link.url}
+                                    className={`mx-1 px-4 py-2 text-lg border rounded-md transition shadow-sm font-medium flex justify-center items-center ${
+                                        link.active
+                                            ? "bg-indigo-500 text-white"
+                                            : "bg-white text-indigo-500 hover:bg-indigo-100"
+                                    }`}
+                                >
+                                    {translatePaginationLabel(link.label)}
+                                </Link>
+                            ) : (
+                                <div
+                                    key={index}
+                                    className="opacity-50 bg-white text-indigo-500 mx-1 px-4 py-2 text-lg border rounded-md transition shadow-sm font-medium flex justify-center items-center"
+                                >
+                                    {translatePaginationLabel(link.label)}
+                                </div>
+                            )
+                        )}
                     </div>
                 )}
             </div>

@@ -28,13 +28,31 @@ export default function Authenticated({ user, header, children }) {
                                     href={route("dashboard")}
                                     active={route().current("dashboard")}
                                 >
-                                    Hesap
+                                    Hesapım
                                 </NavLink>
                                 <NavLink
                                     href={route("user.cart")}
                                     active={route().current("user.cart")}
                                 >
-                                    Sepet
+                                    Sepetim
+                                </NavLink>
+                                <NavLink
+                                    href={route("user.cart")}
+                                    active={route().current("user.cart")}
+                                >
+                                    Siparislerim
+                                </NavLink>
+                                <NavLink
+                                    href={route("user.cart")}
+                                    active={route().current("user.cart")}
+                                >
+                                    Sorularim
+                                </NavLink>
+                                <NavLink
+                                    href={route("user.cart")}
+                                    active={route().current("user.cart")}
+                                >
+                                    Değerlendirmelerin
                                 </NavLink>
                             </div>
                         </div>
@@ -70,14 +88,14 @@ export default function Authenticated({ user, header, children }) {
                                         <Dropdown.Link
                                             href={route("profile.edit")}
                                         >
-                                            Profile
+                                            Kullancı Bilgileri
                                         </Dropdown.Link>
                                         <Dropdown.Link
                                             href={route("logout")}
                                             method="post"
                                             as="button"
                                         >
-                                            Log Out
+                                            Çıkıs yap
                                         </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
@@ -154,14 +172,14 @@ export default function Authenticated({ user, header, children }) {
 
                         <div className="mt-3 space-y-1">
                             <ResponsiveNavLink href={route("profile.edit")}>
-                                Profile
+                                Kullancı Bilgileri
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"
                                 href={route("logout")}
                                 as="button"
                             >
-                                Log Out
+                                Çıkıs yap
                             </ResponsiveNavLink>
                         </div>
                     </div>
